@@ -29,7 +29,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $stmt->bind_param("ss", $phonenumber, $password);
             if($stmt->execute()){
                 $stmt->close();
-                // Chuyển sang phần tạo hồ sơ -- chưa điền
+                header('Location: tao-ho-so.php')
                 exit;
             } else{
                 if($stmt->errno ==  1062){
