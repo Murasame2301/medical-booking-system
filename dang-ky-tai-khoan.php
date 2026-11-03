@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'mysqlConnect.php';
+require_once __DIR__ . '/include/mysqlConnect.php';
 
 if(!empty($_SESSION['is_logged_in'])){
     header('Location: xem-lich-kham.php');
@@ -10,11 +10,12 @@ if(!empty($_SESSION['is_logged_in'])){
 $message = "";
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $phonenumber = trim($_POST['sdt'] ?? ' =');
-    $rawPassword = trim($_POST['mat_khau'] ?? '');
-    $rawRepassword = trim($_POST['nhap_lai_mat_khau' ?? '']);
+    $fullname = trim($_POST['hoten'] ?? '');
+    $phonenumber = trim($_POST['sdt'] ?? '');
+    $rawPassword = $_POST['mat_khau'] ?? '';
+    $rawRepassword = $_POST['nhap_lai_mat_khau'] ?? '';
 
-    if($phonenumber === '' && $rawPassword === '' && $rawRepassword === ''){
+    if($phonenumber === '' || $rawPassword === '' || $rawRepassword === ''){
         $message = 'Vui lòng nhập đầy đủ thông tin.';
     }
     elseif ($rawPassword !== $rawRepassword){
@@ -22,14 +23,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     } else{
         //Mã hóa mật khẩu sau khi đã khớp
         $password = password_hash($rawPassword, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO NGUOI_DUNG(mavaitro, sdt, matkhau) VALUES(1, ?, ?)";
+        $sql = "INSERT INTO NGUOI_DUNG(mavaitro, hoten, sdt, matkhau) VALUES(1, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql);
         if($stmt){
-            $stmt->bind_param("ss", $phonenumber, $password);
+            $stmt->bind_param("sss", $fullname, $phonenumber, $password);
             if($stmt->execute()){
+                $manguoidung = $conn->insert_id;
+
+                $_SESSION['manguoidung'] = $manguoidung;
+                
                 $stmt->close();
-                header('Location: tao-ho-so.php')
+                header('Location: tao-ho-so.php');
                 exit;
             } else{
                 if($stmt->errno ==  1062){
