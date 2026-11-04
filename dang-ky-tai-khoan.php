@@ -52,13 +52,76 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký thành viên</title>
 </head>
 <body>
-<!-- <?php include 'menu.php';?> -->
+    <!-- Menu sẽ được thêm sau. -->
+
+    <main>
+        <h1>Đăng ký thành viên</h1>
+        <p>Vui lòng điền thông tin bên dưới để tạo tài khoản.</p>
+
+        <?php if ($message !== ''): ?>
+            <div role="alert">
+                <?php echo $message; ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="" method="post">
+            <div>
+                <label for="hoten">Họ và tên</label>
+                <input
+                    type="text"
+                    id="hoten"
+                    name="hoten"
+                    value="<?php echo htmlspecialchars($_POST['hoten'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                    autocomplete="name"
+                    required
+                >
+            </div>
+
+            <div>
+                <label for="sdt">Số điện thoại</label>
+                <input
+                    type="tel"
+                    id="sdt"
+                    name="sdt"
+                    value="<?php echo htmlspecialchars($_POST['sdt'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                    autocomplete="tel"
+                    required
+                >
+            </div>
+
+            <div>
+                <label for="mat_khau">Mật khẩu</label>
+                <input
+                    type="password"
+                    id="mat_khau"
+                    name="mat_khau"
+                    autocomplete="new-password"
+                    required
+                >
+            </div>
+
+            <div>
+                <label for="nhap_lai_mat_khau">Nhập lại mật khẩu</label>
+                <input
+                    type="password"
+                    id="nhap_lai_mat_khau"
+                    name="nhap_lai_mat_khau"
+                    autocomplete="new-password"
+                    required
+                >
+            </div>
+
+            <button type="submit">Đăng ký</button>
+        </form>
+
+        <p>Đã có tài khoản? <a href="dang-nhap.php">Đăng nhập</a></p>
+    </main>
 </body>
 </html>
