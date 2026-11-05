@@ -9,7 +9,7 @@ function ket_noi_db(): mysqli{
   static $mysqli = null;
   if($mysqli === null){
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-    $mysqli = new mysqli(DB_HOST, DB_USE, DB_PASS, DB_NAME);
+    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
   }
   return $mysqli;
 }
@@ -25,6 +25,7 @@ function truy_van(string $sql, string $kieu = '', array $thamSo = []): array {
     $stmt->close();
     return $ketQua;
 }
+
 // try van mot dong dau tien hoac null
 function truy_van_mot(string $sql, string $kieu = '', array $thamSo = []): ?array{
     $rows = truy_van($sql, $kieu, $thamSo);

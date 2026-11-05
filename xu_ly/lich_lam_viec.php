@@ -3,89 +3,70 @@ require_once __DIR__ . '/../chung/hang_so.php';
 require_once __DIR__ . '/../chung/co_so_du_lieu.php';
 require_once __DIR__ . '/../chung/tien_ich.php';
 
-function tinh_gio_ket_thuc(string $gioBatDau, int $soPhut): string
-{
-  return phut_sang_gio(min(gio_sang_phut($gioBatDau) + $soPhut, 23 * 60 + 59));
+#gio ket thuc = gio bat dau + so phut
+function tinh_gio_ket_thuc(string $gioBatDau, int$soPhut): string {
+  return phut_sang_gio(min(gio_sang_phut($gioBatDau) +$soPhut, 23 * 60 + 59));
 }
 
 // khong tinh lich da huy
-function khung_gio_co_luot_kham(int $maLichKhan): bool
-{
-  $sql = "SELECT COUNT(*) AS so_luong 
-          FROM lich_kham
-          WHERE malichkham = ? AND trangthai <> ? ";
-  $ketQua = truy_van_mot($sql, 'is', [$maLichKhan, LK_DA_HUY]);
-  return (int)($ketQua['so_luong'] ?? 0) > 0;
+function khung_gio_co_luot_kham(int $maLichKham): bool {
+    $sql = "SELECT COUNT(*) AS so_luong
+            FROM lich_kham
+            WHERE malichkham = ? AND trangthai <> ?";
+    $ketQua = truy_van_mot($sql, 'is', [$maLichKham, LK_DA_HUY]);
+    return (int)($ketQua['so_luong'] ?? 0) > 0;
 }
 
-function khung_gio_bi_trung(int $maBacSi, string $ngay, string $gioBatDau, string $gioKetThuc, int $boQuaMa = 0): int
-{
-  $thoiGianBatDau = ngayGio($ngay, $gioBatDau);
-  $thoiGianKetThuc = ngayGio($ngay, $gioKetThuc);
 
+function khung_gio_bi_trung (int $maBacSi, string $ngay, string $gioBatDau, string $gioKetThuc) : bool {
+    #ghep
+    $tgBatDau = ghep_ngay_gio($ngay, $gioBatDau);
+    $tgKetThuc = ghep_ngay_gio($ngay, $gioKetThuc);
 
-  $sql = "SELECT COUNT(*) AS so_luong 
-        FROM lich_lam_viec
-        WHERE manguoidung = ? AND malichlamviec <> ? AND thoigianbatdau < ? AND thoigianketthuc > ?";
-  $ketQua = truy_van_mot($sql, 'iiss', [$maBacSi, $boQuaMa, $thoiGianKetThuc, $thoiGianBatDau]);
-  return (int)($ketQua['so_luong'] ?? 0) > 0;
+    #sql
+    $sql = " SELECT COUNT(*) AS so_luong
+             FROM lich_lam_viec
+             WHERE manguoidung = ? AND thoigianbatdau < ? AND thoigianketthuc > ?";
+    $ketQua = truy_van_mot($sql, 'iss', [$maBacSi, $tgKetThuc, $tgBatDau]);
+    # kiem tra ket ra so_luong, so_luong, va tra ve true or false
+    return (int)($ketQua['so_luong'] ?? 0) > 0;
 }
 
-function tao_lich_lam_viec(int $maBacSi, string $ngay, string $tuGio, string $denGio, int $soPhut): array
-{
-  if (!hop_le_ngay($ngay)) return ket_qua(false, 'Ngày không hợp lệ.');
-  if (!hop_le_gio($tuGio) || !hop_le_gio($denGio)) return ket_qua(false, 'Giờ không hợp lệ.');
-  if ($soPhut < 5 || $soPhut > 60) return ket_qua(false, 'Số phút mỗi lượt phải từ 5 phút đến 60 phút.');
+function tao_mot_lich_kham(int $maBacSi, string $ngay, string $tuGio, int $soPhut): array {
+    #kiem tra ngay, gio, sophut tao lich
+    if(!hop_le_ngay($ngay)) return ket_qua(false, 'Ngày không hợp lệ.');
+    if(!hop_le_gio($tuGio)) return ket_qua(false, 'Giờ bắt đầu không hợp lệ');
+    if($soPhut < 5 || $soPhut > 60) return ket_qua(false, 'Số phút cho mỗi lượt phải từ 5 phút đến 60 phút.');
 
-  $dau = gio_sang_phut($tuGio);
-  $cuoi = gio_sang_phut($denGio);
-
-  if ($cuoi - $dau < $soPhut) return ket_qua(false, 'Khoảng giờ ngắn hơn một lượt khám.');
-
-  $mysqli = ket_noi_db();
-
-  // Câu lệnh chuẩn bị với 4 tham số
-  $sql = "INSERT INTO lich_lam_viec (manguoidung, thoigianbatdau, thoigianketthuc, trangthai)
-            VALUES (?, ?, ?, ?)";
-  $them = $mysqli->prepare($sql);
+    #kiem tra trung gio
+    $denGio = tinh_gio_ket_thuc($tuGio, $soPhut);
+    if(khung_gio_bi_trung($maBacSi, $ngay, $tuGio, $denGio)) return ket_qua(false, 'Khung giờ từ $tuGio đến $denGio ngày $ngay đã được tạo trong lịch làm việc.');
 
 
-  $p_thoigianbatdau = '';
-  $p_thoigianketthuc = '';
-  $p_trangthai = 'Chờ duyệt';
-  $them->bind_param("isss", $maBacSi, $p_thoigianbatdau, $p_thoigianketthuc, $p_trangthai);
+    $thoiGianBatDau = ghep_ngay_gio($ngay, $tuGio);
+    $thoiGianKetThuc = ghep_ngay_gio($ngay, $denGio);
+    $trangThai = LLV_CON_TRONG; # trang thai mac dinh
 
-  $daTao = 0;
-  $boQua = [];
+    $mysqli = ket_noi_db();
 
-  $mysqli->begin_transaction();
-  try {
-    for ($t = $dau; $t + $soPhut <= $cuoi; $t += $soPhut) {
-      $bd = phut_sang_gio($t);
-      $kt = phut_sang_gio($t + $soPhut);
+    $sql = "INSERT INTO (manguoidung, thoigianbatdau, thoigianketthuc, trangthai) VALUES (?, ?, ?, ?)";
+    $themLich = $mysqli->prepare($sql);
 
-      if (khung_gio_bi_trung($maBacSi, $ngay, $bd, $kt)) {
-        $boQua[] = "$bd-$kt";
-        continue;
-      }
-      $p_thoigianbatdau = $ngay . ' ' . $bd . ':00';
-      $p_thoigianketthuc = $ngay . ' ' . $kt . ':00';
+    if($themLich === false) return ket_qua(false, 'Không thể thêm lịch do lỗi hệ thống.');
 
-      $them->execute();
-      $daTao++;
+    $themLich->bind_param('isss', $maBacSi, $thoiGianBatDau, $thoiGianKetThuc, $trangThai);
+
+    try {
+        $ketQua = $themLich->execute();
+        $themLich->close();
+        if($ketQua) return ket_qua(true, "Tạo lịch làm việc từ $tuGio đến $denGio ngày $ngay thành công.", ['thoi_gian_bat_dau' => $thoiGianBatDau,
+                                                                                                            'thoi_gian_ket_thuc' => $thoiGianKetThuc]);
+    } catch (Throwable $loi){
+        if(isset($themLich)){
+            $themLich->close();
+            return ket_qua(false, 'Lỗi hệ thống khi tạo lịch: '.$loi->getMessage());
+        }
     }
-    $mysqli->commit();
-  } catch (Throwable $ex) {
-    $mysqli->rollback();
-    $them->close();
-    return ket_qua(false, 'Lỗi khi tạo lịch: ' . $ex->getMessage());
-  }
-  $them->close();
 
-  $msg = "Đã tạo $daTao khung giờ. ";
-  if ($boQua) {
-    $msg .= 'Bỏ qua do trùng: ' . implode(', ', $boQua) . '.';
-  }
-
-  return ket_qua($daTao > 0, $daTao > 0 ? $msg : 'Không tạo được khung nào (đều trùng giờ).', ['da_tao' => $daTao, 'bo_qua' => $boQua]);
 }
+
