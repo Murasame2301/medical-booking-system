@@ -59,7 +59,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <title>Đăng ký thành viên</title>
 </head>
 <body>
-    <!-- Menu sẽ được thêm sau. -->
+    <?php require_once __DIR__ . '/include/menu.php'; ?>
 
     <main>
         <h1>Đăng ký thành viên</h1>
