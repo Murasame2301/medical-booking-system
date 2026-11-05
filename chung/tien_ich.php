@@ -42,11 +42,11 @@ function dinh_dang__khung_gio(string $batDau, string $ketThuc): string
 }
 
 #chuan kieu DATETIME trong MySQL
-function ghep_ngay_gio(string $ngay, string $gio): string
+function ghep_ngay_gio(string $ngay, string $gio, string $giay = ':00'): string
 {
-  return $ngay . ' ' . $gio . ':00';
+  return $ngay . ' ' . $gio . $giay;
 }
-// nhan trang thai lich kham
+
 
 function nhan_trang_thai(string $tt): array
 {

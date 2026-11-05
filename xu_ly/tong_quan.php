@@ -1,6 +1,4 @@
 <?php
-
-
 require_once __DIR__ .'/../chung/hang_so.php';
 require_once __DIR__ .'/../chung/co_so_du_lieu.php';
 require_once __DIR__ .'/../chung/tien_ich.php';
@@ -69,7 +67,7 @@ function lay_lich_kham_theo_ngay(int $maBacSi, string $ngay, bool $boDaHuy = tru
         $tham[] = LK_DA_HUY; 
     }
 
-    // ORDER BY trực tiếp bằng cột nguyên thuỷ để tận dụng Index
+    //  sap xep theo thoigian
     $sql .= " ORDER BY llv.thoigianbatdau";
 
     return ket_qua(true, '', truy_van($sql, $kieu, $tham));
