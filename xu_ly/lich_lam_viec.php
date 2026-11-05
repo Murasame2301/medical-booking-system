@@ -17,7 +17,6 @@ function khung_gio_co_luot_kham(int $maLichKham): bool {
     return (int)($ketQua['so_luong'] ?? 0) > 0;
 }
 
-
 function khung_gio_bi_trung (int $maBacSi, string $ngay, string $gioBatDau, string $gioKetThuc) : bool {
     #ghep
     $tgBatDau = ghep_ngay_gio($ngay, $gioBatDau);
@@ -61,11 +60,12 @@ function tao_mot_lich_kham(int $maBacSi, string $ngay, string $tuGio, int $soPhu
         $themLich->close();
         if($ketQua) return ket_qua(true, "Tạo lịch làm việc từ $tuGio đến $denGio ngày $ngay thành công.", ['thoi_gian_bat_dau' => $thoiGianBatDau,
                                                                                                             'thoi_gian_ket_thuc' => $thoiGianKetThuc]);
+        return ket_qua(false, 'Không thể thêm lịch làm việc.');
     } catch (Throwable $loi){
         if(isset($themLich)){
             $themLich->close();
-            return ket_qua(false, 'Lỗi hệ thống khi tạo lịch: '.$loi->getMessage());
         }
+        return ket_qua(false, 'Lỗi hệ thống khi tạo lịch: '.$loi->getMessage());
     }
 
 }
