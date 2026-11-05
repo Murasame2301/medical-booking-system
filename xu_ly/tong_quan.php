@@ -4,7 +4,6 @@ require_once __DIR__ .'/../chung/co_so_du_lieu.php';
 require_once __DIR__ .'/../chung/tien_ich.php';
 
 
-
 function thong_ke_tong_quan(int $maBacSi, string $ngay): array {
   if(!hop_le_ngay($ngay)) ket_qua(false, 'Ngày không hợp lệ.');
   
@@ -43,8 +42,9 @@ function thong_ke_tong_quan(int $maBacSi, string $ngay): array {
 function lay_lich_kham_theo_ngay(int $maBacSi, string $ngay, bool $boDaHuy = true): array 
 {
     if (!hop_le_ngay($ngay)) return ket_qua(false, "Ngày không hợp lệ.");
-    $batDau = $ngay . ' 00:00:00';
-    $ketThuc = $ngay . ' 23:59:59';
+    $batDau = ghep_ngay_gio($ngay,'00:00');
+    $ketThuc = ghep_ngay_gio($ngay,'23:59',':59');
+
     
     $sql = "SELECT 
                 llv.manguoidung AS ma_bac_si, 
