@@ -60,24 +60,43 @@ function tao_mot_lich_kham(int $maBacSi, string $ngay, string $tuGio, int $soPhu
     } else {
         return ket_qua(false, 'Tạo lịch làm việc thất bại.');
     }
-    
 }
 
 #lay lich lam viec ngay den ngay
-function lay_danh_sach_lich_lam_viec(int $maBacSi, string $tuNgay, string $denNgay, $tt = ''): array
+function lay_danh_sach_lich_lam_viec(int $maBacSi, string $tuNgay, string $denNgay, array|string $trangThai = []): array
 {
-    #kiem tra ngay , khoang ngay co hop le khong 
+    # kiem tra hop le ngay
     if (!hop_le_ngay($tuNgay) || !hop_le_ngay($denNgay)) return ket_qua(false, 'Ngày không hợp lệ.');
     if ($tuNgay > $denNgay) return ket_qua(false, 'Ngày bắt đầu phải trước ngày kết thúc.');
 
+    #chuan hoa: a,b hoac [a,b], rong thi lay tat ca
+    $tt = is_string($trangThai) ? explode(',', $trangThai) : $trangThai;
+    $tt = array_unique(array_filter(array_map('trim', $tt)));
 
-    $tuNgayGio = ghep_ngay_gio($tuNgay, '00:00');
+    # kiem tra trang thai hop le
+    if (array_diff($tt, [LLV_CON_TRONG, LLV_NGUNG_NHAN])) {
+        return ket_qua(false, 'Trạng thái không hợp lệ.');
+    }
+
+    $tuNgayGio  = ghep_ngay_gio($tuNgay, '00:00');
     $denNgayGio = ghep_ngay_gio($denNgay, '23:59', ':59');
-    #sql lay lich
+
+    #sql lay lich lam viec cua bac si tu ngay den ngay
     $sql = "SELECT malichlamviec, thoigianbatdau, thoigianketthuc, trangthai
             FROM lich_lam_viec
-            WHERE manguoidung = ? AND thoigianbatdau >= ? AND  thoigianketthuc <= ?
-            ORDER BY thoigianbatdau ASC";
-    $danhSach = truy_van($sql, 'iss', [$maBacSi, $tuNgayGio, $denNgayGio]);
+            WHERE manguoidung = ? AND thoigianbatdau >= ? AND thoigianketthuc <= ?";
+    $kieu   = 'iss';
+    $thamSo = [$maBacSi, $denNgayGio, $tuNgayGio];
+
+    # loc trang thai neu co
+    if ($tt) {
+        $sql   .= " AND trangthai IN (" . implode(',', array_fill(0, count($tt), '?')) . ")";
+        $kieu  .= str_repeat('s', count($tt));
+        $thamSo = array_merge($thamSo, $tt);
+    }
+
+    $sql .= " ORDER BY thoigianbatdau ASC";
+
+    $danhSach = truy_van($sql, $kieu, $thamSo);
     return ket_qua(true, 'Lấy danh sách lịch làm việc thành công.', ['danh_sach' => $danhSach]);
 }
