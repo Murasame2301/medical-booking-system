@@ -1,0 +1,511 @@
+:root {
+  --nen: #f6f7f9;
+  --the: #fff;
+  --vien: #e4e7ec;
+  --chu: #1d2433;
+  --mo: #667085;
+  --xanh: #2563eb;
+  --xanh-nhat: #eaf1ff;
+  --hover: #f2f4f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  min-width: 800px;
+  overflow-x: auto;
+  margin: 0;
+  background: var(--nen);
+  color: var(--chu);
+  font:
+    14px/1.4 system-ui,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 18px;
+}
+
+h2 {
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+
+/* Khung trang */
+.app {
+  display: grid;
+  grid-template-columns: 253px 1fr;
+  height: 100vh;
+}
+
+.side {
+  background: var(--the);
+  border-right: 1px solid var(--vien);
+  overflow-y: auto;
+  padding: 12px 6px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 16px;
+  font-weight: 600;
+}
+
+.user:hover .ten {
+  text-decoration: underline;
+}
+
+/* Khung avatar dùng chung: cùng kích thước/màu nền/canh giữa chữ,
+   chỉ khác bo góc (vuông bo / tròn) */
+.av-lon-home,
+.anh-dai-dien .av-lon {
+  width: 56px;
+  height: 56px;
+  background: #fb923c;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.av-lon-home {
+  flex: none;
+  border-radius: 12px;
+}
+
+.nhom {
+  margin: 18px 8px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--mo);
+}
+
+.muc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  color: #344054;
+}
+
+.muc i {
+  font-style: normal;
+  width: 16px;
+  text-align: center;
+}
+
+.muc:hover {
+  background: var(--hover);
+}
+
+.muc.on {
+  background: var(--xanh-nhat);
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.thoat {
+  /* margin-top: auto đẩy khối .thoat xuống sát đáy sidebar */
+  margin-top: auto;
+  border-top: 1px solid var(--vien);
+  padding-top: 12px;
+}
+
+.muc:focus-visible,
+.btn:focus-visible,
+.nhan-ghi:focus-within {
+  outline: 2px solid var(--xanh);
+  outline-offset: 1px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  height: 54px;
+  padding: 0 20px;
+  background: var(--the);
+  border-bottom: 1px solid var(--vien);
+}
+
+.top h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.noidung {
+  padding: 20px;
+  overflow: auto;
+  flex: 1;
+}
+
+/* Form và nút */
+.loc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.khung {
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.khung .loc,
+.khung .bang {
+  margin-bottom: 0;
+}
+
+.goiy {
+  color: var(--mo);
+  font-size: 13px;
+  margin: 0 0 10px;
+}
+
+.nhan-ghi {
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+  color: var(--chu);
+  padding: 0 10px;
+  height: 36px;
+  font: inherit;
+}
+
+input.nhan-ghi {
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
+label.nhan-ghi {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--mo);
+}
+
+label.nhan-ghi input,
+label.nhan-ghi select,
+label.nhan-ghi textarea {
+  background: none;
+  border: 0;
+  color: var(--chu);
+  font: inherit;
+  font-size: 13px;
+  padding: 0;
+  outline: 0;
+}
+
+.btn {
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn.xanh {
+  background: var(--xanh);
+  color: #fff;
+}
+
+.btn.vien {
+  border-color: var(--vien);
+  background: var(--the);
+  color: var(--chu);
+}
+
+.btn.do {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn.cam {
+  background: #f7da86;
+  color: #000;
+}
+
+.btn.nho {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.btn.avt {
+  background-color: rgb(28, 224, 238);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Bảng và nhãn trạng thái */
+.bang {
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--mo);
+  background: #f9fafb;
+  padding: 10px;
+  border-bottom: 1px solid var(--vien);
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #eef0f3;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+table th:last-child,
+table td:last-child {
+  width: 1%;
+  white-space: nowrap;
+  text-align: left;
+  /* Đẩy các nút cách xa cột Trạng thái */
+  padding-left: 40px !important;
+  padding-right: 30px !important;
+}
+
+.nhan {
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.n-vang {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.n-xanh {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.n-luc {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.n-do {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.n-xam {
+  background: #f2f4f7;
+  color: #475467;
+}
+
+/* Ô số tổng quan */
+.the {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.the div {
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.the b {
+  display: block;
+  font-size: 28px;
+  margin-top: 4px;
+  color: var(--xanh);
+}
+
+.the span {
+  color: var(--mo);
+}
+
+/* Hồ sơ khám */
+.tt {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+.tt dt {
+  font-size: 12px;
+  color: var(--mo);
+}
+
+.tt dd {
+  margin: 2px 0 0;
+  font-weight: 600;
+}
+
+.mau .nhan-ghi {
+  height: auto;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+
+.mau textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+/* CSS riêng cho các tab và form trang Cá nhân */
+.tab-header {
+  display: flex;
+  gap: 16px;
+  border-bottom: 1px solid var(--vien);
+  margin-bottom: 20px;
+}
+
+.tab-nut {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 4px;
+  font: inherit;
+  font-weight: 500;
+  color: var(--mo);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-nut.on {
+  color: var(--xanh);
+  border-bottom-color: var(--xanh);
+  font-weight: 600;
+}
+
+.tab-noi-dung {
+  display: none;
+}
+
+.tab-noi-dung.on {
+  display: block;
+}
+
+.form-ca-nhan {
+  max-width: 600px;
+}
+
+.form-ca-nhan.form-bao-mat {
+  max-width: 400px;
+}
+
+.hang-doi {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.nhom-truong {
+  margin-bottom: 16px;
+}
+
+.nhom-truong label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--chu);
+  margin-bottom: 6px;
+}
+
+.nhom-truong input,
+.nhom-truong select {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+  font: inherit;
+  background: var(--the);
+  color: var(--chu);
+  outline: none;
+}
+
+.nhom-truong input:focus,
+.nhom-truong select:focus {
+  border-color: var(--xanh);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.anh-dai-dien {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.anh-dai-dien .av-lon {
+  border-radius: 50%;
+}
+
+@media (max-width: 800px) {
+  .app,
+  main {
+    display: block;
+    height: auto;
+  }
+  .side {
+    border-right: 0;
+    border-bottom: 1px solid var(--vien);
+  }
+}
