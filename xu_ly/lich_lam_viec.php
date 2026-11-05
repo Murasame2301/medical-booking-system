@@ -145,7 +145,7 @@ function cap_nhat_lich_lam_viec(int $maBacSi, int $maLichLamViec, string $gioBat
 function xoa_lich_lam_viec(int $maBacSi, int $maLichLamViec): array {
     # kiem tra lich lam viec co ton tai va thuoc bac si
     $lichLamViec = lay_lich_lam_viec($maBacSi, $maLichLamViec);
-    if (!$lichLamViec['thanh_cong']) {
+    if (!$lichLamViec['lich_lam_viec']) {
         return ket_qua(false, 'Không tìm thấy lịch làm việc.');
     }
 
