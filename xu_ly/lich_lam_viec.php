@@ -100,3 +100,71 @@ function lay_danh_sach_lich_lam_viec(int $maBacSi, string $tuNgay, string $denNg
     $danhSach = truy_van($sql, $kieu, $thamSo);
     return ket_qua(true, 'Lấy danh sách lịch làm việc thành công.', ['danh_sach' => $danhSach]);
 }
+
+function lay_lich_lam_viec(int $maBacSi, int $maLichLamViec): array {
+    $sql = "SELECT malichlamviec, manguoidung, thoigianbatdau, thoigianketthuc, trangthai
+            FROM lich_lam_viec
+            WHERE malichlamviec = ? AND manguoidung = ?";
+    $lichLamViec = truy_van_mot($sql, 'ii', [$maLichLamViec, $maBacSi]);
+    if ($lichLamViec) {
+        return ket_qua(true, 'Lấy thông tin lịch làm việc thành công.', ['lich_lam_viec' => $lichLamViec]);
+    } else {
+        return ket_qua(false, 'Không tìm thấy lịch làm việc.');
+    }
+}
+
+function cap_nhat_lich_lam_viec(int $maBacSi, int $maLichLamViec, string $gioBatDau, string $gioKetThuc, string $trangThai): array
+{
+    # kiem tra hop le ngay gio
+    if (!hop_le_gio($gioBatDau) || !hop_le_gio($gioKetThuc)) return ket_qua(false, 'Giờ không hợp lệ.');
+    if ($gioBatDau >= $gioKetThuc) return ket_qua(false, 'Giờ bắt đầu phải trước giờ kết thúc.');
+
+    # kiem tra trang thai hop le
+    if (!in_array($trangThai, [LLV_CON_TRONG, LLV_NGUNG_NHAN])) {
+        return ket_qua(false, 'Trạng thái không hợp lệ.');
+    }
+
+    # kiem tra trung gio voi lich khac
+    if (khung_gio_bi_trung($maBacSi, substr($gioBatDau, 0, 10), $gioBatDau, $gioKetThuc)) {
+        return ket_qua(false, 'Khung giờ từ ' . $gioBatDau . ' đến ' . $gioKetThuc . ' đã được tạo trong lịch làm việc.');
+    }
+
+    # cap nhat lich lam viec
+    $sql = "UPDATE lich_lam_viec
+            SET thoigianbatdau = ?, thoigianketthuc = ?, trangthai = ?
+            WHERE malichlamviec = ? AND manguoidung = ?";
+    $stmt = thi_hanh($sql, [$gioBatDau, $gioKetThuc, $trangThai, $maLichLamViec, $maBacSi]);
+    
+    if ($stmt->affected_rows > 0) {
+        return ket_qua(true, 'Cập nhật lịch làm việc thành công.');
+    } else {
+        return ket_qua(false, 'Cập nhật lịch làm việc thất bại hoặc không có thay đổi.');
+    }
+}
+
+function xoa_lich_lam_viec(int $maBacSi, int $maLichLamViec): array {
+    # kiem tra lich lam viec co ton tai va thuoc bac si
+    $lichLamViec = lay_lich_lam_viec($maBacSi, $maLichLamViec);
+    if (!$lichLamViec['thanh_cong']) {
+        return ket_qua(false, 'Không tìm thấy lịch làm việc.');
+    }
+
+    # kiem tra lich lam viec co luot kham chua
+    $sql = "SELECT COUNT(*) AS so_luot_kham
+            FROM lich_kham
+            WHERE malichlamviec = ? AND trangthai <> ?";
+    $luotKham = truy_van_mot($sql, 'is', [$maLichLamViec, LK_DA_HUY]);
+    if ((int)($luotKham['so_luot_kham'] ?? 0) > 0) {
+        return ket_qua(false, 'Không thể xóa lịch làm việc vì đã có lượt khám.');
+    }
+
+    # xoa lich lam viec
+    $sql = "DELETE FROM lich_lam_viec WHERE malichlamviec = ? AND manguoidung = ?";
+    $stmt = thi_hanh($sql, [$maLichLamViec, $maBacSi]);
+
+    if ($stmt->affected_rows > 0) {
+        return ket_qua(true, 'Xóa lịch làm việc thành công.');
+    } else {
+        return ket_qua(false, 'Xóa lịch làm việc thất bại.');
+    }
+}
