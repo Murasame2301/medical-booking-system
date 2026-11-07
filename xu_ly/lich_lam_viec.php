@@ -142,6 +142,7 @@ function cap_nhat_lich_lam_viec(int $maBacSi, int $maLichLamViec, string $gioBat
     }
 }
 
+// xoa lich lam viec
 function xoa_lich_lam_viec(int $maBacSi, int $maLichLamViec): array {
     # kiem tra lich lam viec co ton tai va thuoc bac si
     $lichLamViec = lay_lich_lam_viec($maBacSi, $maLichLamViec);
