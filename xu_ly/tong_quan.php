@@ -54,8 +54,7 @@ function lay_lich_kham_theo_ngay(int $maBacSi, string $ngay, bool $boDaHuy = tru
                 lk.trangthai,
                 TIME(llv.thoigianbatdau) AS gio_bat_dau
             FROM LICH_KHAM lk JOIN LICH_LAM_VIEC llv ON lk.malichlamviec = llv.malichlamviec
-                              JOIN BENH_NHAN bn ON lk.manguoidung = bn.manguoidung
-                              JOIN NGUOI_DUNG nd ON bn.manguoidung = nd.manguoidung
+                              JOIN NGUOI_DUNG nd ON lk.manguoidung = nd.manguoidung
             WHERE llv.manguoidung = ?  AND TIME(llv.thoigianbatdau) BETWEEN ? AND ?";
 
     $kieu = 'iss';
