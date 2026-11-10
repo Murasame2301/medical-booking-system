@@ -30,7 +30,7 @@ function hienNgay(chuoiNgay) {
 }
 
 function gioDauCuoi(gioBatDau, gioKetThuc){
-  return `${giobatDau}-${gioKetThuc}`;
+  return `${gioDatDau}-${gioKetThuc}`;
 }
 
 function tuanChua(chuoiNgay) {
