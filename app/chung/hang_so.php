@@ -18,9 +18,9 @@ const LK_DA_HUY       = 'da_huy';
 
 
 /* cau hinh session co dinh de phat trien giao dien */
-const CHE_DO_PHAT_TRIEN = true;
-const DEV_MA_NGUOI_DUNG = 100;
-const DEV_HO_TEN = 'Nguyễn Văn An';
-const DEV_VAI_TRO = VT_BAC_SI;
+// const CHE_DO_PHAT_TRIEN = false;
+// const DEV_MA_NGUOI_DUNG = 100;
+// const DEV_HO_TEN = 'Nguyễn Văn An';
+// const DEV_VAI_TRO = VT_BAC_SI;
 
 ?>

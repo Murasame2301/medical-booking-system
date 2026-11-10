@@ -68,52 +68,52 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
 // DU KIEU GIA VA GIAO DIEN
-  const NHAN_TRANG_THAI = {
-    conTrong: { chu: "Còn trống", lop: "n-luc" },
-    ngungNhan: { chu: "Ngừng nhận", lop: "n-xam" },
-  };
+  // const NHAN_TRANG_THAI = {
+  //   conTrong: { chu: "Còn trống", lop: "n-luc" },
+  //   ngungNhan: { chu: "Ngừng nhận", lop: "n-xam" },
+  // };
 
-  let lich = [
-    { ma: 21, ngay: tuanChua(layNgayThuc()).tu, bd: "08:00", kt: "08:30", trangThai: "conTrong", daCoLuot: false },
-    { ma: 22, ngay: tuanChua(layNgayThuc()).tu, bd: "08:30", kt: "09:00", trangThai: "conTrong", daCoLuot: true },
-    { ma: 23, ngay: tuanChua(layNgayThuc()).tu, bd: "09:00", kt: "09:30", trangThai: "ngungNhan", daCoLuot: false },
-  ];
-  let maTiepTheo = 24;
+  // let lich = [
+  //   { ma: 21, ngay: tuanChua(layNgayThuc()).tu, bd: "08:00", kt: "08:30", trangThai: "conTrong", daCoLuot: false },
+  //   { ma: 22, ngay: tuanChua(layNgayThuc()).tu, bd: "08:30", kt: "09:00", trangThai: "conTrong", daCoLuot: true },
+  //   { ma: 23, ngay: tuanChua(layNgayThuc()).tu, bd: "09:00", kt: "09:30", trangThai: "ngungNhan", daCoLuot: false },
+  // ];
+  // let maTiepTheo = 24;
 
-  const taoDongHTML = (k) => {
-    const nhan = NHAN_TRANG_THAI[k.trangThai];
-    const nutSua = (k.trangThai === "conTrong" && !k.daCoLuot) 
-      ? `<button type="button" class="btn cam nho" data-sua="${k.ma}">Chỉnh sửa</button> ` : '';
-    const nutXoa = `<button type="button" class="btn do nho" data-xoa="${k.ma}" ${k.daCoLuot ? 'title="Đã có lượt khám"' : ''}>Xóa</button>`;
+  // const taoDongHTML = (k) => {
+  //   const nhan = NHAN_TRANG_THAI[k.trangThai];
+  //   const nutSua = (k.trangThai === "conTrong" && !k.daCoLuot) 
+  //     ? `<button type="button" class="btn cam nho" data-sua="${k.ma}">Chỉnh sửa</button> ` : '';
+  //   const nutXoa = `<button type="button" class="btn do nho" data-xoa="${k.ma}" ${k.daCoLuot ? 'title="Đã có lượt khám"' : ''}>Xóa</button>`;
     
-    return `
-      <tr>
-        <td>${k.ma}</td>
-        <td>${hienNgay(k.ngay)}</td>
-        <td>${k.bd}–${k.kt}</td>
-        <td><span class="nhan ${nhan.lop}">${nhan.chu}</span></td>
-        <td>${nutSua}${nutXoa}</td>
-      </tr>
-    `;
-  };
+  //   return `
+  //     <tr>
+  //       <td>${k.ma}</td>
+  //       <td>${hienNgay(k.ngay)}</td>
+  //       <td>${k.bd}–${k.kt}</td>
+  //       <td><span class="nhan ${nhan.lop}">${nhan.chu}</span></td>
+  //       <td>${nutSua}${nutXoa}</td>
+  //     </tr>
+  //   `;
+  // };
 
-  const veBang = () => {
-    const { value: tuNgay } = locTu, { value: denNgay } = locDen, { value: tt } = locTrangThai;
-    const danhSach = lich
-      .filter((k) => k.ngay >= tuNgay && k.ngay <= denNgay && (!tt || k.trangThai === tt))
-      .sort((a, b) => (a.ngay + a.bd).localeCompare(b.ngay + b.bd));
+  // const veBang = () => {
+  //   const { value: tuNgay } = locTu, { value: denNgay } = locDen, { value: tt } = locTrangThai;
+  //   const danhSach = lich
+  //     .filter((k) => k.ngay >= tuNgay && k.ngay <= denNgay && (!tt || k.trangThai === tt))
+  //     .sort((a, b) => (a.ngay + a.bd).localeCompare(b.ngay + b.bd));
 
-    thanBang.innerHTML = danhSach.length 
-      ? danhSach.map(taoDongHTML).join("") 
-      : `<tr><td colspan="5">Không có lịch làm việc trong khoảng này.</td></tr>`;
-  };
+  //   thanBang.innerHTML = danhSach.length 
+  //     ? danhSach.map(taoDongHTML).join("") 
+  //     : `<tr><td colspan="5">Không có lịch làm việc trong khoảng này.</td></tr>`;
+  // };
 
-  const xemTuanHienTai = () => {
-    const tuan = tuanChua(layNgayThuc());
-    ghi(locTu, tuan.tu);
-    ghi(locDen, tuan.den);
-    locTrangThai.value = "";
-  };
+  // const xemTuanHienTai = () => {
+  //   const tuan = tuanChua(layNgayThuc());
+  //   ghi(locTu, tuan.tu);
+  //   ghi(locDen, tuan.den);
+  //   locTrangThai.value = "";
+  // };
 
  // SU KIEN TUONG TAC
   ghi(ngayKham, layNgayThuc());

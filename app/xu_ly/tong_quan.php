@@ -1,13 +1,12 @@
 <?php
-require_once __DIR__ .'/../chung/hang_so.php';
-require_once __DIR__ .'/../chung/co_so_du_lieu.php';
-require_once __DIR__ .'/../chung/tien_ich.php';
+require_once __DIR__ . '/../chung/hang_so.php';
+require_once __DIR__ . '/../chung/co_so_du_lieu.php';
+require_once __DIR__ . '/../chung/tien_ich.php';
 
 
-function thong_ke_tong_quan(int $maBacSi, string $ngay): array {
-  if(!hop_le_ngay($ngay)) ket_qua(false, 'Ngày không hợp lệ.');
-  
-
+function thong_ke_tong_quan(int $maBacSi, string $ngay): array
+{
+  if (!hop_le_ngay($ngay)) ket_qua(false, 'Ngày không hợp lệ.');
   // tong so luot va so luot cua trang thai
   $sql = "SELECT SUM(lk.trang_thai <> ?) AS tong_luot,
                 SUM(lk.trang_thai = ?) AS cho_xac_nhan,
@@ -15,8 +14,7 @@ function thong_ke_tong_quan(int $maBacSi, string $ngay): array {
           FROM lich_kham lk JOIN lich_lam_viec llv ON lk.malichlamviec = llv.malichlamviec
           WHERE llv.manguoidung = ? AND DATE(llv.thoigianbatdau) = ?";
 
-        $r = truy_van_mot($sql, 'sssis',[LK_DA_HUY, LK_CHO_XAC_NHAN, LK_DA_KHAM, $maBacSi]);
-  
+  $r = truy_van_mot($sql, 'sssis', [LK_DA_HUY, LK_CHO_XAC_NHAN, LK_DA_KHAM, $maBacSi]);
 
   // dem lich con_trong trong ngay hien tai
   $sql2 = "SELECT COUNT(*) AS so_luong
@@ -27,7 +25,7 @@ function thong_ke_tong_quan(int $maBacSi, string $ngay): array {
             FROM lich_kham lk
             WHERE lk.malichlamviec = llv.malichlamviec AND lk.trangthai <> ?
             )";
-  
+
   $r = truy_van_mot($sql2, 'isss', [$maBacSi, $ngay, LLV_CON_TRONG, LK_DA_HUY]);
 
   return ket_qua(true, '', [
@@ -36,17 +34,17 @@ function thong_ke_tong_quan(int $maBacSi, string $ngay): array {
     'da_kham' => (int)($r['da_kham'] ?? 0),
     'con_trong' => (int)($r['con_trong'] ?? 0),
   ]);
-} 
+}
 
 // lay lich kham cua mot ngay hoac nhieu ngay 
-function lay_lich_kham_theo_ngay(int $maBacSi, string $ngay, bool $boDaHuy = true): array 
+function lay_lich_kham_theo_ngay(int $maBacSi, string $ngay, bool $boDaHuy = true): array
 {
-    if (!hop_le_ngay($ngay)) return ket_qua(false, "Ngày không hợp lệ.");
-    $batDau = ghep_ngay_gio($ngay,'00:00');
-    $ketThuc = ghep_ngay_gio($ngay,'23:59',':59');
+  if (!hop_le_ngay($ngay)) return ket_qua(false, "Ngày không hợp lệ.");
+  $batDau = ghep_ngay_gio($ngay, '00:00');
+  $ketThuc = ghep_ngay_gio($ngay, '23:59', ':59');
 
-    
-    $sql = "SELECT 
+
+  $sql = "SELECT 
                 llv.manguoidung AS ma_bac_si, 
                 nd.hoten AS ho_ten_benh_nhan,
                 lk.malichkham, 
@@ -57,18 +55,17 @@ function lay_lich_kham_theo_ngay(int $maBacSi, string $ngay, bool $boDaHuy = tru
                               JOIN NGUOI_DUNG nd ON lk.manguoidung = nd.manguoidung
             WHERE llv.manguoidung = ?  AND TIME(llv.thoigianbatdau) BETWEEN ? AND ?";
 
-    $kieu = 'iss';
-    $tham = [$maBacSi, $batDau, $ketThuc];
+  $kieu = 'iss';
+  $tham = [$maBacSi, $batDau, $ketThuc];
 
-    if ($boDaHuy) {
-        $sql .= " AND lk.trangthai <> ?";
-        $kieu .= "s";
-        $tham[] = LK_DA_HUY; 
-    }
+  if ($boDaHuy) {
+    $sql .= " AND lk.trangthai <> ?";
+    $kieu .= "s";
+    $tham[] = LK_DA_HUY;
+  }
 
-    //  sap xep theo thoigian
-    $sql .= " ORDER BY llv.thoigianbatdau";
+  //  sap xep theo thoigian
+  $sql .= " ORDER BY llv.thoigianbatdau";
 
-    return ket_qua(true, '', truy_van($sql, $kieu, $tham));
+  return ket_qua(true, '', truy_van($sql, $kieu, $tham));
 }
-?>

@@ -51,10 +51,9 @@ function tao_mot_lich_kham(int $maBacSi, string $ngay, string $tuGio, int $soPhu
     $thoiGianKetThuc = ghep_ngay_gio($ngay, $denGio);
     $trangThai = LLV_CON_TRONG; # trang thai mac dinh
 
-    $mysqli = ket_noi_db();
-
     $sql = "INSERT INTO lich_lam_viec (manguoidung, thoigianbatdau, thoigianketthuc, trangthai) VALUES (?, ?, ?, ?)";
-    $themLich = thi_hanh($sql, [$maBacSi, $thoiGianBatDau, $thoiGianKetThuc, $trangThai]);
+    $kieu = 'isss';
+    $themLich = thi_hanh($sql, $kieu, [$maBacSi, $thoiGianBatDau, $thoiGianKetThuc, $trangThai]);
     if ($themLich->affected_rows > 0) {
         return ket_qua(true, 'Tạo lịch làm việc thành công.', ['ma_lich' => $themLich->insert_id]);
     } else {
@@ -133,7 +132,7 @@ function cap_nhat_lich_lam_viec(int $maBacSi, int $maLichLamViec, string $gioBat
     $sql = "UPDATE lich_lam_viec
             SET thoigianbatdau = ?, thoigianketthuc = ?, trangthai = ?
             WHERE malichlamviec = ? AND manguoidung = ?";
-    $stmt = thi_hanh($sql, [$gioBatDau, $gioKetThuc, $trangThai, $maLichLamViec, $maBacSi]);
+    $stmt = thi_hanh($sql,'sssii', [$gioBatDau, $gioKetThuc, $trangThai, $maLichLamViec, $maBacSi]);
     
     if ($stmt->affected_rows > 0) {
         return ket_qua(true, 'Cập nhật lịch làm việc thành công.');
@@ -161,7 +160,7 @@ function xoa_lich_lam_viec(int $maBacSi, int $maLichLamViec): array {
 
     # xoa lich lam viec
     $sql = "DELETE FROM lich_lam_viec WHERE malichlamviec = ? AND manguoidung = ?";
-    $stmt = thi_hanh($sql, [$maLichLamViec, $maBacSi]);
+    $stmt = thi_hanh($sql, 'ii', [$maLichLamViec, $maBacSi]);
 
     if ($stmt->affected_rows > 0) {
         return ket_qua(true, 'Xóa lịch làm việc thành công.');

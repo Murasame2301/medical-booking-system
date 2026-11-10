@@ -1,6 +1,6 @@
 <?php
 /* cau hinh chung va ket noi co so du lieu cau */
-const DB_HOST = 'local';
+const DB_HOST = 'localhost';
 const DB_NAME = 'dat_lich_kham';
 const DB_USER = 'root';
 const DB_PASS = '';
@@ -33,14 +33,11 @@ function truy_van_mot(string $sql, string $kieu = '', array $thamSo = []): ?arra
 }
 
 // dung cho them, sua, xoa, -> tra ve mot mysqlo_stmt da duc excute
-function thi_hanh(string $sql, $tham = []) : mysqli_stmt{
+function thi_hanh(string $sql, string $kieu = '', array $thamSo = []): mysqli_stmt {
   $stmt = ket_noi_db()->prepare($sql);
-  if($tham != []){
-      $kieu = '';
-      foreach($tham as $t ) $kieu .= is_int($t) ? 'i' : 's';
-      $stmt->bind_param($kieu, ...$tham);
+  if ($thamSo !== []) {
+      $stmt->bind_param($kieu, ...$thamSo);
   }
   $stmt->execute();
   return $stmt;
 }
-?>

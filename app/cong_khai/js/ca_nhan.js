@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
   khoiTaoDoiAnhDaiDien();
 });
 
-// chuye tab thong tin va bao mat
 function khoiTaoChuyenTab() {
   const tabButtons = document.querySelectorAll(".tab-nut");
   const tabContents = document.querySelectorAll(".tab-noi-dung");
@@ -60,11 +59,11 @@ function xemTruocAnh(inputAnh) {
 }
 
 function capNhatAnhDaiDien(duongDanAnh) {
-  const cackhungAvatar = document.querySelectorAll('.av-lon');
-  cackhungAvatar.forEach(function(khung){
+  const cacKhungAvatar = document.querySelectorAll(".av-lon");
+  cacKhungAvatar.forEach(function (khung) {
     khung.style.backgroundImage = "url(" + duongDanAnh + ")";
     khung.style.backgroundSize = "cover";
     khung.style.backgroundPosition = "center";
     khung.textContent = "";
-  })
+  });
 }

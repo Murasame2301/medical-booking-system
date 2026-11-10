@@ -11,7 +11,7 @@ function hop_le_ngay(string $ngay): bool
 // kiem tra gio
 function hop_le_gio(string $gio): bool
 {
-  return (bool) preg_match('/^([01]\d|2[0-3]):[0:5]\d$/', $gio);
+  return (bool) preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $gio);
 }
 
 // doi gio sang phut
@@ -22,7 +22,7 @@ function gio_sang_phut(string $gio): int
 }
 
 // doi phut sang gio
-function phut_sang_gio(string $tongPhut): int
+function phut_sang_gio(string $tongPhut): string
 {
   return sprintf('%02d:%02d', intdiv($tongPhut, 60), $tongPhut % 60);
 }
@@ -71,4 +71,12 @@ function h(?string $s): string
 function ket_qua(bool $ok, string $msg = '', $data = null): array
 {
   return ['ok' => $ok, 'msg' => $msg, 'data' => $data];
+}
+
+
+function tra_json($ketQuaGoiHam = [])
+{
+  header('Content-Type : application/json; charset=utf-8');
+  echo json_encode($ketQuaGoiHam, JSON_UNESCAPED_UNICODE);
+  exit;
 }

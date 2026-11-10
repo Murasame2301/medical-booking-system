@@ -64,3 +64,5 @@ function giuKhongTrong(input) {
     if (e.key === "Backspace" || e.key === "Delete") e.preventDefault();
   });
 }
+
+
