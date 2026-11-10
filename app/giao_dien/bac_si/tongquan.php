@@ -4,15 +4,15 @@
         <h1>Tổng quan</h1>
       </header>
       <div class="noidung">
-        <div class="the">
-          <div><span>Lượt khám hôm nay</span><b>8</b></div>
+        <div class="the" id='the-thong-ke'>
+          <!-- <div><span>Lượt khám hôm nay</span><b>8</b></div>
           <div><span>Chờ xác nhận</span><b>3</b></div>
           <div><span>Đã khám</span><b>4</b></div>
-          <div><span>Khung giờ còn trống</span><b>5</b></div>
+          <div><span>Khung giờ còn trống</span><b>5</b></div> -->
         </div>
         <h2>Lịch khám hôm nay</h2>
-        <div class="bang">
-          <table>
+        <div class="bang" id='bang-lich-kham'>
+          <!-- <table>
             <thead>
               <tr>
                 <th>Giờ khám</th>
@@ -41,7 +41,7 @@
                 <td><span class="nhan n-vang">Chờ xác nhận</span></td>
               </tr>
             </tbody>
-          </table>
+          </table> -->
         </div>
       </div>
 <!-- tiep theo la footer -->
