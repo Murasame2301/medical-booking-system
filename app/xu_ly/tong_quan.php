@@ -6,7 +6,7 @@ require_once __DIR__ . '/../chung/tien_ich.php';
 
 function thong_ke_tong_quan(int $maBacSi, string $ngay): array
 {
-  if (!hop_le_ngay($ngay)) ket_qua(false, 'Ngày không hợp lệ.');
+  if (!hop_le_ngay($ngay)) return ket_qua(false, 'Ngày không hợp lệ.');
   // tong so luot va so luot cua trang thai
   $sql = "SELECT SUM(lk.trang_thai <> ?) AS tong_luot,
                 SUM(lk.trang_thai = ?) AS cho_xac_nhan,
@@ -42,18 +42,17 @@ function lay_lich_kham_theo_ngay(int $maBacSi, string $ngay, bool $boDaHuy = tru
   if (!hop_le_ngay($ngay)) return ket_qua(false, "Ngày không hợp lệ.");
   $batDau = ghep_ngay_gio($ngay, '00:00');
   $ketThuc = ghep_ngay_gio($ngay, '23:59', ':59');
-
-
   $sql = "SELECT 
                 llv.manguoidung AS ma_bac_si, 
                 nd.hoten AS ho_ten_benh_nhan,
                 lk.malichkham, 
                 lk.lydo, 
                 lk.trangthai,
-                TIME(llv.thoigianbatdau) AS gio_bat_dau
+                TIME(llv.thoigianbatdau) AS gio_bat_dau,
+                TIME(llv.thoigianketthuc) AS gio_ket_thuc
             FROM LICH_KHAM lk JOIN LICH_LAM_VIEC llv ON lk.malichlamviec = llv.malichlamviec
                               JOIN NGUOI_DUNG nd ON lk.manguoidung = nd.manguoidung
-            WHERE llv.manguoidung = ?  AND TIME(llv.thoigianbatdau) BETWEEN ? AND ?";
+            WHERE llv.manguoidung = ? AND llv.thoigianbatdau BETWEEN ? AND ?";
 
   $kieu = 'iss';
   $tham = [$maBacSi, $batDau, $ketThuc];
@@ -66,6 +65,17 @@ function lay_lich_kham_theo_ngay(int $maBacSi, string $ngay, bool $boDaHuy = tru
 
   //  sap xep theo thoigian
   $sql .= " ORDER BY llv.thoigianbatdau";
-
   return ket_qua(true, '', truy_van($sql, $kieu, $tham));
 }
+
+if (($_GET['ajax'] ?? '') === 'lich-kham') {
+  $ngay = (string)($_GET['ngay'] ?? '');
+  $manguoidung = (int)($_SESSION['ma_nguoi_dung'] ?? 0);
+
+  if ($manguoidung <= 0) {
+    tra_json(ket_qua(false, 'Không tìm thấy thông tin bác sĩ.'));
+  }
+   tra_json(lay_lich_kham_theo_ngay($manguoidung, $ngay));
+}
+
+/* XU LY DU LIEU */
