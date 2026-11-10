@@ -9,7 +9,7 @@ function taoDauBang() {
   cacTieuDe.forEach((tieude) => {
     const cellTieuDe = document.createElement('th');
     cellTieuDe.textContent = tieude;
-    dongTieuDe.appendChild(tieude);
+    dongTieuDe.appendChild(cellTieuDe);
   });
   dauBang.appendChild(dongTieuDe);
   return dauBang;
@@ -19,16 +19,16 @@ function taoDongLich(lich) {
   const dongLich = document.createElement('tr');
   // gio:phut , khong lay giay
   const gioBatDau = String(lich.gio_bat_dau || '').slice(0, 5);
-  const gioKetThuc = String(lich.gioKetThuc || '').slice(0, 5);
+  const gioKetThuc = String(lich.gio_ket_thuc || '').slice(0, 5);
   // ghep theo dang [gioBatDau-gioKetThuc]
   const gioKham = gioDauCuoi(gioBatDau, gioKetThuc);
   const cacGiaTri = [gioKham,
     lich.ho_ten_benh_nhan || '',
     lich.lydo || '',
     lich.trangthai || ''];
-  cacGiaTri.foreach((giatri) => {
+  cacGiaTri.forEach((giatri) => {
     const cellGiaTri = document.createElement('td');
-    cellGiaTri.textContent = giatri;
+    cellGiaTri.textContent = String(giatri);
     dongLich.appendChild(cellGiaTri);
   });
   return dongLich;
@@ -43,7 +43,7 @@ function hienLoiLayLich(loi) {
 
 function hienThiLichKham(danhSachLich) {
   if (!bangLichKham) return;
-  if (!danhSachLich.length === 0) {
+  if (danhSachLich.length === 0) {
     bangLichKham.textContent = 'Hôm nay chưa có lịch đặt khám';
     return;
   }
@@ -60,7 +60,7 @@ function hienThiLichKham(danhSachLich) {
   bang.appendChild(dauBang);
   bang.appendChild(thanBang);
 
-  bangLichKham.replaceChild(bang);
+  bangLichKham.replaceChildren(bang);
 }
 
 async function layLichKham() {
@@ -86,4 +86,4 @@ async function layLichKham() {
   }
 }
 
-window.addEventListener('DOMContentloaded', layLichKham);
+window.addEventListener('DOMContentLoaded', layLichKham);
