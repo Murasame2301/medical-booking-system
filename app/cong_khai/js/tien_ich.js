@@ -29,6 +29,10 @@ function hienNgay(chuoiNgay) {
   return chuoiNgay.split("-").reverse().join("/");
 }
 
+function gioDauCuoi(gioBatDau, gioKetThuc){
+  return `${giobatDau}-${gioKetThuc}`;
+}
+
 function tuanChua(chuoiNgay) {
   const [nam, thang, ngay] = chuoiNgay.split("-").map(Number);
   const d = new Date(nam, thang - 1, ngay);
