@@ -30,7 +30,7 @@ function hienNgay(chuoiNgay) {
 }
 
 function gioDauCuoi(gioBatDau, gioKetThuc){
-  return `${gioDatDau}-${gioKetThuc}`;
+  return `${gioBatDau}-${gioKetThuc}`;
 }
 
 function tuanChua(chuoiNgay) {
@@ -68,5 +68,4 @@ function giuKhongTrong(input) {
     if (e.key === "Backspace" || e.key === "Delete") e.preventDefault();
   });
 }
-
 
