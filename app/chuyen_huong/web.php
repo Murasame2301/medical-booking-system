@@ -3,8 +3,8 @@ return [
   'tongquan' => [
     'tieu_de' => 'Tổng quan - Phòng khám',
     'view'    => 'tongquan.php',
-    'xu_ly'   => [],
-    'js'      => [],
+    'xu_ly'   => ['tong_quan.php'],
+    'js'      => ['api.js', 'tien_ich.js', 'tong_quan.js'],
   ],
   'lichlamviec' => [
     'tieu_de' => 'Lịch làm việc - Phòng khám',
