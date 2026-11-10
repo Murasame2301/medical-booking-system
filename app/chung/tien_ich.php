@@ -76,7 +76,7 @@ function ket_qua(bool $ok, string $msg = '', $data = null): array
 
 function tra_json($ketQuaGoiHam = [])
 {
-  header('Content-Type : application/json; charset=utf-8');
+  header('Content-Type: application/json; charset=utf-8');
   echo json_encode($ketQuaGoiHam, JSON_UNESCAPED_UNICODE);
   exit;
 }
