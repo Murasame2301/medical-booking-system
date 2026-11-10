@@ -8,16 +8,22 @@ function thong_ke_tong_quan(int $maBacSi, string $ngay): array
 {
   if (!hop_le_ngay($ngay)) return ket_qua(false, 'Ngày không hợp lệ.');
   // tong so luot va so luot cua trang thai
-  $sql = "SELECT SUM(lk.trang_thai <> ?) AS tong_luot,
-                SUM(lk.trang_thai = ?) AS cho_xac_nhan,
-                SUM(lk.trang_thai = ?) AS da_kham
+  $sql = "SELECT SUM(lk.trangthai <> ?) AS tong_luot,
+                SUM(lk.trangthai = ?) AS cho_xac_nhan,
+                SUM(lk.trangthai = ?) AS da_kham
           FROM lich_kham lk JOIN lich_lam_viec llv ON lk.malichlamviec = llv.malichlamviec
           WHERE llv.manguoidung = ? AND DATE(llv.thoigianbatdau) = ?";
 
-  $r = truy_van_mot($sql, 'sssis', [LK_DA_HUY, LK_CHO_XAC_NHAN, LK_DA_KHAM, $maBacSi]);
+  $rThongKe = truy_van_mot($sql, 'sssis', [
+    LK_DA_HUY,
+    LK_CHO_XAC_NHAN,
+    LK_DA_KHAM,
+    $maBacSi,
+    $ngay,
+  ]);
 
   // dem lich con_trong trong ngay hien tai
-  $sql2 = "SELECT COUNT(*) AS so_luong
+  $sql2 = "SELECT COUNT(*) AS con_trong
           FROM lich_lam_viec llv
           WHERE llv.manguoidung = ? AND DATE(llv.thoigianbatdau) = ? AND llv.trangthai = ?
           AND NOT EXISTS(
@@ -26,13 +32,13 @@ function thong_ke_tong_quan(int $maBacSi, string $ngay): array
             WHERE lk.malichlamviec = llv.malichlamviec AND lk.trangthai <> ?
             )";
 
-  $r = truy_van_mot($sql2, 'isss', [$maBacSi, $ngay, LLV_CON_TRONG, LK_DA_HUY]);
+  $rTrong = truy_van_mot($sql2, 'isss', [$maBacSi, $ngay, LLV_CON_TRONG, LK_DA_HUY]);
 
   return ket_qua(true, '', [
-    'tong_luot' => (int)($r['tong_luot'] ?? 0),
-    'cho_xac_nhan' => (int)($r['cho_xac_nhan'] ?? 0),
-    'da_kham' => (int)($r['da_kham'] ?? 0),
-    'con_trong' => (int)($r['con_trong'] ?? 0),
+    'tong_luot' => (int)($rThongKe['tong_luot'] ?? 0),
+    'cho_xac_nhan' => (int)($rThongKe['cho_xac_nhan'] ?? 0),
+    'da_kham' => (int)($rThongKe['da_kham'] ?? 0),
+    'con_trong' => (int)($rTrong['con_trong'] ?? 0),
   ]);
 }
 
