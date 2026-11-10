@@ -57,6 +57,7 @@ CREATE TABLE BENH_NHAN (
 CREATE TABLE HO_SO_BENH (
     mahoso INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     manguoidung INT UNSIGNED NOT NULL,
+    sobhyt VARCHAR(20) NULL,
     tinhtrang TEXT NULL,
 
     CONSTRAINT fk_ho_so_benh_nhan
