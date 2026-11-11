@@ -91,13 +91,13 @@ function taoPhanTu(tag, className = "", noiDung = "") {
   const phanTu = document.createElement(tag);
 
   if (className) {
-    phanTu.clasName = className;
+    phanTu.className = className;
   }
   phanTu.textContent = noiDung;
   return phanTu;
 }
 
-function taoO(tag, noidung = "") {
+function taoO(tag, noiDung = "") {
   const cell = document.createElement(tag);
   cell.textContent = noiDung;
   return cell;
