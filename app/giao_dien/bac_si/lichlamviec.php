@@ -13,7 +13,7 @@
         <label class="nhan-ghi">Từ giờ<input type="time" id="tg-bat-dau" required /></label>
         <label class="nhan-ghi">Đến giờ<input type="time" id="tg-ket-thuc" required /></label>
         <label class="nhan-ghi" for="so-phut" style="width:120px">Mỗi lượt (phút)
-          <input type="number" id="so-phut" min="5" max="60" step="1" value="30" required />
+          <input type="number" id="so-phut" min="5" max="480" step="1" value="30" required />
         </label>
         <button class="btn xanh" type="submit">Tạo lịch</button>
       </form>

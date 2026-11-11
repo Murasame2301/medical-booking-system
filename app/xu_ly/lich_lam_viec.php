@@ -168,3 +168,7 @@ function xoa_lich_lam_viec(int $maBacSi, int $maLichLamViec): array {
         return ket_qua(false, 'Xóa lịch làm việc thất bại.');
     }
 }
+
+//  XU LY AJAX: yeu cau tao, xoa, thay doi lic và loc lich 
+
+
