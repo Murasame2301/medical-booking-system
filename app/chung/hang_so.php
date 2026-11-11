@@ -11,6 +11,7 @@ const LLV_NGUNG_NHAN = 'ngung_nhan';
 
 
 /* LICH KHAM */
+const LK_TONG_LUOT  = 'tong_luot';
 const LK_CHO_XAC_NHAN = 'cho_xac_nhan';  
 const LK_DA_XAC_NHAN  = 'da_xac_nhan';   
 const LK_DA_KHAM      = 'da_kham';      
