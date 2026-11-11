@@ -1,3 +1,4 @@
+// HANG SO VA NHAN CLASS CSS
 
 // cac ham tien ich ve gio, ngay, tuan, thang, nam, thoi gian
 function dinhDangNgay(d) {
@@ -29,7 +30,7 @@ function hienNgay(chuoiNgay) {
   return chuoiNgay.split("-").reverse().join("/");
 }
 
-function gioDauCuoi(gioBatDau, gioKetThuc){
+function gioDauCuoi(gioBatDau, gioKetThuc) {
   return `${gioBatDau}-${gioKetThuc}`;
 }
 
@@ -38,7 +39,7 @@ function tuanChua(chuoiNgay) {
   const d = new Date(nam, thang - 1, ngay);
   d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // thu 2
   const tu = dinhDangNgay(d);
-  d.setDate(d.getDate() + 6); // cong 6 de lay chu nhat 
+  d.setDate(d.getDate() + 6); // cong 6 de lay chu nhat
   return { tu, den: dinhDangNgay(d) };
 }
 
@@ -52,14 +53,16 @@ function ghi(input, giaTri) {
 
 function khoiPhuc(input) {
   if (!input) return;
-  if (input.value === "" || input.validity.badInput) input.value = input.dataset.cu;
+  if (input.value === "" || input.validity.badInput)
+    input.value = input.dataset.cu;
 }
 
 function giuKhongTrong(input) {
   if (!input) return;
   input.dataset.cu = input.value;
   const ghiNhoNeuHopLe = () => {
-    if (input.value !== "" && !input.validity.badInput) input.dataset.cu = input.value;
+    if (input.value !== "" && !input.validity.badInput)
+      input.dataset.cu = input.value;
   };
   input.addEventListener("input", ghiNhoNeuHopLe);
   input.addEventListener("change", ghiNhoNeuHopLe);
@@ -69,3 +72,53 @@ function giuKhongTrong(input) {
   });
 }
 
+
+const NHAN_TRANG_THAI = {
+    cho_xac_nhan: "Chờ xác nhận",
+    da_xac_nhan: "Đã xác nhận",
+    da_kham: "Đã khám",
+    da_huy: "Đã hủy",
+};
+
+const LOP_TRANG_THAI = {
+    cho_xac_nhan: "n-vang",
+    da_xac_nhan: "n-xanh",
+    da_kham: "n-luc",
+    da_huy: "n-do",
+};
+
+function taoPhanTu(tag, className = "", noiDung = "") {
+  const phanTu = document.createElement(tag);
+
+  if (className) {
+    phanTu.clasName = className;
+  }
+  phanTu.textContent = noiDung;
+  return phanTu;
+}
+
+function taoO(tag, noidung = "") {
+  const cell = document.createElement(tag);
+  cell.textContent = noiDung;
+  return cell;
+}
+
+function taoDong(cacGiaTri, tag = "td") {
+  const dong = taoPhanTu('tr');
+  cacGiaTri.forEach((giaTri) => {
+    dong.appendChild(taoO(tag, giaTri));
+  });
+
+  return dong;
+}
+
+function taoNhan(trangThai) {
+    const nhan = taoPhanTu('span', 'nhan');
+    nhan.textContent = NHAN_TRANG_THAI[trangThai] || 'Không xác định';
+
+    const lop = LOP_TRANG_THAI[trangThai];
+    if (lop) {
+        nhan.classList.add(lop);
+    }
+    return nhan;
+}
