@@ -87,6 +87,7 @@ const LOP_TRANG_THAI = {
     da_huy: "n-do",
 };
 
+
 function taoPhanTu(tag, className = "", noiDung = "") {
   const phanTu = document.createElement(tag);
 
@@ -122,3 +123,8 @@ function taoNhan(trangThai) {
     }
     return nhan;
 }
+
+ const LLV_NHAN_TRANG_THAI = {
+    conTrong: { chu: "Còn trống", lop: "n-luc" },
+    ngungNhan: { chu: "Ngừng nhận", lop: "n-xam" },
+  };
