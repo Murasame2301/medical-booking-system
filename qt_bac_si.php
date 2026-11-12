@@ -47,5 +47,7 @@ hien_dau_trang('Quản lý bác sĩ');
         </div>
     <?php endif; ?>
 </section>
+<br>
+<br>
 <?php
 hien_cuoi_trang();

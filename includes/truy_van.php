@@ -12,47 +12,38 @@ function tim_nguoi_dung($conn, $sdt) {
     return $stmt->get_result()->fetch_assoc();
 }
 
-// Kiểm tra email đã có NGƯỜI KHÁC dùng chưa ($bo_qua_id: ID người cần bỏ qua, 0 = không bỏ qua ai)
-function email_da_dung($conn, $email, $bo_qua_id = 0) {
-    $stmt = $conn->prepare("SELECT manguoidung FROM NGUOI_DUNG WHERE email = ? AND manguoidung <> ?");
-    $stmt->bind_param("si", $email, $bo_qua_id);
+function da_co_nguoi_dung($conn, $cot, $giatri, $bo_qua_id = 0) {
+    $cot_cho_phep = ['sdt', 'email', 'cccd', 'bhyt'];
+    if (!in_array($cot, $cot_cho_phep, true)) {
+        throw new InvalidArgumentException('Cột không hợp lệ: ' . $cot);
+    }
+    $stmt = $conn->prepare("SELECT manguoidung FROM NGUOI_DUNG WHERE $cot = ? AND manguoidung <> ?");
+    $stmt->bind_param("si", $giatri, $bo_qua_id);
     $stmt->execute();
     return $stmt->get_result()->fetch_assoc() ? true : false;
 }
 
+function email_da_dung($conn, $email, $bo_qua_id = 0) {
+    return da_co_nguoi_dung($conn, 'email', $email, $bo_qua_id);
+}
 
 function tao_benh_nhan($conn, $hoten, $sdt, $email, $matkhau_ma_hoa, $ngaysinh) {
-    if ($email == "") {
-        $email = null;   // để trống thì lưu NULL, vì cột email không được trùng (chuỗi rỗng sẽ bị coi là trùng)
-    }
-    $conn->begin_transaction();
+    $email = null_neu_rong($email);
     try {
-        // mavaitro = 1 là bệnh nhân (theo bảng VAI_TRO)
         $stmt = $conn->prepare("INSERT INTO NGUOI_DUNG (mavaitro, hoten, sdt, email, matkhau, ngaysinh) VALUES (1,?,?,?,?,?)");
         $stmt->bind_param("sssss", $hoten, $sdt, $email, $matkhau_ma_hoa, $ngaysinh);
         $stmt->execute();
-        $id = $conn->insert_id;   // ID vừa được tạo
-
-        $stmt = $conn->prepare("INSERT INTO BENH_NHAN (manguoidung) VALUES (?)");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-
-        $conn->commit();
         return true;
     } catch (mysqli_sql_exception $e) {
-        $conn->rollback();   // có lỗi thì hoàn tác tất cả
         return false;
     }
 }
-
 
 // Lấy danh sách chuyên khoa (kèm ID để làm bộ lọc)
 function lay_chuyen_khoa($conn) {
     $ketqua = $conn->query("SELECT machuyenkhoa AS ID, tenchuyenkhoa AS ChuyenKhoa FROM CHUYEN_KHOA ORDER BY tenchuyenkhoa");
     return $ketqua->fetch_all(MYSQLI_ASSOC);
 }
-
-
 
 // Lấy danh sách bác sĩ. $id_chuyenkhoa = 0 nghĩa là lấy tất cả,
 // khác 0 thì chỉ lấy bác sĩ thuộc chuyên khoa đó.
@@ -87,7 +78,7 @@ function lay_gio_trong($conn, $id_bacsi) {
         "SELECT l.malichlamviec, l.thoigianbatdau, l.thoigianketthuc
          FROM LICH_LAM_VIEC l
          WHERE l.manguoidung = ?
-           AND l.trangthai = 'con_trong'
+           AND l.trangthai = 'mo'
            AND l.thoigianbatdau > ?
            AND NOT EXISTS (
                SELECT 1 FROM LICH_KHAM k WHERE k.malichdangdung = l.malichlamviec
@@ -114,10 +105,6 @@ function luu_lich_kham($conn, $id_benhnhan, $id_lichlamviec, $lydo) {
         return false;
     }
 }
-
-
-
-
 
 // Lấy tất cả lịch khám của một bệnh nhân (mới nhất trước).
 // Bí danh giữ nguyên tên khóa cũ nên trang hiển thị gần như không phải sửa.

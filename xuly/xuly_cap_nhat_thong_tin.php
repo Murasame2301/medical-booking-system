@@ -37,6 +37,16 @@ if ($d['hoten'] == "") {
     $loi = "Dân tộc tối đa 15 ký tự.";
 } elseif ($d['bhyt'] != "" && !preg_match('/^[A-Za-z0-9]{10,15}$/', $d['bhyt'])) {
     $loi = "Mã thẻ BHYT gồm 10 đến 15 chữ và số.";
+} elseif ($d['cccd'] != "" && !preg_match('/^[0-9]{12}$/', $d['cccd'])) {
+    $loi = "Số CCCD phải gồm đúng 12 chữ số.";
+} elseif ($d['cccd'] != "" && da_co_nguoi_dung($conn, 'cccd', $d['cccd'], $_SESSION['id'])) {
+    $loi = "Số CCCD này đã được người khác sử dụng.";
+} elseif (mb_strlen($d['dantoc']) > 15) {
+    $loi = "Dân tộc tối đa 15 ký tự.";
+} elseif ($d['bhyt'] != "" && !preg_match('/^[A-Za-z0-9]{10,15}$/', $d['bhyt'])) {
+    $loi = "Mã thẻ BHYT gồm 10 đến 15 chữ và số.";
+} elseif ($d['bhyt'] != "" && da_co_nguoi_dung($conn, 'bhyt', $d['bhyt'], $_SESSION['id'])) {
+    $loi = "Mã thẻ BHYT này đã được người khác sử dụng.";
 }
 
 if ($loi != "") {
