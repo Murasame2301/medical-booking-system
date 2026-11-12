@@ -24,9 +24,9 @@
       <label class="nhan-ghi">Đến<input type="date" id="loc-den" required /></label>
       <label class="nhan-ghi">Trạng thái
         <select id="loc-trang-thai">
-          <option value="">Tất cả</option>
-          <option value="conTrong">Còn trống</option>
-          <option value="ngungNhan">Ngừng nhận</option>
+          <option value="tat-ca">Tất cả</option>
+          <option value="con_nhan">Còn trống</option>
+          <option value="ngung_nhan">Ngừng nhận</option>
         </select></label>
       <button class="btn xanh" type="submit">Tìm</button>
       <a class="btn vien" id="dat-lai" href="#">Đặt lại</a>

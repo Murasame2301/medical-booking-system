@@ -80,3 +80,9 @@ function tra_json($ketQuaGoiHam = [])
   echo json_encode($ketQuaGoiHam, JSON_UNESCAPED_UNICODE);
   exit;
 }
+// khi post hoac json
+function doc_du_lieu_gui(): array
+{
+    $json = json_decode(file_get_contents('php://input') ?: '', true);
+    return is_array($json) ? $json : $_POST;
+}

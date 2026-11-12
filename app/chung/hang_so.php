@@ -8,7 +8,7 @@ const VT_QUAN_TRI = 3;
 
 const LLV_CON_TRONG = 'con_trong';
 const LLV_NGUNG_NHAN = 'ngung_nhan';
-
+const LLV_TAT_CA = 'tat_ca';
 
 /* LICH KHAM */
 const LK_TONG_LUOT  = 'tong_luot';
