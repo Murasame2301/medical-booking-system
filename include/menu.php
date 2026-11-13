@@ -3,9 +3,8 @@ $isLoggedIn = !empty($_SESSION['is_logged_in']);
 ?>
 
 <nav aria-label="Điều hướng chính">
-    <a href="tim-lich-kham.php">Đặt khám</a>
+    <a href="dat-kham.php">Đặt khám</a>
     <a href="xem-lich-kham.php">Lịch sử đặt khám</a>
-    <a href="tao-ho-so.php">Hồ sơ khám bệnh</a>
 
     <?php if ($isLoggedIn): ?>
         <a href="quan-ly-tai-khoan.php">Quản lý tài khoản</a>

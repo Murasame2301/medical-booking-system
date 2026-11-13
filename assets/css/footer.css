@@ -1,0 +1,149 @@
+/* Shared footer · compact contact layout inspired by the supplied reference */
+:root {
+    --footer-blue: #4f91b9;
+    --footer-blue-dark: #3f7fa7;
+    --footer-paper: #ffffff;
+    --footer-line: rgba(255, 255, 255, .28);
+    --footer-focus: #ffffff;
+    --footer-font: 'Be Vietnam Pro', Arial, sans-serif;
+}
+
+.site-footer {
+    width: 100%;
+    background: var(--footer-blue);
+    color: var(--footer-paper);
+    font-family: var(--footer-font);
+}
+.site-footer a { color: inherit; text-decoration: none; }
+.site-footer a:hover { color: var(--footer-paper); text-decoration: underline; }
+.site-footer a:focus-visible { outline: 3px solid var(--footer-focus); outline-offset: 4px; }
+.site-footer-main {
+    max-width: 1260px;
+    margin: 0 auto;
+    padding: 38px clamp(24px, 5.5vw, 64px) 34px;
+    display: grid;
+    grid-template-columns: 160px minmax(300px, 1.7fr) minmax(170px, 1fr) minmax(140px, .75fr);
+    align-items: start;
+    gap: clamp(28px, 5vw, 72px);
+}
+.site-footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--footer-paper);
+    font-size: 18px;
+    font-weight: 700;
+}
+.site-footer-brand img {
+    width: 80px;
+    height: 80px;
+    display: block;
+    border-radius: 0;
+    object-fit: cover;
+    background: var(--footer-paper);
+}
+.site-footer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.site-footer-section h2 {
+    margin: 0 0 14px;
+    color: var(--footer-paper);
+    font-size: 19px;
+    line-height: 1.25;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.site-footer-section address {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    color: var(--footer-paper);
+    font-size: 13px;
+    font-style: normal;
+    line-height: 1.55;
+}
+.footer-contact-item {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+.footer-contact-icon {
+    width: 17px;
+    height: 17px;
+    flex: none;
+    margin-top: 2px;
+    color: currentColor;
+}
+.site-footer-hours {
+    margin: 14px 0 0;
+    color: rgba(255, 255, 255, .9);
+    font-size: 12px;
+}
+.site-footer-demo-note {
+    margin: 7px 0 0;
+    color: rgba(255, 255, 255, .72);
+    font-size: 10px;
+    font-style: italic;
+}
+.site-footer-section > a {
+    margin-top: 9px;
+    color: rgba(255, 255, 255, .92);
+    font-size: 13px;
+}
+.site-footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.site-footer-socials a {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--footer-paper);
+    border-radius: 50%;
+    color: var(--footer-paper);
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+}
+.site-footer-socials a:nth-child(2) { font-size: 24px; font-weight: 400; }
+.site-footer-socials a:nth-child(3) { border-radius: 7px; font-size: 13px; }
+.site-footer-bottom {
+    max-width: 1260px;
+    margin: 0 auto;
+    padding: 22px clamp(24px, 5.5vw, 64px) 26px;
+    border-top: 1px solid var(--footer-line);
+    color: var(--footer-paper);
+    font-size: 12px;
+    text-align: center;
+}
+
+@media (max-width: 980px) {
+    .site-footer-main {
+        grid-template-columns: 120px minmax(260px, 1.5fr) minmax(150px, 1fr);
+        gap: 28px;
+    }
+    .site-footer-socials { grid-column: 2 / -1; }
+}
+
+@media (max-width: 700px) {
+    .site-footer-main {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
+    .site-footer-section { margin-top: 28px; }
+}
+
+@media (max-width: 520px) {
+    .site-footer-main { padding: 34px 24px 30px; }
+    .site-footer-brand img { width: 80px; height: 80px; }
+    .site-footer-bottom { padding: 20px 24px 24px; }
+}

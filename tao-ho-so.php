@@ -159,7 +159,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $userFound){
         if($saveError === ''){
             $conn->commit();
             $_SESSION['is_logged_in'] = true;
-            header('Location: tim-lich-kham.php');
+            header('Location: dat-kham.php');
             exit;
         } else{
             $conn->rollback();
@@ -179,7 +179,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $userFound){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tạo hồ sơ khám bệnh</title>
-    <link rel="stylesheet" href="assets/css/auth.css">
+    <link rel="stylesheet" href="assets/css/auth.css?v=3">
+    <link rel="stylesheet" href="assets/css/footer.css?v=1">
     <script src="assets/js/auth.js" defer></script>
 </head>
 <body class="profile-page">
@@ -295,8 +296,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $userFound){
         </form>
         <?php endif; ?>
         </div>
-        <p class="auth-footer">Cổng đặt lịch khám bệnh trực tuyến</p>
         </section>
     </main>
+
+    <?php require __DIR__ . '/include/footer.php'; ?>
 </body>
 </html>

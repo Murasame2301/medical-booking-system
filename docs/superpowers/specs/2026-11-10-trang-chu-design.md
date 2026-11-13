@@ -31,7 +31,7 @@ Tạo điểm bắt đầu rõ ràng cho cổng đặt lịch khám bệnh trự
 
 - Header căn trái logo, căn phải menu từ `include/menu.php`; không tạo bản sao các liên kết trong menu.
 - Hero căn trái phần nội dung, căn phải minh họa lịch hẹn bằng SVG inline cùng ngôn ngữ hình ảnh với `auth-story.php`.
-- CTA chính là `Đặt khám ngay` trỏ đến `tim-lich-kham.php`; CTA phụ là `Xem hồ sơ` trỏ đến `tao-ho-so.php`.
+- CTA chính là `Đặt khám ngay` trỏ đến `dat-kham.php`; CTA phụ là `Xem hồ sơ` trỏ đến `tao-ho-so.php`.
 - Ba lợi ích bên dưới là nội dung tĩnh, không giả lập số liệu hoặc đánh giá.
 - Trên mobile, header chuyển thành bố cục dọc; menu vẫn hiển thị đầy đủ và hero xếp một cột.
 
