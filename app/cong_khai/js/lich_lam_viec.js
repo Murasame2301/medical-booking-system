@@ -1,94 +1,82 @@
 document.addEventListener("DOMContentLoaded", function () {
-  //  THOI GIAN TOI THIEU VA TOI DA
+  // ===== HANG SO =====
   const SO_PHUT_TOI_THIEU = 5;
   const SO_PHUT_TOI_DA = 60;
   const CUOI_NGAY = 23 * 60 + 59;
+  const TAT_CA = "tat_ca";
+  const CON_TRONG = "con_trong";
 
-  // `lich` CHI chua du lieu lay tu CSDL (khong tu them / xoa tai cho)
+  // `lich` chi chua du lieu lay tu CSDL
   let lich = [];
-  // du lieu tra ve tu sever lay cap nhat trong ham gapSuKienTaoLich
-  // lich = (ketQua.data.danh_sach || []).map(function (k) {
-  //       return {
-  //         ma: Number(k.malichlamviec),
-  //         ngay: k.thoigianbatdau.slice(0, 10),
-  //         bd: k.thoigianbatdau.slice(11, 16),
-  //         kt: k.thoigianketthuc.slice(11, 16),
-  //         trangThai: Number(k.trangthai),
-  //       };
-  //     });
-  // lay phan tu tao lich
+  let soLanTai = 0;
+
+  // ===== PHAN TU =====
   const ngayKham = document.getElementById("ngay-kham");
   const gioBatDau = document.getElementById("tg-bat-dau");
   const gioKetThuc = document.getElementById("tg-ket-thuc");
   const soPhut = document.getElementById("so-phut");
-  // lay phan tu bo loc
   const locTu = document.getElementById("loc-tu");
   const locDen = document.getElementById("loc-den");
   const locTrangThai = document.getElementById("loc-trang-thai");
   const thanBang = document.getElementById("than-bang");
 
-  // lau gia tri cua bo loc
-  const tuNgay = locTu.value;
-  const denNgay = locDen.value;
-  const trangThaiLoc = locTrangThai.value;
-  // VE BANG
+  // ===== VE BANG =====
   function taoDongKhungGio(k) {
-    const dong = taoDong([
-      k.ma,
-      k.ngay,
-      gioDauCuoi(k.bd, k.kt),
-      (LLV_NHAN_TRANG_THAI[k.trangThai] || { chu: k.trangThai }).chu,
-    ]);
+  // co luot kham dang hieu luc => coi nhu da dat
+  const daDat = k.daCoLuot || k.trangThai === "da_dat";
+  const trangThaiHienThi = daDat ? "da_dat" : k.trangThai;
 
-    const oXoa = taoPhanTu("td");
-    const nutXoa = taoPhanTu("button", "btn do nho", "Xóa");
+  // 3 o dau la chu thuong
+  const dong = taoDong([k.ma, k.ngay, gioDauCuoi(k.bd, k.kt)]);
+  if (daDat) dong.classList.add("dong-da-dat"); // lam mo ca dong
 
-    nutXoa.type = "button";
-    nutXoa.dataset.xoa = k.ma;
-    oXoa.appendChild(nutXoa);
-    dong.appendChild(oXoa);
+  // o trang thai: nhan co mau
+  const oTrangThai = taoPhanTu("td");
+  oTrangThai.appendChild(taoNhanLLV(trangThaiHienThi));
+  dong.appendChild(oTrangThai);
 
-    return dong;
+  // o xoa
+  const oXoa = taoPhanTu("td");
+  const nutXoa = taoPhanTu("button", "btn do nho", "Xóa");
+  nutXoa.type = "button";
+  nutXoa.dataset.xoa = k.ma;
+  if (daDat) {
+    nutXoa.disabled = true;
+    nutXoa.title = "Khung giờ đã được đặt nên không thể xóa";
   }
+  oXoa.appendChild(nutXoa);
+  dong.appendChild(oXoa);
+  return dong;
+}
 
   function taoDongRong(noiDung = "Không có khung giờ phù hợp.") {
     const dong = taoPhanTu("tr");
     const o = taoPhanTu("td", "", noiDung);
     o.colSpan = 5;
     o.style.textAlign = "center";
+    o.style.color = "#667085";
     dong.appendChild(o);
     return dong;
   }
 
+  // server da loc theo ngay va trang thai nen khong loc lai o client
   function veBang() {
-    const danhSachLoc = lich.filter(function (k) {
-      const trongKhoangNgay =
-        (!tuNgay || k.ngay >= tuNgay) && (!denNgay || k.ngay <= denNgay);
-      const dungTrangThai = !trangThaiLoc || k.trangThai === trangThaiLoc;
-      return trongKhoangNgay && dungTrangThai;
-    });
-
-    if (danhSachLoc.length === 0) {
+    if (lich.length === 0) {
       thanBang.replaceChildren(taoDongRong());
       return;
     }
-    thanBang.replaceChildren(...danhSachLoc.map(taoDongKhungGio));
+    thanBang.replaceChildren(...lich.map(taoDongKhungGio));
   }
 
-  // LOC TIM KIEM
+  // ===== BO LOC =====
   function xemTuanHienTai() {
     const tuan = tuanChua(layNgayThuc());
     ghi(locTu, tuan.tu);
     ghi(locDen, tuan.den);
-    locTrangThai.value = "";
+    locTrangThai.value = TAT_CA;
   }
 
-  function chinhKhoangNgay() {
-    if (locDen.value < locTu.value) ghi(locDen, locTu.value);
-    veBang();
-  }
-
-  // GIO BAT DAU, GIO KET THUC, VA SO PHUT KHI CHON HOAC NHAP VAO (TOI DA 60)
+  // ===== GIO BAT DAU / KET THUC / SO PHUT =====
   function laySoPhut() {
     return Number(soPhut.value) || Number(soPhut.dataset.cu) || 30;
   }
@@ -97,24 +85,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const sp = laySoPhut();
     if (!gioBatDau.value || sp < SO_PHUT_TOI_THIEU || sp > SO_PHUT_TOI_DA)
       return;
-
-    const pBatDau = gioSangPhut(gioBatDau.value);
-    const pKetThuc = Math.min(pBatDau + sp, CUOI_NGAY);
+    const pKetThuc = Math.min(gioSangPhut(gioBatDau.value) + sp, CUOI_NGAY);
     ghi(gioKetThuc, phutSangGio(pKetThuc));
   }
 
+  // nguoi dung doi gio ket thuc -> tinh lai so phut (neu hop le)
   function capNhatSoPhut() {
     if (!gioBatDau.value || !gioKetThuc.value) return;
     const chenh = gioSangPhut(gioKetThuc.value) - gioSangPhut(gioBatDau.value);
-    if (chenh >= 1) soPhut.value = chenh;
+    if (chenh >= SO_PHUT_TOI_THIEU && chenh <= SO_PHUT_TOI_DA) {
+      ghi(soPhut, chenh);
+    }
   }
 
+  // roi o gio ket thuc: neu khong hop le thi tra ve gio theo so phut hien tai
   function chotGioKetThuc() {
     const chenh = gioSangPhut(gioKetThuc.value) - gioSangPhut(gioBatDau.value);
     if (chenh >= SO_PHUT_TOI_THIEU && chenh <= SO_PHUT_TOI_DA) {
       ghi(soPhut, chenh);
     } else {
-      soPhut.value = soPhut.dataset.cu;
       capNhatGioKetThuc();
     }
   }
@@ -134,6 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
     capNhatGioKetThuc();
   }
 
+  // sau khi tao xong: gio bat dau moi = gio ket thuc cu
   function congDonThoiGian() {
     if (gioSangPhut(gioKetThuc.value) + SO_PHUT_TOI_THIEU > CUOI_NGAY)
       return false;
@@ -142,20 +132,14 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
-  // GOI SEVER
-  // BUOC 1 - HAM GUI YEU CAU TAO LICH len server.
-  // Chi gui yeu cau :tra ve true neu server bao tao thanh cong, false neu that bai (da bao loi).
-  async function guiYeuCauTaoLich(ngay, bd, soPhut) {
-    const urlTao = "index.php?trang=khunggio&ajax=tao";
+  // ===== GOI SERVER =====
+  async function guiYeuCauTaoLich(ngay, bd, giaTriSoPhut) {
     try {
-      const ketQua = await post(urlTao, {
+      await post("index.php?trang=lichlamviec&ajax=tao", {
         ngay,
         gio_bat_dau: bd,
-        so_phut: soPhut,
+        so_phut: giaTriSoPhut,
       });
-      if (!ketQua || !ketQua.ok) {
-        throw new Error((ketQua && ketQua.msg) || "Không thể tạo khung giờ");
-      }
       return true;
     } catch (loi) {
       console.error("Lỗi tạo khung giờ:", loi);
@@ -164,66 +148,76 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // BUOC 2 - HAM GUI YEU CAU LAY LICH tu server roi ve len giao dien.
-  // Lay toan bo khung gio tu CSDL roi ve bang
-  // Tra ve true neu tai thanh cong, false neu loi.
-  // baoLoi = false: khong alert (de noi goi tu tu bao loi theo ngu canh cua no).
+  // lay lich tu server (theo gia tri bo loc HIEN TAI) roi ve bang
   async function taiKhungGio(baoLoi = true) {
-    const urlDanhSach = `index.php?trang=khunggio&ajax=lich-lam-viec&tu_ngay=${tuNgay}&den_ngay=${denNgay}$trang_thai=${trangThaiLoc}`;
+    const lanNay = ++soLanTai;
+    const params = new URLSearchParams({
+      trang: "lichlamviec",
+      ajax: "lich-lam-viec",
+      tu_ngay: locTu.value,
+      den_ngay: locDen.value,
+      trang_thai: locTrangThai.value || TAT_CA,
+    });
+
+    let ketQua;
     try {
-      const ketQua = await get(urlDanhSach);
-      if (!ketQua.ok) throw new Error(ketQua.msg || "Không thể tải khung giờ");
-      // ket qua tra ve tu sever
-      lich = (ketQua.data.danh_sach || []).map(function (k) {
+      ketQua = await get(`index.php?${params.toString()}`);
+    } catch (loi) {
+      if (lanNay !== soLanTai) return false;
+      console.error("LỖI GỌI SERVER:", loi);
+      lich = [];
+      thanBang.replaceChildren(taoDongRong("Không tải được dữ liệu."));
+      if (baoLoi) alert(loi.message);
+      return false;
+    }
+    if (lanNay !== soLanTai) return true; // da co yeu cau moi hon
+
+    try {
+      lich = (ketQua.data?.danh_sach || []).map(function (k) {
         return {
           ma: Number(k.malichlamviec),
-          ngay: k.thoigianbatdau.slice(0, 10),
-          bd: k.thoigianbatdau.slice(11, 16),
-          kt: k.thoigianketthuc.slice(11, 16),
-          trangThai: Number(k.trangthai),
+          ngay: String(k.thoigianbatdau).slice(0, 10),
+          bd: String(k.thoigianbatdau).slice(11, 16),
+          kt: String(k.thoigianketthuc).slice(11, 16),
+          trangThai: String(k.trangthai),
+          daCoLuot: Boolean(Number(k.da_co_luot)),
         };
       });
       veBang();
       return true;
     } catch (loi) {
-      console.error("Lỗi tải khung giờ:", loi);
-      if (baoLoi) alert(loi.message);
+      console.error("LỖI VẼ BẢNG:", loi);
+      thanBang.replaceChildren(taoDongRong("Lỗi hiển thị dữ liệu."));
+      if (baoLoi) alert("Lỗi hiển thị: " + loi.message);
       return false;
     }
   }
 
-  // Tao lich va hien thi khung gio theo quy trinh
-  // Quy trinh:
-  //   1. Kiem tra du lieu o client
-  //   2. GUI len server
-  //   3. CHI KHI server bao thanh cong -> moi doi bo loc, lay lai tu CSDL, ve bang, tang gio
-  // Neu buoc 2 that bai: chi bao loi, giu nguyen bang / bo loc / gio dang nhap.
+  // ===== SU KIEN TAO LICH =====
   function ganSuKienTaoLich() {
     const formTao = document.getElementById("form-tao");
-    let dangGui = false; // chan bam tao nhieu lan trong luc dang gui / dang tai lai
+    let dangGui = false;
 
     formTao.addEventListener("submit", async function (e) {
       e.preventDefault();
       if (dangGui) return;
-      // sever tao lich khong can gio ketthuc , gio ket thuc = bat dau + so phut
-      [ngayKham, gioBatDau, gioBatDau].forEach(khoiPhuc);
-      chotGioKetThuc();
-      chotSoPhut();
 
+      [ngayKham, gioBatDau, gioKetThuc].forEach(khoiPhuc);
+      chotSoPhut(); // dua so phut ve 5-60 va tinh lai gio ket thuc
+
+      const ngay = ngayKham.value;
       const bd = gioBatDau.value;
       const kt = gioKetThuc.value;
-      const soPhut = soPhut.value;
-      const ngay = ngayKham.value;
+      const giaTriSoPhut = Number(soPhut.value);
 
-      // 1: kiem tra o client
+      // 1. kiem tra o client
       if (!ngay || !bd || !kt)
         return alert("Vui lòng chọn đủ ngày, giờ bắt đầu và giờ kết thúc.");
       if (ngay < layNgayThuc())
         return alert("Không thể tạo khung giờ ở ngày đã qua.");
-      if (gioSangPhut(kt) <= gioSangPhut(bd))
-        return alert("Giờ kết thúc phải sau giờ bắt đầu.");
+      if (gioSangPhut(bd) + giaTriSoPhut > CUOI_NGAY)
+        return alert("Khung giờ vượt quá cuối ngày.");
 
-      // kiem tra trung lap tren du lieu da lay tu CSDL (server cung co kiem tra)
       const trung = lich.find(function (k) {
         return (
           k.ngay === ngay &&
@@ -236,37 +230,33 @@ document.addEventListener("DOMContentLoaded", function () {
           `Trùng với khung giờ ${gioDauCuoi(trung.bd, trung.kt)} đã có.`,
         );
 
-      // khoa nut tao tu luc gui cho den khi tai lai xong
       const nutTao = formTao.querySelector('[type="submit"]');
       dangGui = true;
       if (nutTao) nutTao.disabled = true;
 
       try {
-        // 2: Gui len server
-        // sever tao lich khong can gio ketthuc , gio ket thuc = bat dau + so phut
-        const daTao = await guiYeuCauTaoLich(ngay, bd, soPhut);
-        if (!daTao) return; // that bai -> dung o day, khong lam gi them
+        // 2. gui len server
+        const daTao = await guiYeuCauTaoLich(ngay, bd, giaTriSoPhut);
+        if (!daTao) return;
 
-        // 3: Server bao tao THANH CONG -> moi gui yeu cau LAY lich tu server de hien len giao dien
-        // dua bo loc ve noi co khung gio moi de no hien ra
+        // 3. thanh cong -> dua bo loc ve noi co khung gio moi
         if (ngay < locTu.value || ngay > locDen.value) {
           const tuan = tuanChua(ngay);
           ghi(locTu, tuan.tu);
           ghi(locDen, tuan.den);
         }
-        if (locTrangThai.value && locTrangThai.value !== "con_trong") {
-          locTrangThai.value = ""; // khung gio moi la "Còn trống", tranh bi bo loc an mat
+        if (locTrangThai.value !== TAT_CA && locTrangThai.value !== CON_TRONG) {
+          locTrangThai.value = TAT_CA;
         }
 
         const taiDuoc = await taiKhungGio(false);
         if (!taiDuoc) {
           alert(
-            "Đã tạo khung giờ nhưng không tải lại được danh sách từ server. Vui lòng tải lại trang.",
+            "Đã tạo khung giờ nhưng không tải lại được danh sách. Vui lòng tải lại trang.",
           );
           return;
         }
 
-        // tang gio cho lan tao ke tiep
         if (!congDonThoiGian()) alert("Đã tới cuối ngày. Hãy chọn ngày khác.");
       } finally {
         dangGui = false;
@@ -275,35 +265,39 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // SU KIEN KHI DUNG BO LOC LICH
+  // ===== SU KIEN BO LOC =====
   function ganSuKienLoc() {
     const formLoc = document.getElementById("form-loc");
     const datLai = document.getElementById("dat-lai");
-    // 1: loc ngay
-    [locTu, locDen].forEach(function (el) {
-      el.addEventListener("blur", chinhKhoangNgay);
-    });
-    // 2: loc ngay va co trang thai
+
+    function dieuChinhNgay() {
+      if (locDen.value < locTu.value) ghi(locDen, locTu.value);
+    }
+
     [locTu, locDen, locTrangThai].forEach(function (el) {
-      el.addEventListener("change", veBang);
+      el.addEventListener("change", async function () {
+        dieuChinhNgay();
+        await taiKhungGio();
+      });
     });
-    //gui yeu cau loc
-    formLoc.addEventListener("submit", function (e) {
+
+    formLoc.addEventListener("submit", async function (e) {
       e.preventDefault();
       [locTu, locDen].forEach(khoiPhuc);
-      chinhKhoangNgay();
+      dieuChinhNgay();
+      await taiKhungGio();
     });
-    // dat lai bo loc
-    datLai.addEventListener("click", function (e) {
+
+    datLai.addEventListener("click", async function (e) {
       e.preventDefault();
       xemTuanHienTai();
-      veBang();
+      await taiKhungGio();
     });
   }
 
-  // SU KIEN XOA KHUNG GIO LAM VIEC
+  // ===== SU KIEN XOA =====
   function ganSuKienXoa() {
-    const urlXoa = "index.php?trang=khunggio&ajax=xoa"; // doi cho khop index.php cua ban
+    const urlXoa = "index.php?trang=lichlamviec&ajax=xoa";
 
     thanBang.addEventListener("click", async function (e) {
       const nutXoa = e.target.closest("[data-xoa]");
@@ -314,16 +308,14 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       if (!k) return;
 
+      if (k.trangThai !== "con_trong")
+        return alert("Chỉ xóa được khung giờ còn trống.");
       if (k.daCoLuot)
-        return alert("Khung giờ đã có LƯỢT KHÁM nên không thể xóa.");
+        return alert("Khung giờ đã có lượt khám nên không thể xóa.");
       if (!confirm("Xóa khung giờ này?")) return;
 
-      // gui yeu cau xoa
       try {
-        const ketQua = await post(urlXoa, { ma: k.ma });
-        if (!ketQua.ok)
-          throw new Error(ketQua.msg || "Không thể xóa khung giờ");
-        // Xoa thanh cong -> lay lai tu CSDL
+        await post(urlXoa, { ma: k.ma });
         await taiKhungGio();
       } catch (loi) {
         console.error("Lỗi xóa khung giờ:", loi);
@@ -332,7 +324,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // ===== SU KIEN: SO PHUT, GIO =====
+  // ===== SU KIEN SO PHUT, GIO =====
   soPhut.addEventListener("input", dangNhapSoPhut);
   soPhut.addEventListener("blur", chotSoPhut);
   soPhut.addEventListener("keydown", function (e) {
@@ -348,13 +340,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // doi gio bat dau thi gio ket thuc tang theo
   gioBatDau.addEventListener("input", capNhatGioKetThuc);
   gioBatDau.addEventListener("change", capNhatGioKetThuc);
   gioKetThuc.addEventListener("change", capNhatSoPhut);
   gioKetThuc.addEventListener("blur", chotGioKetThuc);
 
-  // KHOI TAO
+  // ===== KHOI TAO =====
   ghi(ngayKham, layNgayThuc());
   ghi(gioBatDau, layGioThuc());
   ghi(
@@ -369,7 +360,6 @@ document.addEventListener("DOMContentLoaded", function () {
   ganSuKienLoc();
   ganSuKienXoa();
 
-  // Chua co du lieu: hien "dang tai", sau do lay tu CSDL
   thanBang.replaceChildren(taoDongRong("Đang tải..."));
   taiKhungGio();
 });

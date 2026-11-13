@@ -1,6 +1,4 @@
-// HANG SO VA NHAN CLASS CSS
-
-// cac ham tien ich ve gio, ngay, tuan, thang, nam, thoi gian
+// ===== NGAY, GIO, TUAN =====
 function dinhDangNgay(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
@@ -34,17 +32,17 @@ function gioDauCuoi(gioBatDau, gioKetThuc) {
   return `${gioBatDau}-${gioKetThuc}`;
 }
 
+// tra ve thu 2 -> chu nhat cua tuan chua ngay da cho
 function tuanChua(chuoiNgay) {
   const [nam, thang, ngay] = chuoiNgay.split("-").map(Number);
   const d = new Date(nam, thang - 1, ngay);
   d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // thu 2
   const tu = dinhDangNgay(d);
-  d.setDate(d.getDate() + 6); // cong 6 de lay chu nhat
+  d.setDate(d.getDate() + 6); // chu nhat
   return { tu, den: dinhDangNgay(d) };
 }
 
-// xu ly du lieu nhap vao
-
+// ===== XU LY O NHAP =====
 function ghi(input, giaTri) {
   if (!input) return;
   input.value = giaTri;
@@ -72,28 +70,31 @@ function giuKhongTrong(input) {
   });
 }
 
-
+// ===== NHAN TRANG THAI =====
 const NHAN_TRANG_THAI = {
-    cho_xac_nhan: "Chờ xác nhận",
-    da_xac_nhan: "Đã xác nhận",
-    da_kham: "Đã khám",
-    da_huy: "Đã hủy",
+  cho_xac_nhan: "Chờ xác nhận",
+  da_xac_nhan: "Đã xác nhận",
+  da_kham: "Đã khám",
+  da_huy: "Đã hủy",
 };
 
 const LOP_TRANG_THAI = {
-    cho_xac_nhan: "n-vang",
-    da_xac_nhan: "n-xanh",
-    da_kham: "n-luc",
-    da_huy: "n-do",
+  cho_xac_nhan: "n-vang",
+  da_xac_nhan: "n-xanh",
+  da_kham: "n-luc",
+  da_huy: "n-do",
 };
 
+// trang thai lich lam viec (khoa phai khop gia tri ENUM trong DB)
+const LLV_NHAN_TRANG_THAI = {
+  con_trong: { chu: "Còn trống", lop: "n-luc" },
+  da_dat: { chu: "Đã đặt", lop: "n-xam" },
+};
 
+// ===== TAO PHAN TU DOM =====
 function taoPhanTu(tag, className = "", noiDung = "") {
   const phanTu = document.createElement(tag);
-
-  if (className) {
-    phanTu.className = className;
-  }
+  if (className) phanTu.className = className;
   phanTu.textContent = noiDung;
   return phanTu;
 }
@@ -105,26 +106,26 @@ function taoO(tag, noiDung = "") {
 }
 
 function taoDong(cacGiaTri, tag = "td") {
-  const dong = taoPhanTu('tr');
+  const dong = taoPhanTu("tr");
   cacGiaTri.forEach((giaTri) => {
     dong.appendChild(taoO(tag, giaTri));
   });
-
   return dong;
 }
 
 function taoNhan(trangThai) {
-    const nhan = taoPhanTu('span', 'nhan');
-    nhan.textContent = NHAN_TRANG_THAI[trangThai] || 'Không xác định';
-
-    const lop = LOP_TRANG_THAI[trangThai];
-    if (lop) {
-        nhan.classList.add(lop);
-    }
-    return nhan;
+  const nhan = taoPhanTu("span", "nhan");
+  nhan.textContent = NHAN_TRANG_THAI[trangThai] || "Không xác định";
+  const lop = LOP_TRANG_THAI[trangThai];
+  if (lop) nhan.classList.add(lop);
+  return nhan;
 }
 
- const LLV_NHAN_TRANG_THAI = {
-    conTrong: { chu: "Còn trống", lop: "n-luc" },
-    ngungNhan: { chu: "Ngừng nhận", lop: "n-xam" },
-  };
+
+// nhan mau cho trang thai lich lam viec (con_trong / da_dat)
+function taoNhanLLV(trangThai) {
+  const cauHinh = LLV_NHAN_TRANG_THAI[trangThai];
+  const nhan = taoPhanTu("span", "nhan", cauHinh ? cauHinh.chu : "Không xác định");
+  if (cauHinh && cauHinh.lop) nhan.classList.add(cauHinh.lop);
+  return nhan;
+}

@@ -25,9 +25,9 @@ async function request(url, options) {
     throw new Error("Phản hồi không hợp lệ (HTTP " + res.status + ")");
   }
 
-  if (!res.ok || !json.ok) {
-    throw new Error(json.msg || "Lỗi HTTP " + res.status);
-  }
+ if (!res.ok || !json || !json.ok) {
+  throw new Error((json && json.msg) || "Lỗi HTTP " + res.status);
+}
   return json;
 }
 

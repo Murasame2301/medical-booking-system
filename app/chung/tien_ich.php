@@ -36,7 +36,7 @@ function dinh_dang_ngay(string $ngay): string
 }
 
 // dinh dang khung gio 8:00 - 08:30
-function dinh_dang__khung_gio(string $batDau, string $ketThuc): string
+function dinh_dang_khung_gio(string $batDau, string $ketThuc): string
 {
   return substr($batDau, 0, 5) . ' - ' . substr($ketThuc, 0, 5);
 }
@@ -81,7 +81,7 @@ function tra_json($ketQuaGoiHam = [])
   exit;
 }
 // khi post hoac json
-function doc_du_lieu_gui(): array
+function  doc_du_lieu_gui(): array
 {
     $json = json_decode(file_get_contents('php://input') ?: '', true);
     return is_array($json) ? $json : $_POST;

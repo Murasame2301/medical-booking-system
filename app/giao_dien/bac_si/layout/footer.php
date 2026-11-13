@@ -3,11 +3,10 @@
       </footer>
     </main>
   </div>
-<!-- tao script ung voi trang -->
-<!-- cac bien lay tu khoi_tao.php -->
-<?php foreach ((array) ($js_trang_lay_duoc ?? []) as $ten_file_js): ?>
+
+  <?php foreach ((array) ($js_trang_lay_duoc ?? []) as $ten_file_js): ?>
     <script src="cong_khai/js/<?= h($ten_file_js) ?>"></script>
-<?php endforeach; ?>
+  <?php endforeach; ?>
 </body>
- 
+
 </html>

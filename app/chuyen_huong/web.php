@@ -16,7 +16,7 @@ return [
     'tieu_de' => 'Lịch khám - Phòng khám',
     'view'    => 'lichkham.php',
     'xu_ly'   => ['lich_kham.php'],
-    'js'      => ['api.js','tien_ich.js','lam_kham.js'],
+    'js'      => ['api.js','tien_ich.js','lich_kham.js'],
   ],
   'khambenh' => [
     'tieu_de' => 'Khám bệnh - Phòng khám',

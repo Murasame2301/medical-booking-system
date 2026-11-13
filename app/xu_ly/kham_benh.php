@@ -7,10 +7,10 @@ function lay_ho_so_kham(int $maLichKham, int $maBacSi, string $chuanDoan, string
 
   if ($chuanDoan === '') return ket_qua(false, 'Vui lòng nhập chuẩn đoán.');
 
-  $lichKham = lay_lich_kham($maLichKham, $maBacSi);
+  $lichKham = lay_lich_kham($maBacSi, $maLichKham);
   if (!$lichKham) return ket_qua(false, 'Không tìm thấy lịch khám.');
 
-  $sql = "SELECT chuandoan, loidan, ngaylap, 
+  $sql = "SELECT chuandoan, loidan, ngaylap
           FROM ho_so_benh_nhan
           WHERE malichkham = ?";
   $hoSo = truy_van_mot($sql, 'i', [$maLichKham]);
@@ -33,17 +33,17 @@ function hoan_thanh_kham(int $maLichKham, int $maBacSi, string $chuanDoan, strin
   $loiDan = trim($loiDan);
   if ($chuanDoan === '') return ket_qua(false, 'Vui lòng nhập chuẩn đoán.');
 
-  $lichKham = lay_lich_kham($maLichKham, $maBacSi);
+  $lichKham = lay_lich_kham($maBacSi, $maLichKham);
   if ($lichKham === null) return ket_qua(false, 'Không tìm thấy lịch khám.');
-  if ($lichKham['trangthai'] !== LK_DA_KHAM) return ket_qua(false, 'Lượt khám chưa được xác nhận.');
+  if ($lichKham['trangthai'] !== LK_DA_XAC_NHAN) return ket_qua(false, 'Lượt khám chưa được xác nhận.');
 
   // doi trang thai va luu ho so benh nhan
   $mysqli = ket_noi_db();
   $mysqli->begin_transaction();
   try {
     $sql = "UPDATE lich_kham
-            SET trangthai = ? 
-            WHERE trangthai = ? AND malichkham = ? ";
+            SET trangthai = ?
+            WHERE malichkham = ? AND trangthai = ?";
     $kieu = 'sis';
     $thamSo = [LK_DA_KHAM, $maLichKham, LK_DA_XAC_NHAN];
 
@@ -69,7 +69,7 @@ function hoan_thanh_kham(int $maLichKham, int $maBacSi, string $chuanDoan, strin
     return ket_qua(true, "Đã hoàn thành khám.");
   } catch (Throwable $loi) {
     $mysqli->rollback();
-    error_log('hoan_thanh_kham', $loi->getMessage());
+    error_log('hoan_thanh_kham: ' . $loi->getMessage());
     return ket_qua(false, 'Không lưu được hồ sơ, vui lòng thử lại.');
   }
 }

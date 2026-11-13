@@ -17,7 +17,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><?php h($tieu_de ?? '') ?></title>
+  <title><?= h($tieu_de ?? '') ?></title>
   <link rel="stylesheet" href="cong_khai/css/style_bacsi.css" />
 </head>
 
