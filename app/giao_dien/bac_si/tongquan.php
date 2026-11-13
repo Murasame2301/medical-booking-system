@@ -21,7 +21,7 @@
                 <th>Trạng thái</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="than-bang-lich">
               <!-- <tr>
                 <td>08:00–08:30</td>
                 <td>Trần Thị Hoa</td>
