@@ -15,7 +15,7 @@ hien_dau_trang('Quản lý người dùng');
     <h2 class="tieu-de-khu">Quản lý người dùng</h2>
 
     <?php hien_thong_bao_phien(); ?>
-
+    <p id="thong_bao_ajax"></p>
     <!-- Bộ lọc: gửi bằng GET nên có thể lưu hoặc gửi lại đường dẫn -->
     <form method="get" class="bo-loc">
         <input type="text" name="tukhoa" placeholder="Tên hoặc số điện thoại" value="<?php echo h($tukhoa); ?>">
@@ -49,7 +49,7 @@ hien_dau_trang('Quản lý người dùng');
                         <td><?php echo h($u['SDT']); ?></td>
                         <td><?php echo h($u['TenVaiTro']); ?></td>
                         <td><?php echo h(date('d/m/Y', strtotime($u['NgayTao']))); ?></td>
-                        <td>
+                        <td class="o-trang-thai">
                             <?php if ($u['TrangThai'] == 'hoat_dong'): ?>
                                 <span class="trangthai tt-xacnhan">Hoạt động</span>
                             <?php else: ?>
@@ -60,8 +60,7 @@ hien_dau_trang('Quản lý người dùng');
                             <?php if ($u['VaiTro'] == 'quan_tri'): ?>
                                 <span class="trong">—</span>
                             <?php else: ?>
-                                <form method="post" action="xuly/xuly_khoa_mo_tai_khoan.php"
-                                      onsubmit="return confirm('Bạn chắc chắn muốn thực hiện thao tác này?');">
+                                <form method="post" action="xuly/xuly_khoa_mo_tai_khoan.php" class="form-khoa-mo">
                                     <?php
                                     o_an('id', $u['ID']);
                                     o_an('tukhoa', $tukhoa);   // gửi kèm để quay về đúng danh sách đang xem
@@ -81,5 +80,6 @@ hien_dau_trang('Quản lý người dùng');
         </div>
     <?php endif; ?>
 </section>
+<script src="js/qt_nguoi_dung.js"></script>
 <?php
 hien_cuoi_trang();

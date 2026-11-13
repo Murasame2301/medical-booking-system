@@ -172,3 +172,25 @@ function cap_nhat_bac_si($conn, $id, $d, $matkhau_ma_hoa, $ds_chuyenkhoa) {
         return false;
     }
 }
+// Khóa hoặc mở khóa một tài khoản. Trả về mảng: ok, thong_bao, trangthai.
+function doi_trang_thai_tai_khoan($conn, $id, $hanhdong, $id_nguoi_lam){
+    $vaitro = lay_vai_tro_cua($conn, $id);
+
+    if($vaitro === null)
+        return ['ok' => false, 'thong_bao' => 'Khong tim thay nguoi dung'];
+
+    if($hanhdong != 'khoa' && $hanhdong != 'mo')
+        return ['ok' => false, 'thong_bao' => 'Thao tac khong hop le'];
+
+    if($hanhdong == 'khoa' && ($id == $id_nguoi_lam || $vaitro == 'quan_tri'))
+        return ['ok' => false, 'thong_bao' => 'Khong the khoa tai khoan'];
+
+    $trangthai = ($hanhdong == 'khoa') ? 'bi_khoa' : 'hoat_dong';
+    dat_trang_thai_tai_khoan($conn, $id, $trangthai);
+
+    return [
+        'ok' => true,
+        'thong_bao' => ($hanhdong == 'khoa') ? 'Da khoa tai khoan' : 'Da mo tai khoan',
+        'trangthai' => $trangthai,
+    ];
+}
