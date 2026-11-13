@@ -143,3 +143,4 @@ function taoNhanLLV(trangThai) {
   const { chu, lop } = LLV_NHAN_TRANG_THAI[trangThai] || {};
   return taoNhanMau(chu, lop);
 }
+
