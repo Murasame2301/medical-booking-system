@@ -1,40 +1,35 @@
-async function request(url, options) {
-  options = options || {};
-  const method = options.method || "GET";
-  const data = options.data ?? null;
-
+async function request(url, { method = "GET", data = null } = {}) {
   const config = {
-    method: method,
+    method,
     headers: { "X-Requested-With": "XMLHttpRequest" },
   };
 
-  if (data !== null) {
-    if (data instanceof FormData) {
-      config.body = data; // upload file: khong set Content-Type
-    } else {
-      config.headers["Content-Type"] = "application/json";
-      config.body = JSON.stringify(data);
-    }
-  }
-  const res = await fetch(url, config);
-  
-  let json;
-  try {
-    json = await res.json();
-  } catch (e) {
-    throw new Error("Phản hồi không hợp lệ (HTTP " + res.status + ")");
+  if (data instanceof FormData) {
+    config.body = data; // upload file: khong set Content-Type
+  } else if (data !== null) {
+    config.headers["Content-Type"] = "application/json";
+    config.body = JSON.stringify(data);
   }
 
- if (!res.ok || !json || !json.ok) {
-  throw new Error((json && json.msg) || "Lỗi HTTP " + res.status);
-}
+  let res;
+  try {
+    res = await fetch(url, config);
+  } catch {
+    throw new Error("Không kết nối được máy chủ.");
+  }
+
+  let json = null;
+  try {
+    json = await res.json();
+  } catch {
+    throw new Error(`Phản hồi không hợp lệ (HTTP ${res.status})`);
+  }
+
+  if (!res.ok || !json?.ok) {
+    throw new Error(json?.msg || `Lỗi HTTP ${res.status}`);
+  }
   return json;
 }
 
-function get(url) {
-  return request(url);
-}
-
-function post(url, data) {
-  return request(url, { method: "POST", data: data });
-}
+const get = (url) => request(url);
+const post = (url, data) => request(url, { method: "POST", data });

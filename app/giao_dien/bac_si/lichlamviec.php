@@ -39,7 +39,7 @@
         <select id="loc-trang-thai" autocomplete="off">
           <option value="tat_ca" selected>Tất cả</option>
           <option value="con_trong">Còn trống</option>
-          <option value="ngung_nhan">Ngừng nhận</option>
+          <option value="da_dat">Đã đặt</option>
         </select>
       </label>
       <button class="btn xanh" type="submit">Tìm</button>

@@ -1,6 +1,8 @@
 // ===== NGAY, GIO, TUAN =====
+const pad2 = (n) => String(n).padStart(2, "0");
+
 function dinhDangNgay(d) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 }
 
 function layNgayThuc(soNgayCongThem = 0) {
@@ -10,9 +12,8 @@ function layNgayThuc(soNgayCongThem = 0) {
 }
 
 function layGioThuc(soPhutCongThem = 0) {
-  const d = new Date();
-  d.setMinutes(d.getMinutes() + Number(soPhutCongThem));
-  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  const d = new Date(Date.now() + Number(soPhutCongThem) * 60000);
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
 
 function gioSangPhut(gio) {
@@ -21,7 +22,7 @@ function gioSangPhut(gio) {
 }
 
 function phutSangGio(tong) {
-  return `${String(Math.floor(tong / 60)).padStart(2, "0")}:${String(tong % 60).padStart(2, "0")}`;
+  return `${pad2(Math.floor(tong / 60))}:${pad2(tong % 60)}`;
 }
 
 function hienNgay(chuoiNgay) {
@@ -62,8 +63,7 @@ function giuKhongTrong(input) {
     if (input.value !== "" && !input.validity.badInput)
       input.dataset.cu = input.value;
   };
-  input.addEventListener("input", ghiNhoNeuHopLe);
-  input.addEventListener("change", ghiNhoNeuHopLe);
+  ["input", "change"].forEach((ev) => input.addEventListener(ev, ghiNhoNeuHopLe));
   input.addEventListener("blur", () => khoiPhuc(input));
   input.addEventListener("keydown", (e) => {
     if (e.key === "Backspace" || e.key === "Delete") e.preventDefault();
@@ -99,33 +99,47 @@ function taoPhanTu(tag, className = "", noiDung = "") {
   return phanTu;
 }
 
-function taoO(tag, noiDung = "") {
-  const cell = document.createElement(tag);
-  cell.textContent = noiDung;
-  return cell;
-}
+const taoO = (tag, noiDung = "") => taoPhanTu(tag, "", noiDung);
 
 function taoDong(cacGiaTri, tag = "td") {
   const dong = taoPhanTu("tr");
-  cacGiaTri.forEach((giaTri) => {
-    dong.appendChild(taoO(tag, giaTri));
-  });
+  dong.append(...cacGiaTri.map((giaTri) => taoO(tag, giaTri)));
   return dong;
 }
 
-function taoNhan(trangThai) {
-  const nhan = taoPhanTu("span", "nhan");
-  nhan.textContent = NHAN_TRANG_THAI[trangThai] || "Không xác định";
-  const lop = LOP_TRANG_THAI[trangThai];
-  if (lop) nhan.classList.add(lop);
-  return nhan;
+// o <td> chua cac node/chuoi bat ky
+function taoOChua(...nodes) {
+  const o = taoPhanTu("td");
+  o.append(...nodes);
+  return o;
 }
 
+function taoOInput(loai, truong, giaTri) {
+  const o = document.createElement("input");
+  o.type = loai;
+  o.value = giaTri;
+  o.dataset.truong = truong;
+  return o;
+}
+
+// nut bam; duLieu -> data-*, vd taoNut("Sửa", "btn nho", { sua: 5 })
+function taoNut(chu, className, duLieu = {}) {
+  const nut = taoPhanTu("button", className, chu);
+  nut.type = "button";
+  Object.assign(nut.dataset, duLieu);
+  return nut;
+}
+
+function taoNhanMau(chu, lop) {
+  return taoPhanTu("span", lop ? `nhan ${lop}` : "nhan", chu || "Không xác định");
+}
+
+function taoNhan(trangThai) {
+  return taoNhanMau(NHAN_TRANG_THAI[trangThai], LOP_TRANG_THAI[trangThai]);
+}
 
 // nhan mau cho trang thai lich lam viec (con_trong / da_dat)
 function taoNhanLLV(trangThai) {
-  const cauHinh = LLV_NHAN_TRANG_THAI[trangThai];
-  const nhan = taoPhanTu("span", "nhan", cauHinh ? cauHinh.chu : "Không xác định");
-  if (cauHinh && cauHinh.lop) nhan.classList.add(cauHinh.lop);
-  return nhan;
+  const { chu, lop } = LLV_NHAN_TRANG_THAI[trangThai] || {};
+  return taoNhanMau(chu, lop);
 }

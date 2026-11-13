@@ -180,6 +180,7 @@ label.nhan-ghi textarea {
 .btn.do { background: #fee2e2; color: #b91c1c; }
 .btn.cam { background: #f7da86; color: #000; }
 .btn.avt { background: rgb(28, 224, 238); }
+.btn.xam  { background: #f1f1f1; color: #000000; }
 .btn.nho { height: 28px; padding: 0 10px; font-size: 12px; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
@@ -327,3 +328,61 @@ table td:last-child {
   main { display: block; height: auto; }
   .side { border-right: 0; border-bottom: 1px solid var(--vien); }
 }
+
+
+/* ===== Phóng to giao diện ===== */
+body { font-size: 16px; }
+h1 { font-size: 20px; }
+h2 { font-size: 17px; }
+
+/* Khung trang */
+.app { grid-template-columns: 280px 1fr; }
+.side { padding: 14px 8px; }
+.user { gap: 10px; padding: 4px 10px 18px; }
+.av-lon-home,
+.anh-dai-dien .av-lon { width: 64px; height: 64px; }
+.nhom { margin: 20px 10px 8px; font-size: 12px; }
+.muc { gap: 12px; padding: 10px 12px; }
+.muc i { width: 20px; }
+
+.top { height: 60px; padding: 0 24px; }
+.top h1 { font-size: 18px; }
+.noidung { padding: 24px; }
+
+/* Form và nút */
+.khung { padding: 18px; margin-bottom: 20px; }
+.goiy { font-size: 14px; }
+.nhan-ghi { height: 42px; padding: 0 12px; }
+label.nhan-ghi { font-size: 11px; }
+label.nhan-ghi input,
+label.nhan-ghi select,
+label.nhan-ghi textarea { font-size: 15px; }
+
+.btn { height: 42px; padding: 0 22px; }
+.btn.nho { height: 34px; padding: 0 14px; font-size: 14px; }
+
+/* Bảng */
+table { font-size: 16px; }
+th, td { padding: 14px 16px; }
+table th:last-child,
+table td:last-child { padding-left: 48px; padding-right: 36px; }
+.nhan { padding: 4px 12px; font-size: 14px; }
+#than-bang input {
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--vien);
+  border-radius: 6px;
+  font: inherit;
+}
+
+/* Trang cá nhân */
+.nhom-truong label { font-size: 14px; }
+.nhom-truong input,
+.nhom-truong select { height: 44px; }
+.tab-nut { padding: 12px 6px; }
+.form-ca-nhan { max-width: 680px; }
+.form-ca-nhan.form-bao-mat { max-width: 460px; }
+
+/* Ô số tổng quan */
+.the { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.the b { font-size: 32px; }
