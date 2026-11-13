@@ -12,13 +12,15 @@ const thanBangLich = document.getElementById("than-bang-lich");
 
 // chi cap nhat so, khung giu co dinh; thieu du lieu thi = 0
 function taoThongKe(thong_ke = {}) {
-  Object.keys(oThongKe).forEach((khoa) => {
-    oThongKe[khoa].textContent = thong_ke[khoa] ?? 0;
+  Object.entries(oThongKe).forEach(([khoa, phanTu]) => {
+    if (!phanTu) return;
+    phanTu.textContent = thong_ke[khoa] ?? 0;
   });
 }
 
 // dong thong bao nam trong tbody (giu nguyen tieu de bang)
 function hienThongBaoBang(noiDung) {
+  if (!thanBangLich) return;
   const dong = taoPhanTu("tr");
   const o = taoPhanTu("td", "", noiDung);
   o.colSpan = 4;
@@ -41,6 +43,7 @@ function taoDongLich(lich) {
 
 // hien bang lich
 function hienThiLichKham(danhSachLich) {
+  if (!thanBangLich) return;
   if (danhSachLich.length === 0) {
     hienThongBaoBang("Hôm nay chưa có lịch đặt khám");
     return;
