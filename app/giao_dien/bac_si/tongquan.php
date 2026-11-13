@@ -4,6 +4,7 @@
         <h1>Tổng quan</h1>
       </header>
       <div class="noidung">
+        <h2>Hôm nay</h2>
         <div class="the" id="the-thong-ke">
           <div><span>Lượt khám hôm nay</span><b id="so-tong-luot">0</b></div>
           <div><span>Chờ xác nhận</span><b id="so-cho-xac-nhan">0</b></div>
