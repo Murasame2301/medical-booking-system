@@ -11,6 +11,9 @@
 }
 body {
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   font-family: Arial, sans-serif;
   color: var(--chu);
   background: #fff;
@@ -20,7 +23,7 @@ a {
   color: var(--chinh);
 }
 main {
-  min-height: 50vh;
+  flex: 1;
 }
 .rong {
   max-width: 1100px;

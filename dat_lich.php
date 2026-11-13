@@ -53,8 +53,5 @@ hien_dau_trang('Đặt lịch khám');
 
     <a class="lien-ket" href="lich_cua_toi.php">Xem lịch khám của tôi</a>
 </div>
-<br>
-<br>
-<br>
 <?php
 hien_cuoi_trang();
