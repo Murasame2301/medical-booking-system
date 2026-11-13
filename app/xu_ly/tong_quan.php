@@ -106,6 +106,7 @@ function lay_lich_con_trong(int $maBacSi, string $ngay): array
 /* XU LY AJAX: mot request tra ve thong ke, danh sach lich va khung gio con trong */
 if (($_GET['ajax'] ?? '') === 'tong-quan') {
   $ngay = (string)($_GET['ngay'] ?? date('Y-m-d'));
+  // NOTE LAI: COI LAI FILE DANG NHAP CHINH THUC
   $manguoidung = (int)($_SESSION['ma_nguoi_dung'] ?? 0);
 
   if ($manguoidung <= 0) {
