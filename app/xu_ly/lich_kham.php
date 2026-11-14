@@ -145,23 +145,6 @@ function doi_trang_thai_theo_yeu_cau(int $maBacSi, int $maLichKham, string $sang
 if (($_GET['trang'] ?? '') === 'lichkham' && isset($_GET['ajax'])) {
   $maBacSi = (int)($_SESSION[SS_MA_NGUOI_DUNG] ?? 0);
   $hanhDong = (string)$_GET['ajax'];
-
-  if ($maBacSi <= 0 || (int)($_SESSION[SS_VAI_TRO] ?? 0) !== VT_BAC_SI) {
-    http_response_code(401);
-    tra_json(ket_qua(false, 'Bạn cần đăng nhập bằng tài khoản bác sĩ.'));
-  }
-
-  if (!in_array($hanhDong, ['lich-kham', 'xac-nhan', 'huy', 'doi-trang-thai'], true)) {
-    http_response_code(400);
-    tra_json(ket_qua(false, 'Yêu cầu không hợp lệ.'));
-  }
-
-  // xac-nhan / huy / doi-trang-thai bat buoc POST
-  if ($hanhDong !== 'lich-kham' && ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-    http_response_code(405);
-    tra_json(ket_qua(false, 'Phương thức không được hỗ trợ.'));
-  }
-
   try {
     $dl = doc_du_lieu_gui();
     $ma = (int)($dl['ma'] ?? 0);

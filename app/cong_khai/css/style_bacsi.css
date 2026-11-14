@@ -482,106 +482,106 @@ table td:last-child {
   }
 }
 
-/* ===== Phóng to giao diện ===== */
+/* ===== Cỡ giao diện vừa phải (nhỏ hơn bản phóng to, lớn hơn bản gốc) ===== */
 body {
-  font-size: 16px;
+  font-size: 15px;
 }
 h1 {
-  font-size: 20px;
+  font-size: 19px;
 }
 h2 {
-  font-size: 17px;
+  font-size: 16px;
 }
 
 /* Khung trang */
 .app {
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 260px 1fr;
 }
 .side {
-  padding: 14px 8px;
+  padding: 12px 8px;
 }
 .user {
   gap: 10px;
-  padding: 4px 10px 18px;
+  padding: 4px 10px 16px;
 }
 .av-lon-home,
 .anh-dai-dien .av-lon {
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
 }
 .nhom {
-  margin: 20px 10px 8px;
-  font-size: 12px;
+  margin: 18px 10px 6px;
+  font-size: 11px;
 }
 .muc {
-  gap: 12px;
-  padding: 10px 12px;
+  gap: 10px;
+  padding: 9px 10px;
 }
 .muc i {
-  width: 20px;
+  width: 18px;
 }
 
 .top {
-  height: 60px;
-  padding: 0 24px;
+  height: 56px;
+  padding: 0 22px;
 }
 .top h1 {
-  font-size: 18px;
+  font-size: 17px;
 }
 .noidung {
-  padding: 24px;
+  padding: 20px;
 }
 
 /* Form và nút */
 .khung {
-  padding: 18px;
-  margin-bottom: 20px;
+  padding: 16px;
+  margin-bottom: 18px;
 }
 .goiy {
-  font-size: 14px;
+  font-size: 13px;
 }
 .nhan-ghi {
-  height: 42px;
-  padding: 0 12px;
+  height: 38px;
+  padding: 0 11px;
 }
 label.nhan-ghi {
-  font-size: 11px;
+  font-size: 10px;
 }
 label.nhan-ghi input,
 label.nhan-ghi select,
 label.nhan-ghi textarea {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .btn {
-  height: 42px;
-  padding: 0 22px;
+  height: 38px;
+  padding: 0 20px;
 }
 .btn.nho {
-  height: 34px;
-  padding: 0 14px;
-  font-size: 14px;
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
 }
 
 /* Bảng */
 table {
-  font-size: 16px;
+  font-size: 15px;
 }
 th,
 td {
-  padding: 14px 16px;
+  padding: 11px 14px;
 }
 table th:last-child,
 table td:last-child {
-  padding-left: 48px;
-  padding-right: 36px;
+  padding-left: 40px;
+  padding-right: 30px;
 }
 .nhan {
-  padding: 4px 12px;
-  font-size: 14px;
+  padding: 3px 10px;
+  font-size: 13px;
 }
 #than-bang input {
-  height: 34px;
+  height: 32px;
   padding: 0 8px;
   border: 1px solid var(--vien);
   border-radius: 6px;
@@ -594,24 +594,24 @@ table td:last-child {
 }
 .nhom-truong input,
 .nhom-truong select {
-  height: 44px;
+  height: 40px;
 }
 .tab-nut {
-  padding: 12px 6px;
+  padding: 11px 6px;
 }
 .form-ca-nhan {
-  max-width: 680px;
+  max-width: 640px;
 }
 .form-ca-nhan.form-bao-mat {
-  max-width: 460px;
+  max-width: 440px;
 }
 
 /* Ô số tổng quan */
 .the {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 }
 .the b {
-  font-size: 32px;
+  font-size: 30px;
 }
 
 /* ===== Ô chọn trạng thái ngay trong bảng lịch khám ===== */
@@ -619,7 +619,7 @@ select.chon-tt {
   border: 0;
   cursor: pointer;
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 select.chon-tt:disabled {
@@ -630,4 +630,71 @@ select.chon-tt option {
   background: #fff;
   color: var(--chu);
   font-weight: 500;
+}
+
+/* ===== Bảng lịch khám: vừa khung, không có thanh kéo ngang ===== */
+.bang-vua table {
+  font-size: 14px;
+}
+.bang-vua th,
+.bang-vua td {
+  padding: 9px 8px;
+}
+/* Họ tên (3), Giờ khám (7), Lý do (8) được xuống dòng để bảng co vừa khung */
+.bang-vua td:nth-child(3),
+.bang-vua td:nth-child(7),
+.bang-vua td:nth-child(8) {
+  white-space: normal;
+}
+.bang-vua td:nth-child(8) {
+  min-width: 110px;
+}
+/* Cột thao tác: bỏ khoảng đệm lớn để đỡ rộng */
+.bang-vua table th:last-child,
+.bang-vua table td:last-child {
+  padding-left: 8px;
+  padding-right: 12px;
+}
+
+/* ===== Hộp thoại hủy lịch khám ===== */
+#hop-huy-kham {
+  width: min(440px, 92vw);
+  padding: 22px;
+  background: var(--the);
+  color: var(--chu);
+  border: 1px solid var(--vien);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.18);
+}
+#hop-huy-kham::backdrop {
+  background: rgba(16, 24, 40, 0.45);
+}
+#hop-huy-kham h2 {
+  margin: 0 0 6px;
+}
+.huy-thong-tin {
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: var(--mo);
+}
+#hop-huy-kham textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+  color: var(--chu);
+  font: inherit;
+  outline: none;
+  resize: vertical;
+}
+#hop-huy-kham textarea:focus {
+  border-color: var(--xanh);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+.hang-nut {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
 }

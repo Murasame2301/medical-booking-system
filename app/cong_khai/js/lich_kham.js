@@ -12,6 +12,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const thanBang = $("than-bang-kham");
   const datLai = $("dat-lai");
 
+  // hop thoai huy lich kham
+  const hopHuy = $("hop-huy-kham");
+  const formHuy = $("form-huy-kham");
+  const huyThongTin = $("huy-thong-tin");
+  const huyLyDo = $("huy-ly-do");
+  const huyNutDong = $("huy-nut-dong");
+
   if (!thanBang) return;
 
   let hen = null; // bo hen gio cho o tim kiem
@@ -31,6 +38,9 @@ document.addEventListener("DOMContentLoaded", function () {
       .trim();
   }
 
+  // gia tri ENUM trong DB ('nam', 'nu') -> chu hien thi
+  const NHAN_GIOI_TINH = { nam: "Nam", nu: "Nữ" };
+
   // 1 dong tu server -> doi tuong phia client
   function chuyenLichKham(k) {
     return {
@@ -38,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
       trangThai: String(k.trangthai),
       ten: String(k.hoten || ""),
       ngaySinh: k.ngaysinh ? hienNgay(String(k.ngaysinh).slice(0, 10)) : "—",
-      gioiTinh: String(k.gioitinh || ""),
+      gioiTinh: NHAN_GIOI_TINH[k.gioitinh] || "—",
       sdt: String(k.sdt || ""),
       ngay: String(k.thoigianbatdau).slice(0, 10),
       gioBatDau: String(k.thoigianbatdau).slice(11, 16),
@@ -162,13 +172,39 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // hoi ly do huy: tra ve null neu bam Cancel, chuoi (co the rong) neu dong y
-  function hoiLyDoHuy(ten) {
-    const v = prompt(
-      "Hủy lịch khám của " + ten + ".\nNhập lý do hủy (có thể để trống):",
-      "",
-    );
-    return v === null ? null : v.trim();
+  // hop thoai nhap ly do huy: tra ve Promise
+  // - chuoi (co the rong) khi bam "Huy lich"; null khi bam Dong / Esc
+  function hoiLyDoHuy(lich) {
+    return new Promise(function (resolve) {
+      huyThongTin.textContent =
+        lich.ten +
+        " — " +
+        hienNgay(lich.ngay) +
+        " " +
+        gioDauCuoi(lich.gioBatDau, lich.gioKetThuc);
+      huyLyDo.value = "";
+
+      function xong(giaTri) {
+        formHuy.removeEventListener("submit", khiGui);
+        huyNutDong.removeEventListener("click", khiDong);
+        hopHuy.removeEventListener("close", khiDong);
+        if (hopHuy.open) hopHuy.close();
+        resolve(giaTri);
+      }
+      function khiGui(e) {
+        e.preventDefault();
+        xong(huyLyDo.value.trim());
+      }
+      function khiDong() {
+        xong(null);
+      }
+
+      formHuy.addEventListener("submit", khiGui);
+      huyNutDong.addEventListener("click", khiDong);
+      hopHuy.addEventListener("close", khiDong); // bam Esc
+      hopHuy.showModal();
+      huyLyDo.focus();
+    });
   }
 
   // xac nhan hoac huy
@@ -182,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const duLieu = { ma: ma };
     if (hanhDong === "huy") {
-      const lyDo = hoiLyDoHuy(lich.ten);
+      const lyDo = await hoiLyDoHuy(lich);
       if (lyDo === null) return;
       duLieu.ly_do_huy = lyDo;
     } else if (!confirm(cauHoi(lich))) {

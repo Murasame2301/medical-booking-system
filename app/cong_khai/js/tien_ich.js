@@ -31,6 +31,8 @@ const LOC_LICH_KHAM_TUY_CHON = Object.freeze([
   { giaTri: LOC_LICH_KHAM.DA_HUY, chu: "Đã hủy" },
 ]);
 
+// gia tri ENUM trong DB ('nam', 'nu') -> chu hien thi
+const NHAN_GIOI_TINH = { nam: "Nam", nu: "Nữ" };
 // kiem tra hop le LLV
 function hopLeLocLLV(giaTri) {
   return LOC_LLV_TUY_CHON.some(function (o) {

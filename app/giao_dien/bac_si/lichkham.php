@@ -19,7 +19,7 @@
       <button class="btn xanh" type="submit">Tìm</button>
       <button class="btn vien" type="button" id="dat-lai">Đặt lại</button>
     </form>
-    <div class="bang">
+    <div class="bang bang-vua">
       <table>
         <thead>
           <tr>
@@ -40,4 +40,20 @@
       </table>
     </div>
   </div>
+
+  <!-- HOP THOAI HUY LICH KHAM -->
+  <dialog id="hop-huy-kham">
+    <form id="form-huy-kham">
+      <h2>Hủy lịch khám</h2>
+      <p class="huy-thong-tin" id="huy-thong-tin"></p>
+      <div class="nhom-truong">
+        <label for="huy-ly-do">Lý do hủy (không bắt buộc)</label>
+        <textarea id="huy-ly-do" rows="3" maxlength="255" placeholder="Ví dụ: bác sĩ bận đột xuất"></textarea>
+      </div>
+      <div class="hang-nut">
+        <button class="btn vien" type="button" id="huy-nut-dong">Đóng</button>
+        <button class="btn do" type="submit">Hủy lịch</button>
+      </div>
+    </form>
+  </dialog>
 </main>
