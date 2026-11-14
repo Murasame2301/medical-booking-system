@@ -1,20 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // HANG SO
+  // ************ HANG SO
   const SO_PHUT_TOI_THIEU = 5;
   const SO_PHUT_TOI_DA = 60;
   const CUOI_NGAY = 23 * 60 + 59;
-  const TAT_CA = "tat_ca";
-  const CON_TRONG = "con_trong";
+  const SO_COT = 5;
   const URL_AJAX = "index.php?trang=lichlamviec&ajax=";
 
-  // TRANG THAI
+  // ************  TRANG THAI
   let lich = []; // chi chua du lieu lay tu CSDL
   let soLanTai = 0; // bo qua ket qua cu khi co yeu cau moi hon
   let maDangSua = null; // ma khung gio dang sua (null = khong sua)
   let dangGui = false; // dang gui tao/luu -> chan bam lien tiep
 
-  // CHON PHAN TU
-  const $ = (id) => document.getElementById(id);
+  // ************ VE BANG CHON PHAN TU
   const formTao = $("form-tao");
   const ngayKham = $("ngay-kham");
   const gioBatDau = $("tg-bat-dau");
@@ -29,19 +27,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const thanBang = $("than-bang");
 
-  // TIEN ICH NHO
-  const chenhPhut = (bd, kt) => gioSangPhut(kt) - gioSangPhut(bd);
-  const coTheSua = (k) => k.trangThai === CON_TRONG && !k.daCoLuot;
+  // ************ TIEN ICH NHO
+  function chenhPhut(bd, kt) {
+    return gioSangPhut(kt) - gioSangPhut(bd);
+  }
+
+  function coTheSua(k) {
+    return k.trangThai === LOC_LLV.CON_TRONG && !k.daCoLuot;
+  }
 
   // chuyen 1 dong tu server sang dang dung o client
-  const chuyenKhungGio = (k) => ({
-    ma: Number(k.malichlamviec),
-    ngay: String(k.thoigianbatdau).slice(0, 10),
-    bd: String(k.thoigianbatdau).slice(11, 16),
-    kt: String(k.thoigianketthuc).slice(11, 16),
-    trangThai: String(k.trangthai),
-    daCoLuot: Boolean(Number(k.da_co_luot)),
-  });
+  function chuyenKhungGio(k) {
+    return {
+      ma: Number(k.malichlamviec),
+      ngay: String(k.thoigianbatdau).slice(0, 10),
+      bd: String(k.thoigianbatdau).slice(11, 16),
+      kt: String(k.thoigianketthuc).slice(11, 16),
+      trangThai: String(k.trangthai),
+      daCoLuot: Boolean(Number(k.da_co_luot)),
+    };
+  }
 
   // chan gui trung + khoa nut trong luc chay tac vu
   async function chayMotLan(nut, tacVu) {
@@ -56,17 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // VE BANG LICH
-  function taoDongRong(noiDung = "Không có khung giờ phù hợp.") {
-    const dong = taoPhanTu("tr");
-    const o = taoPhanTu("td", "", noiDung);
-    o.colSpan = 5;
-    o.style.textAlign = "center";
-    o.style.color = "#667085";
-    dong.appendChild(o);
-    return dong;
-  }
-
+  // ************ VE BANG
   // dong o che do sua: o hien gia tri doi thanh o nhap
   function taoDongSua(k) {
     const dong = taoDong([k.ma]); // o ma: giu nguyen
@@ -95,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // dong o che do xem
   function taoDongKhungGio(k) {
     // co luot kham dang hieu luc => coi nhu da dat
-    const daDat = k.daCoLuot || k.trangThai === "da_dat";
+    const daDat = k.daCoLuot || k.trangThai === LOC_LLV.DA_DAT;
 
     if (k.ma === maDangSua && !daDat) return taoDongSua(k);
 
@@ -114,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     thaoTac.push(nutXoa);
 
     dong.append(
-      taoOChua(taoNhanLLV(daDat ? "da_dat" : k.trangThai)),
+      taoOChua(taoNhanLLV(daDat ? LOC_LLV.DA_DAT : k.trangThai)),
       taoOChua(...thaoTac),
     );
     return dong;
@@ -122,17 +117,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // server da loc theo ngay va trang thai nen khong loc lai o client
   function veBang() {
-    thanBang.replaceChildren(
-      ...(lich.length ? lich.map(taoDongKhungGio) : [taoDongRong()]),
+    veDanhSach(
+      thanBang,
+      lich,
+      taoDongKhungGio,
+      SO_COT,
+      "Không có khung giờ phù hợp.",
     );
   }
 
-  // TINH GIO KHI TAO LICH
-  const laySoPhut = () =>
-    Number(soPhut.value) || Number(soPhut.dataset.cu) || 30;
-  const hopLeSoPhut = (gt) => gt >= SO_PHUT_TOI_THIEU && gt <= SO_PHUT_TOI_DA;
-  const kepSoPhut = (gt) =>
-    Math.min(SO_PHUT_TOI_DA, Math.max(SO_PHUT_TOI_THIEU, gt));
+  //************ TINH GIO KHI TAO LICH
+  function laySoPhut() {
+    return Number(soPhut.value) || Number(soPhut.dataset.cu) || 30;
+  }
+
+  function hopLeSoPhut(gt) {
+    return gt >= SO_PHUT_TOI_THIEU && gt <= SO_PHUT_TOI_DA;
+  }
+
+  function kepSoPhut(gt) {
+    return Math.min(SO_PHUT_TOI_DA, Math.max(SO_PHUT_TOI_THIEU, gt));
+  }
 
   // gio ket thuc = gio bat dau + so phut
   function capNhatGioKetThuc() {
@@ -169,73 +174,77 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // BO LOC
-  function datKhoangLoc({ tu, den }) {
-    ghi(locTu, tu);
-    ghi(locDen, den);
-  }
-
   function xemTuanHienTai() {
-    datKhoangLoc(tuanChua(layNgayThuc()));
-    locTrangThai.value = TAT_CA;
-  }
-
-  // den ngay khong duoc nho hon tu ngay
-  function dieuChinhNgayLoc() {
-    if (locDen.value < locTu.value) ghi(locDen, locTu.value);
+    datTuanHienTai(locTu, locDen, locTrangThai);
   }
 
   // dua bo loc ve noi co khung gio vua tao/sua
   function dieuChinhLocTheoNgay(ngay) {
     if (ngay < locTu.value || ngay > locDen.value)
-      datKhoangLoc(tuanChua(ngay));
-    if (locTrangThai.value !== TAT_CA && locTrangThai.value !== CON_TRONG)
-      locTrangThai.value = TAT_CA;
+      datKhoangLoc(locTu, locDen, tuanChua(ngay));
+    // khung gio vua tao luon con trong -> khong hien khi dang loc "da dat"
+    if (
+      locTrangThai.value !== LOC_LLV.TAT_CA &&
+      locTrangThai.value !== LOC_LLV.CON_TRONG
+    )
+      locTrangThai.value = LOC_LLV.TAT_CA;
   }
 
-  // KIEM TRA DU LIEU TRUOC KHI GUI
-  function timKhungTrung(ngay, bd, kt, maBoQua = null) {
+  //************ KIEM TRA DU LIEU TRUOC KHI GUI
+  function timKhungTrung(ngay, bd, kt, maBoQua) {
     const b = gioSangPhut(bd);
     const e = gioSangPhut(kt);
-    return lich.find(
-      (k) =>
+    return lich.find(function (k) {
+      return (
         k.ma !== maBoQua &&
         k.ngay === ngay &&
         b < gioSangPhut(k.kt) &&
-        e > gioSangPhut(k.bd),
-    );
+        e > gioSangPhut(k.bd)
+      );
+    });
   }
 
   // tra ve noi dung loi, hoac "" neu hop le
-  function kiemTraKhungGio(ngay, bd, kt, maBoQua = null) {
+  function kiemTraKhungGio(ngay, bd, kt, maBoQua) {
+    if (maBoQua === undefined) maBoQua = null;
+
     if (!ngay || !bd || !kt)
       return "Vui lòng chọn đủ ngày, giờ bắt đầu và giờ kết thúc.";
     if (ngay < layNgayThuc()) return "Không thể đặt khung giờ ở ngày đã qua.";
     if (!hopLeSoPhut(chenhPhut(bd, kt)))
-      return `Khung giờ phải dài từ ${SO_PHUT_TOI_THIEU} đến ${SO_PHUT_TOI_DA} phút và giờ kết thúc phải sau giờ bắt đầu.`;
+      return (
+        "Khung giờ phải dài từ " +
+        SO_PHUT_TOI_THIEU +
+        " đến " +
+        SO_PHUT_TOI_DA +
+        " phút và giờ kết thúc phải sau giờ bắt đầu."
+      );
 
     const trung = timKhungTrung(ngay, bd, kt, maBoQua);
     return trung
-      ? `Trùng với khung giờ ${gioDauCuoi(trung.bd, trung.kt)} đã có.`
+      ? "Trùng với khung giờ " + gioDauCuoi(trung.bd, trung.kt) + " đã có."
       : "";
   }
 
-  // GOI SERVER
-  async function taiKhungGio(baoLoi = true) {
+  // ************ GOI SERVER
+  async function taiKhungGio(baoLoi) {
+    if (baoLoi === undefined) baoLoi = true;
+
     const lanNay = ++soLanTai;
     const params = new URLSearchParams({
       tu_ngay: locTu.value,
       den_ngay: locDen.value,
-      trang_thai: locTrangThai.value || TAT_CA,
+      trang_thai: layLocLLV(locTrangThai.value),
     });
 
     let ketQua;
     try {
-      ketQua = await get(`${URL_AJAX}lich-lam-viec&${params}`);
+      ketQua = await get(URL_AJAX + "lich-lam-viec&" + params);
     } catch (loi) {
       if (lanNay !== soLanTai) return false;
       lich = [];
       maDangSua = null;
-      thanBang.replaceChildren(taoDongRong("Không tải được dữ liệu."));
+      thanBang.replaceChildren(taoDongRong(SO_COT, "Không tải được dữ liệu."));
       if (baoLoi) alert(loi.message);
       return false;
     }
@@ -244,7 +253,12 @@ document.addEventListener("DOMContentLoaded", function () {
     lich = (ketQua.data?.danh_sach || []).map(chuyenKhungGio);
 
     // dong dang sua khong con trong danh sach -> thoat che do sua
-    if (!lich.some((k) => k.ma === maDangSua)) maDangSua = null;
+    if (
+      !lich.some(function (k) {
+        return k.ma === maDangSua;
+      })
+    )
+      maDangSua = null;
 
     veBang();
     if (baoLoi && lich.length === 0) alert("Không tìm thấy lịch.");
@@ -252,12 +266,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // gui yeu cau tao / sua / xoa; thanh cong tra ve true
-  async function guiYeuCau(hanhDong, duLieu) {
+  async function guiYeuCauLLV(hanhDong, duLieu) {
     try {
       await post(URL_AJAX + hanhDong, duLieu);
       return true;
     } catch (loi) {
-      console.error(`Lỗi ${hanhDong} khung giờ:`, loi);
+      console.error("Lỗi " + hanhDong + " khung giờ:", loi);
       alert(loi.message);
       return false;
     }
@@ -271,9 +285,9 @@ document.addEventListener("DOMContentLoaded", function () {
     return false;
   }
 
-  // SU KIEN LOC
+  //************ SU KIEN LOC
   async function xuLyDoiBoLoc() {
-    dieuChinhNgayLoc();
+    dieuChinhNgayLoc(locTu, locDen);
     await taiKhungGio();
   }
 
@@ -289,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
     await taiKhungGio();
   }
 
-  // SU KIEN TAO LICH
+  //************  SU KIEN TAO LICH
   async function xuLyTaoLich(e) {
     e.preventDefault();
     if (dangGui) return;
@@ -308,28 +322,37 @@ document.addEventListener("DOMContentLoaded", function () {
     const loi = kiemTraKhungGio(ngay, bd, kt);
     if (loi) return alert(loi);
 
-    await chayMotLan(formTao.querySelector('[type="submit"]'), async () => {
-      // 2: gui len server
-      const daTao = await guiYeuCau("tao", {
-        ngay,
-        gio_bat_dau: bd,
-        so_phut: giaTriSoPhut,
-      });
-      if (!daTao) return;
+    await chayMotLan(
+      formTao.querySelector('[type="submit"]'),
+      async function () {
+        // 2: gui len server
+        const daTao = await guiYeuCauLLV("tao", {
+          ngay: ngay,
+          gio_bat_dau: bd,
+          so_phut: giaTriSoPhut,
+        });
+        if (!daTao) return;
 
-      // 3: tai lai bang, roi cong don gio cho khung ke tiep
-      const taiDuoc = await taiLaiSauKhiGhi(
-        ngay,
-        "Đã tạo khung giờ nhưng không tải lại được danh sách. Vui lòng tải lại trang.",
-      );
-      if (taiDuoc && !congDonThoiGian())
-        alert("Đã tới cuối ngày. Hãy chọn ngày khác.");
+        // 3: tai lai bang, roi cong don gio cho khung ke tiep
+        const taiDuoc = await taiLaiSauKhiGhi(
+          ngay,
+          "Đã tạo khung giờ nhưng không tải lại được danh sách. Vui lòng tải lại trang.",
+        );
+        if (taiDuoc && !congDonThoiGian())
+          alert("Đã tới cuối ngày. Hãy chọn ngày khác.");
+      },
+    );
+  }
+
+  // ************ SU KIEN BANG: click Sua / Luu / Huy / Xoa, phim Enter / Esc
+  function timTheoMa(ma) {
+    return lich.find(function (item) {
+      return item.ma === Number(ma);
     });
   }
 
-  // SU KIEN BANG: click Sua / Luu / Huy / Xoa, phim Enter / Esc
   function xuLyBamSua(nutSua) {
-    const k = lich.find((item) => item.ma === Number(nutSua.dataset.sua));
+    const k = timTheoMa(nutSua.dataset.sua);
     if (!k) return;
     if (!coTheSua(k)) return alert("Chỉ sửa được khung giờ còn trống.");
 
@@ -354,10 +377,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const loi = kiemTraKhungGio(ngay, bd, kt, ma);
     if (loi) return alert(loi);
 
-    await chayMotLan(dong.querySelector("[data-luu]"), async () => {
-      const daLuu = await guiYeuCau("sua", {
-        ma,
-        ngay,
+    await chayMotLan(dong.querySelector("[data-luu]"), async function () {
+      const daLuu = await guiYeuCauLLV("sua", {
+        ma: ma,
+        ngay: ngay,
         gio_bat_dau: bd,
         so_phut: chenhPhut(bd, kt),
       });
@@ -372,21 +395,23 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function xuLyBamXoa(nutXoa) {
-    const k = lich.find((item) => item.ma === Number(nutXoa.dataset.xoa));
+    const k = timTheoMa(nutXoa.dataset.xoa);
     if (!k) return;
 
-    if (k.trangThai !== CON_TRONG)
+    if (k.trangThai !== LOC_LLV.CON_TRONG)
       return alert("Chỉ xóa được khung giờ còn trống.");
     if (k.daCoLuot)
       return alert("Khung giờ đã có lượt khám nên không thể xóa.");
     if (!confirm("Xóa khung giờ này?")) return;
 
-    if (await guiYeuCau("xoa", { ma: k.ma })) await taiKhungGio();
+    if (await guiYeuCauLLV("xoa", { ma: k.ma })) await taiKhungGio();
   }
 
   // dieu phoi click tren bang
   function xuLyClickBang(e) {
-    const nut = e.target.closest("[data-sua], [data-luu], [data-huy], [data-xoa]");
+    const nut = e.target.closest(
+      "[data-sua], [data-luu], [data-huy], [data-xoa]",
+    );
     if (!nut) return;
 
     if ("sua" in nut.dataset) return xuLyBamSua(nut);
@@ -408,7 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // SU KIEN THOI GIAN TRONG FORM
+  //************  SU KIEN THOI GIAN TRONG FORM
   function xuLyNhapSoPhut() {
     const gt = laySoPhut();
     if (!hopLeSoPhut(gt)) return;
@@ -433,11 +458,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!dongBoSoPhutTuGio()) capNhatGioKetThuc();
   }
 
-  // GAN SU KIEN
+  // ************ GAN SU KIEN
   function ganSuKien() {
-    [locTu, locDen, locTrangThai].forEach((el) =>
-      el.addEventListener("change", xuLyDoiBoLoc),
-    );
+    [locTu, locDen, locTrangThai].forEach(function (el) {
+      el.addEventListener("change", xuLyDoiBoLoc);
+    });
     formLoc.addEventListener("submit", xuLyGuiBoLoc);
     datLai.addEventListener("click", xuLyDatLai);
 
@@ -449,14 +474,14 @@ document.addEventListener("DOMContentLoaded", function () {
     soPhut.addEventListener("input", xuLyNhapSoPhut);
     soPhut.addEventListener("blur", chotSoPhut);
     soPhut.addEventListener("keydown", xuLyPhimSoPhut);
-    ["input", "change"].forEach((ev) =>
-      gioBatDau.addEventListener(ev, capNhatGioKetThuc),
-    );
+    ["input", "change"].forEach(function (ev) {
+      gioBatDau.addEventListener(ev, capNhatGioKetThuc);
+    });
     gioKetThuc.addEventListener("change", dongBoSoPhutTuGio);
     gioKetThuc.addEventListener("blur", xuLyRoiGioKetThuc);
   }
 
-  // KHOI TAO
+  // ************ KHOI TAO
   function khoiTao() {
     ghi(ngayKham, layNgayThuc());
     ghi(gioBatDau, layGioThuc());
@@ -467,7 +492,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     ganSuKien();
 
-    thanBang.replaceChildren(taoDongRong("Đang tải..."));
+    thanBang.replaceChildren(taoDongRong(SO_COT, "Đang tải..."));
     taiKhungGio();
   }
 

@@ -5,15 +5,15 @@
   <div class="noidung">
     <form class="loc" id="form-loc-kham">
       <input class="nhan-ghi" type="search" placeholder="Tìm theo tên hoặc số điện thoại" id="loc-tu-khoa" />
-      <label class="nhan-ghi">Từ<input type="date" value="2026-11-02" id="loc-tu" /></label>
-      <label class="nhan-ghi">Đến<input type="date" value="2026-11-08" id="loc-den" /></label>
+      <label class="nhan-ghi">Từ<input type="date" id="loc-tu" /></label>
+      <label class="nhan-ghi">Đến<input type="date" id="loc-den" /></label>
       <label class="nhan-ghi">Trạng thái
         <select id="loc-trang-thai">
-          <option value="">Tất cả</option>
-          <option value="Chờ xác nhận">Chờ xác nhận</option>
-          <option value="Đã xác nhận">Đã xác nhận</option>
-          <option value="Đã khám">Đã khám</option>
-          <option value="Đã hủy">Đã hủy</option>
+          <option value="tat_ca">Tất cả</option>
+          <option value="cho_xac_nhan">Chờ xác nhận</option>
+          <option value="da_xac_nhan">Đã xác nhận</option>
+          <option value="da_kham">Đã khám</option>
+          <option value="da_huy">Đã hủy</option>
         </select>
       </label>
       <button class="btn xanh" type="submit">Tìm</button>

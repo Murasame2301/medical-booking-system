@@ -3,52 +3,56 @@ const bangLichKham = document.getElementById("bang-lich-kham");
 
 // tao thong ke sever tra ve data : {thong_ke :{ trang thai }}
 const oThongKe = {
-  tong_luot: document.getElementById("so-tong-luot"),
-  cho_xac_nhan: document.getElementById("so-cho-xac-nhan"),
-  da_kham: document.getElementById("so-da-kham"),
-  khung_gio_trong: document.getElementById("so-khung-gio-trong"),
+  tong_luot: $("so-tong-luot"),
+  cho_xac_nhan: $("so-cho-xac-nhan"),
+  da_kham: $("so-da-kham"),
+  khung_gio_trong: $("so-khung-gio-trong"),
 };
-const thanBangLich = document.getElementById("than-bang-lich");
+const thanBangLich = $("than-bang-lich");
+
+const SO_COT_LICH = 4;
 
 // chi cap nhat so, khung giu co dinh; thieu du lieu thi = 0
-function taoThongKe(thong_ke = {}) {
-  Object.entries(oThongKe).forEach(([khoa, phanTu]) => {
+function taoThongKe(thongKe) {
+  thongKe = thongKe || {};
+  Object.keys(oThongKe).forEach(function (khoa) {
+    const phanTu = oThongKe[khoa];
     if (!phanTu) return;
-    phanTu.textContent = thong_ke[khoa] ?? 0;
+    phanTu.textContent = thongKe[khoa] === undefined ? 0 : thongKe[khoa];
   });
 }
 
 // dong thong bao nam trong tbody (giu nguyen tieu de bang)
 function hienThongBaoBang(noiDung) {
   if (!thanBangLich) return;
-  const dong = taoPhanTu("tr");
-  const o = taoPhanTu("td", "", noiDung);
-  o.colSpan = 4;
-  dong.appendChild(o);
-  thanBangLich.replaceChildren(dong);
+  thanBangLich.replaceChildren(taoDongRong(SO_COT_LICH, noiDung));
 }
 
-// tao dong lich trong bang
+// tao 1 dong lich: gio, benh nhan, ly do, trang thai
 function taoDongLich(lich) {
-  const gioBatDau = String(lich.gio_bat_dau || "").slice(0, 5);
-  const gioKetThuc = String(lich.gio_ket_thuc || "").slice(0, 5);
-  const giokham = gioDauCuoi(gioBatDau, gioKetThuc);
-  const cacGiaTri = [giokham, lich.ho_ten_benh_nhan || "", lich.lydo || ""];
-  const dong = taoDong(cacGiaTri);
-  const oTrangThai = taoPhanTu("td");
-  oTrangThai.appendChild(taoNhan(lich.trangthai));
-  dong.appendChild(oTrangThai);
-  return dong;
+  const gio = gioDauCuoi(
+    String(lich.gio_bat_dau || "").slice(0, 5),
+    String(lich.gio_ket_thuc || "").slice(0, 5),
+  );
+  return taoOChua(
+    gio,
+  ) && (function () {
+    const dong = taoDong([gio, lich.ho_ten_benh_nhan || "", lich.lydo || ""]);
+    dong.append(taoOChua(taoNhanLK(lich.trangthai)));
+    return dong;
+  })();
 }
 
 // hien bang lich
 function hienThiLichKham(danhSachLich) {
   if (!thanBangLich) return;
-  if (danhSachLich.length === 0) {
-    hienThongBaoBang("Hôm nay chưa có lịch đặt khám");
-    return;
-  }
-  thanBangLich.replaceChildren(...danhSachLich.map(taoDongLich));
+  veDanhSach(
+    thanBangLich,
+    danhSachLich,
+    taoDongLich,
+    SO_COT_LICH,
+    "Hôm nay chưa có lịch đặt khám",
+  );
 }
 
 // loi tai du lieu: thong ke ve 0, bang bao loi
@@ -61,21 +65,22 @@ function hienLoiLayDuLieu(loi) {
 async function layDuLieuTongQuan() {
   try {
     const ngay = layNgayThuc();
-    const URL_XU_LY = `index.php?trang=tongquan&ajax=tong-quan&ngay=${encodeURIComponent(ngay)}`;
+    const url =
+      "index.php?trang=tongquan&ajax=tong-quan&ngay=" + encodeURIComponent(ngay);
 
-    const ketQua = await get(URL_XU_LY);
-    if (!ketQua.ok) {
-      throw new Error(ketQua.msg || "Không thể tải dữ liệu");
-    }
+    const ketQua = await get(url);
+    if (!ketQua.ok) throw new Error(ketQua.msg || "Không thể tải dữ liệu");
+
     const data = ketQua.data;
     if (!data || !Array.isArray(data.danh_sach_lich)) {
       throw new Error("Dữ liệu server không hợp lệ");
     }
 
-    taoThongKe(data.thong_ke || {});
+    taoThongKe(data.thong_ke);
     hienThiLichKham(data.danh_sach_lich);
   } catch (loi) {
     hienLoiLayDuLieu(loi);
   }
 }
+
 window.addEventListener("DOMContentLoaded", layDuLieuTongQuan);

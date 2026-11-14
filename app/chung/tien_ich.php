@@ -22,11 +22,10 @@ function gio_sang_phut(string $gio): int
 }
 
 // doi phut sang gio
-function phut_sang_gio(string $tongPhut): string
+function phut_sang_gio(int $tongPhut): string
 {
   return sprintf('%02d:%02d', intdiv($tongPhut, 60), $tongPhut % 60);
 }
-
 
 // dinh dang ngay
 function dinh_dang_ngay(string $ngay): string
@@ -56,7 +55,7 @@ function nhan_trang_thai(string $tt): array
     LK_DA_KHAM      => ['Đã khám',      'n-luc'],
     LK_DA_HUY       => ['Đã hủy',       'n-do'],
     LLV_CON_TRONG   => ['Còn trống',    'n-luc'],
-    LLV_NGUNG_NHAN  => ['Ngừng nhận',   'n-xam'],
+    LLV_DA_DAT      => ['Đã đặt',   'n-xam'],
   ];
   return $map[$tt] ?? [$tt, 'n-xam'];
 }

@@ -7,11 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
-const CUOI_NGAY_PHUT = 23 * 60 + 59;
-const SO_PHUT_TOI_THIEU = 5;
-const SO_PHUT_TOI_DA = 60;
-
-// ===== TIEN ICH DUNG CHUNG =====
+// ************ TIEN ICH DUNG CHUNG
 
 // gio ket thuc = gio bat dau + so phut (khong qua 23:59)
 function tinh_gio_ket_thuc(string $gioBatDau, int $soPhut): string
@@ -19,7 +15,7 @@ function tinh_gio_ket_thuc(string $gioBatDau, int $soPhut): string
   return phut_sang_gio(min(gio_sang_phut($gioBatDau) + $soPhut, CUOI_NGAY_PHUT));
 }
 
-// kiem tra ngay / gio bat dau / so phut; tra ve noi dung loi, "" neu hop le
+// tra ve noi dung loi, "" neu hop le
 function kiem_tra_khung_gio(string $ngay, string $tuGio, int $soPhut): string
 {
   if (!hop_le_ngay($ngay)) return 'Ngày không hợp lệ.';
@@ -28,7 +24,6 @@ function kiem_tra_khung_gio(string $ngay, string $tuGio, int $soPhut): string
   if ($soPhut < SO_PHUT_TOI_THIEU || $soPhut > SO_PHUT_TOI_DA) {
     return 'Số phút cho mỗi lượt phải từ ' . SO_PHUT_TOI_THIEU . ' đến ' . SO_PHUT_TOI_DA . ' phút.';
   }
-  // so phut >= 5 nen neu khong vuot cuoi ngay thi gio ket thuc luon > gio bat dau
   if (gio_sang_phut($tuGio) + $soPhut > CUOI_NGAY_PHUT) return 'Khung giờ vượt quá cuối ngày.';
   return '';
 }
@@ -44,15 +39,13 @@ function la_loi_trung_lich(mysqli_sql_exception $e): bool
   return in_array($e->getCode(), [1062, 1644], true);
 }
 
-// ===== TRUY VAN =====
+// ************ TRUY VAN 
 
-// khung gio da co luot kham dang hieu luc (khac 'da_huy') chua
+// khung gio da co luot kham dang hieu luc (khac da huy) chua
 function khung_gio_co_luot_kham(int $maLichLamViec): bool
 {
-  $sql = "SELECT COUNT(*) AS so_luong
-            FROM lich_kham
-            WHERE malichlamviec = ? AND trangthai <> 'da_huy'";
-  $ketQua = truy_van_mot($sql, 'i', [$maLichLamViec]);
+  $sql = "SELECT COUNT(*) AS so_luong FROM lich_kham WHERE malichlamviec = ? AND trangthai <> ?";
+  $ketQua = truy_van_mot($sql, 'is', [$maLichLamViec, LK_DA_HUY]);
   return (int)($ketQua['so_luong'] ?? 0) > 0;
 }
 
@@ -60,8 +53,8 @@ function khung_gio_co_luot_kham(int $maLichLamViec): bool
 function khung_gio_bi_trung(int $maBacSi, string $ngay, string $gioBatDau, string $gioKetThuc, int $boQuaMa = 0): bool
 {
   $sql = "SELECT COUNT(*) AS so_luong
-            FROM lich_lam_viec
-            WHERE manguoidung = ? AND thoigianbatdau < ? AND thoigianketthuc > ? AND malichlamviec <> ?";
+          FROM lich_lam_viec
+          WHERE manguoidung = ? AND thoigianbatdau < ? AND thoigianketthuc > ? AND malichlamviec <> ?";
   $ketQua = truy_van_mot($sql, 'issi', [
     $maBacSi,
     ghep_ngay_gio($ngay, $gioKetThuc),
@@ -74,8 +67,8 @@ function khung_gio_bi_trung(int $maBacSi, string $ngay, string $gioBatDau, strin
 function lay_lich_lam_viec(int $maBacSi, int $maLichLamViec): array
 {
   $sql = "SELECT malichlamviec, manguoidung, thoigianbatdau, thoigianketthuc, trangthai
-            FROM lich_lam_viec
-            WHERE malichlamviec = ? AND manguoidung = ?";
+          FROM lich_lam_viec
+          WHERE malichlamviec = ? AND manguoidung = ?";
   $lich = truy_van_mot($sql, 'ii', [$maLichLamViec, $maBacSi]);
   return $lich
     ? ket_qua(true, 'Lấy thông tin lịch làm việc thành công.', ['lich_lam_viec' => $lich])
@@ -83,35 +76,28 @@ function lay_lich_lam_viec(int $maBacSi, int $maLichLamViec): array
 }
 
 // lay lich lam viec tu ngay den ngay
-function lay_danh_sach_lich_lam_viec(int $maBacSi, string $tuNgay, string $denNgay, array|string $trangThai = []): array
+function lay_danh_sach_lich_lam_viec(int $maBacSi, string $tuNgay, string $denNgay, string $trangThai = ''): array
 {
   if (!hop_le_ngay($tuNgay) || !hop_le_ngay($denNgay)) return ket_qua(false, 'Ngày không hợp lệ.');
   if ($tuNgay > $denNgay) return ket_qua(false, 'Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.');
 
-  // chuan hoa trang thai ve mang chuoi, bo rong va trung
-  $tt = is_string($trangThai) ? explode(',', $trangThai) : $trangThai;
-  $tt = array_values(array_unique(array_filter(
-    array_map('trim', array_map('strval', $tt)),
-    fn($v) => $v !== ''
-  )));
-
-  // "tat ca" = khong loc
-  if (in_array((string)LLV_TAT_CA, $tt, true)) $tt = [];
-
-  if (array_diff($tt, [(string)LLV_CON_TRONG, (string)LLV_DA_DAT])) {
-    return ket_qua(false, 'Trạng thái không hợp lệ.');
-  }
+  // rong hoac "tat_ca" = khong loc
+  $tt = ($trangThai === '' || $trangThai === LLV_TAT_CA)
+    ? []
+    : array_values(array_unique(array_filter(array_map('trim', explode(',', $trangThai)))));
+  if (array_diff($tt, LLV_TRANG_THAI)) return ket_qua(false, 'Trạng thái không hợp lệ.');
 
   $sql = "SELECT llv.malichlamviec, llv.manguoidung, llv.thoigianbatdau, llv.thoigianketthuc, llv.trangthai,
-                   EXISTS (SELECT 1 FROM lich_kham lk
-                           WHERE lk.malichlamviec = llv.malichlamviec AND lk.trangthai <> 'da_huy') AS da_co_luot
-            FROM lich_lam_viec llv
-            WHERE llv.manguoidung = ? AND llv.thoigianbatdau >= ? AND llv.thoigianbatdau <= ?";
-  $kieu = 'iss';
+                 EXISTS (SELECT 1 FROM lich_kham lk
+                         WHERE lk.malichlamviec = llv.malichlamviec AND lk.trangthai <> ?) AS da_co_luot
+          FROM lich_lam_viec llv
+          WHERE llv.manguoidung = ? AND llv.thoigianbatdau >= ? AND llv.thoigianbatdau <= ?";
+  $kieu = 'siss';
   $thamSo = [
+    LK_DA_HUY,
     $maBacSi,
-    ghep_ngay_gio($tuNgay, '00:00', ':00'),
-    ghep_ngay_gio($denNgay, '23:59', ':59'),
+    ghep_ngay_gio($tuNgay, GIO_DAU_NGAY),
+    ghep_ngay_gio($denNgay, GIO_CUOI_NGAY, ':59'),
   ];
 
   if ($tt) {
@@ -124,9 +110,9 @@ function lay_danh_sach_lich_lam_viec(int $maBacSi, string $tuNgay, string $denNg
   return ket_qua(true, 'Lấy danh sách lịch làm việc thành công.', ['danh_sach' => truy_van($sql, $kieu, $thamSo)]);
 }
 
-// ===== TAO / SUA / XOA =====
+// ************ TAO / SUA / XOA 
 
-function tao_mot_lich_kham(int $maBacSi, string $ngay, string $tuGio, int $soPhut): array
+function tao_mot_lich_lam_viec(int $maBacSi, string $ngay, string $tuGio, int $soPhut): array
 {
   if ($loi = kiem_tra_khung_gio($ngay, $tuGio, $soPhut)) return ket_qua(false, $loi);
 
@@ -172,8 +158,8 @@ function cap_nhat_lich_lam_viec(int $maBacSi, int $maLichLamViec, string $ngay, 
 
   // dieu kien trangthai trong WHERE: neu vua co nguoi dat thi khong ghi de
   $sql = "UPDATE lich_lam_viec
-            SET thoigianbatdau = ?, thoigianketthuc = ?
-            WHERE malichlamviec = ? AND manguoidung = ? AND trangthai = ?";
+          SET thoigianbatdau = ?, thoigianketthuc = ?
+          WHERE malichlamviec = ? AND manguoidung = ? AND trangthai = ?";
   try {
     $stmt = thi_hanh($sql, 'ssiis', [
       ghep_ngay_gio($ngay, $tuGio),
@@ -209,7 +195,7 @@ function xoa_lich_lam_viec(int $maBacSi, int $maLichLamViec): array
 
   try {
     // luot da huy khong con y nghia, xoa truoc de khong vuong khoa ngoai RESTRICT
-    thi_hanh("DELETE FROM lich_kham WHERE malichlamviec = ? AND trangthai = 'da_huy'", 'i', [$maLichLamViec])->close();
+    thi_hanh("DELETE FROM lich_kham WHERE malichlamviec = ? AND trangthai = ?", 'is', [$maLichLamViec, LK_DA_HUY])->close();
 
     $stmt = thi_hanh(
       "DELETE FROM lich_lam_viec WHERE malichlamviec = ? AND manguoidung = ?",
@@ -229,73 +215,52 @@ function xoa_lich_lam_viec(int $maBacSi, int $maLichLamViec): array
     : ket_qua(false, 'Xóa lịch làm việc thất bại.');
 }
 
-// ===== XU LY AJAX: tao, sua, xoa va loc lich =====
+// ************ XU LY AJAX: tao, sua, xoa va loc lich 
 if (($_GET['trang'] ?? '') === 'lichlamviec' && isset($_GET['ajax'])) {
-  $maBacSi = (int)($_SESSION['ma_nguoi_dung'] ?? 0);
+  $maBacSi = (int)($_SESSION[SS_MA_NGUOI_DUNG] ?? 0);
   $hanhDong = (string)$_GET['ajax'];
-  $laPost = ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
 
-  // chua dang nhap / khong phai bac si
-  if ($maBacSi <= 0 || (int)($_SESSION['vai_tro'] ?? 0) !== VT_BAC_SI) {
+  if ($maBacSi <= 0 || (int)($_SESSION[SS_VAI_TRO] ?? 0) !== VT_BAC_SI) {
     http_response_code(401);
     tra_json(ket_qua(false, 'Bạn cần đăng nhập bằng tài khoản bác sĩ.'));
-    exit;
+  }
+
+  if (!in_array($hanhDong, ['lich-lam-viec', 'tao', 'sua', 'xoa'], true)) {
+    http_response_code(400);
+    tra_json(ket_qua(false, 'Yêu cầu không hợp lệ.'));
   }
 
   // tao / sua / xoa bat buoc POST
-  if (in_array($hanhDong, ['tao', 'sua', 'xoa'], true) && !$laPost) {
+  if ($hanhDong !== 'lich-lam-viec' && ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     http_response_code(405);
     tra_json(ket_qua(false, 'Phương thức không được hỗ trợ.'));
-    exit;
   }
 
   try {
-    switch ($hanhDong) {
-      case 'tao':
-        $r = doc_du_lieu_gui();
-        // trong ham co kiem tra du lieu
-        $ketQua = tao_mot_lich_kham(
-          $maBacSi,
-          (string)($r['ngay'] ?? ''),
-          (string)($r['gio_bat_dau'] ?? ''),
-          (int)($r['so_phut'] ?? 0)
-        );
-        break;
-
-      case 'lich-lam-viec':
-        $trangThai = (string)($_GET['trang_thai'] ?? '');
-        if ($trangThai === 'tat_ca') $trangThai = (string)LLV_TAT_CA;
-        // trong ham co kiem tra du lieu
-        $ketQua = lay_danh_sach_lich_lam_viec(
-          $maBacSi,
-          (string)($_GET['tu_ngay'] ?? ''),
-          (string)($_GET['den_ngay'] ?? ''),
-          $trangThai
-        );
-        break;
-
-      case 'sua':
-        $r = doc_du_lieu_gui();
-        // trong ham co kiem tra du lieu
-        $ketQua = cap_nhat_lich_lam_viec(
-          $maBacSi,
-          (int)($r['ma'] ?? 0),
-          (string)($r['ngay'] ?? ''),
-          (string)($r['gio_bat_dau'] ?? ''),
-          (int)($r['so_phut'] ?? 0)
-        );
-        break;
-
-      case 'xoa':
-        $r = doc_du_lieu_gui();
-        // trong ham co kiem tra du lieu
-        $ketQua = xoa_lich_lam_viec($maBacSi, (int)($r['ma'] ?? 0));
-        break;
-
-      default:
-        http_response_code(400);
-        $ketQua = ket_qua(false, 'Yêu cầu không hợp lệ.');
-    }
+    // cac ham ben duoi tu kiem tra du lieu
+    $r = doc_du_lieu_gui();
+    $ketQua = match ($hanhDong) {
+      'lich-lam-viec' => lay_danh_sach_lich_lam_viec(
+        $maBacSi,
+        (string)($_GET['tu_ngay'] ?? ''),
+        (string)($_GET['den_ngay'] ?? ''),
+        (string)($_GET['trang_thai'] ?? '')
+      ),
+      'tao' => tao_mot_lich_lam_viec(
+        $maBacSi,
+        (string)($r['ngay'] ?? ''),
+        (string)($r['gio_bat_dau'] ?? ''),
+        (int)($r['so_phut'] ?? 0)
+      ),
+      'sua' => cap_nhat_lich_lam_viec(
+        $maBacSi,
+        (int)($r['ma'] ?? 0),
+        (string)($r['ngay'] ?? ''),
+        (string)($r['gio_bat_dau'] ?? ''),
+        (int)($r['so_phut'] ?? 0)
+      ),
+      'xoa' => xoa_lich_lam_viec($maBacSi, (int)($r['ma'] ?? 0)),
+    };
   } catch (Throwable $e) {
     error_log('lich-lam-viec: ' . $e->getMessage());
     http_response_code(500);
@@ -303,5 +268,4 @@ if (($_GET['trang'] ?? '') === 'lichlamviec' && isset($_GET['ajax'])) {
   }
 
   tra_json($ketQua);
-  exit;
 }
