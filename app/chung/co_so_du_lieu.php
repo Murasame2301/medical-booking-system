@@ -46,3 +46,23 @@ function thi_hanh(string $sql, string $kieu = '', array $thamSo = []): mysqli_st
   $stmt->execute();
   return $stmt;
 }
+
+function tao_token_csrf(): string {
+  if (empty($_SESSION['token_csrf'])) {
+    $_SESSION['token_csrf'] = bin2hex(random_bytes(32));
+  }
+  return $_SESSION['token_csrf'];
+}
+
+function truong_csrf(): string {
+  return '<input type="hidden" name="token_csrf" value="'
+    . htmlspecialchars(tao_token_csrf(), ENT_QUOTES, 'UTF-8') . '">';
+}
+
+function kiem_tra_csrf(): void {
+  $token = $_POST['token_csrf'] ?? '';
+  if (!is_string($token) || !hash_equals($_SESSION['token_csrf'] ?? '', $token)) {
+    http_response_code(403);
+    exit('Yêu cầu không hợp lệ (CSRF).');
+  }
+}
