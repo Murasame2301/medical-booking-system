@@ -53,7 +53,8 @@ function lay_lich_kham(int $maBacSi, int $maLichKham): ?array
 }
 
 // doi trang thai lich kham
-function doi_trang_thai_lich_kham(int $maLichKham, int $maBacSi, array $tuCacTT, string $sangTT, string $msgThanhCong): array
+// khi huy: bat buoc ghi nguoihuy (rang buoc chk_lich_kham_huy), lydohuy (neu co) va tra khung gio ve con_trong
+function doi_trang_thai_lich_kham(int $maLichKham, int $maBacSi, array $tuCacTT, string $sangTT, string $msgThanhCong, ?string $lyDoHuy = null): array
 {
   $lk = lay_lich_kham($maBacSi, $maLichKham);
   if (!$lk) return ket_qua(false, 'Không tìm thấy lịch khám.');
@@ -62,16 +63,41 @@ function doi_trang_thai_lich_kham(int $maLichKham, int $maBacSi, array $tuCacTT,
     return ket_qua(false, 'Trạng thái hiện tại (' . nhan_trang_thai($lk['trangthai'])[0] . ') không cho phép thao tác này.');
   }
 
+  $huy = ($sangTT === LK_DA_HUY);
+  if ($huy) {
+    $lyDoHuy = trim((string)$lyDoHuy);
+    if (mb_strlen($lyDoHuy) > 255) return ket_qua(false, 'Lý do hủy tối đa 255 ký tự.');
+    if ($lyDoHuy === '') $lyDoHuy = null;
+  }
+
   // dieu kien trangthai trong WHERE: neu vua bi doi thi khong ghi de
-  $stmt = thi_hanh(
-    "UPDATE lich_kham SET trangthai = ? WHERE malichkham = ? AND trangthai = ?",
-    'sis',
-    [$sangTT, $maLichKham, $lk['trangthai']]
-  );
+  if ($huy) {
+    $stmt = thi_hanh(
+      "UPDATE lich_kham SET trangthai = ?, nguoihuy = ?, lydohuy = ? WHERE malichkham = ? AND trangthai = ?",
+      'sisis',
+      [$sangTT, $maBacSi, $lyDoHuy, $maLichKham, $lk['trangthai']]
+    );
+  } else {
+    $stmt = thi_hanh(
+      "UPDATE lich_kham SET trangthai = ? WHERE malichkham = ? AND trangthai = ?",
+      'sis',
+      [$sangTT, $maLichKham, $lk['trangthai']]
+    );
+  }
   $soDong = $stmt->affected_rows;
   $stmt->close();
 
-  return $soDong > 0 ? ket_qua(true, $msgThanhCong) : ket_qua(false, 'Lượt khám vừa được thay đổi.');
+  if ($soDong < 1) return ket_qua(false, 'Lượt khám vừa được thay đổi.');
+
+  if ($huy) {
+    $stmt = thi_hanh(
+      "UPDATE lich_lam_viec SET trangthai = ? WHERE malichlamviec = ? AND manguoidung = ?",
+      'sii',
+      [LLV_CON_TRONG, (int)$lk['malichlamviec'], $maBacSi]
+    );
+    $stmt->close();
+  }
+  return ket_qua(true, $msgThanhCong);
 }
 
 function xac_nhan_lich_kham(int $maBacSi, int $maLichKham): array
@@ -80,9 +106,39 @@ function xac_nhan_lich_kham(int $maBacSi, int $maLichKham): array
 }
 
 // khop nut Huy tren giao dien: cho xac nhan + da xac nhan
-function huy_lich_kham(int $maBacSi, int $maLichKham): array
+function huy_lich_kham(int $maBacSi, int $maLichKham, ?string $lyDoHuy = null): array
 {
-  return doi_trang_thai_lich_kham($maLichKham, $maBacSi, [LK_CHO_XAC_NHAN, LK_DA_XAC_NHAN], LK_DA_HUY, 'Đã hủy lịch khám.');
+  return doi_trang_thai_lich_kham($maLichKham, $maBacSi, [LK_CHO_XAC_NHAN, LK_DA_XAC_NHAN], LK_DA_HUY, 'Đã hủy lịch khám.', $lyDoHuy);
+}
+
+// trang thai hien tai -> cac trang thai duoc phep chuyen sang (da_kham, da_huy la trang thai cuoi)
+const LK_CHUYEN_TRANG_THAI = [
+  LK_CHO_XAC_NHAN => [LK_DA_XAC_NHAN, LK_DA_HUY],
+  LK_DA_XAC_NHAN  => [LK_DA_KHAM, LK_DA_HUY],
+];
+
+// doi trang thai tu o chon tren bang: kiem tra duong chuyen hop le roi ghi
+function doi_trang_thai_theo_yeu_cau(int $maBacSi, int $maLichKham, string $sangTT, ?string $lyDoHuy = null): array
+{
+  if (!in_array($sangTT, LK_TRANG_THAI, true)) return ket_qua(false, 'Trạng thái không hợp lệ.');
+
+  $lk = lay_lich_kham($maBacSi, $maLichKham);
+  if (!$lk) return ket_qua(false, 'Không tìm thấy lịch khám.');
+
+  $duocPhep = LK_CHUYEN_TRANG_THAI[$lk['trangthai']] ?? [];
+  if (!in_array($sangTT, $duocPhep, true)) {
+    return ket_qua(false, 'Không thể chuyển từ "' . nhan_trang_thai($lk['trangthai'])[0]
+      . '" sang "' . nhan_trang_thai($sangTT)[0] . '".');
+  }
+
+  return doi_trang_thai_lich_kham(
+    $maLichKham,
+    $maBacSi,
+    [$lk['trangthai']],
+    $sangTT,
+    'Đã chuyển sang "' . nhan_trang_thai($sangTT)[0] . '".',
+    $lyDoHuy
+  );
 }
 
 // ===== XU LY AJAX =====
@@ -95,19 +151,20 @@ if (($_GET['trang'] ?? '') === 'lichkham' && isset($_GET['ajax'])) {
     tra_json(ket_qua(false, 'Bạn cần đăng nhập bằng tài khoản bác sĩ.'));
   }
 
-  if (!in_array($hanhDong, ['lich-kham', 'xac-nhan', 'huy'], true)) {
+  if (!in_array($hanhDong, ['lich-kham', 'xac-nhan', 'huy', 'doi-trang-thai'], true)) {
     http_response_code(400);
     tra_json(ket_qua(false, 'Yêu cầu không hợp lệ.'));
   }
 
-  // xac-nhan / huy bat buoc POST
+  // xac-nhan / huy / doi-trang-thai bat buoc POST
   if ($hanhDong !== 'lich-kham' && ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     http_response_code(405);
     tra_json(ket_qua(false, 'Phương thức không được hỗ trợ.'));
   }
 
   try {
-    $ma = (int)(doc_du_lieu_gui()['ma'] ?? 0);
+    $dl = doc_du_lieu_gui();
+    $ma = (int)($dl['ma'] ?? 0);
     $ketQua = match ($hanhDong) {
       'lich-kham' => tim_kiem_lich_kham(
         $maBacSi,
@@ -115,8 +172,9 @@ if (($_GET['trang'] ?? '') === 'lichkham' && isset($_GET['ajax'])) {
         (string)($_GET['den_ngay'] ?? ''),
         (string)($_GET['trang_thai'] ?? '')
       ),
+      'doi-trang-thai' => doi_trang_thai_theo_yeu_cau($maBacSi, $ma, (string)($dl['trang_thai'] ?? ''), (string)($dl['ly_do_huy'] ?? '')),
       'xac-nhan' => xac_nhan_lich_kham($maBacSi, $ma),
-      'huy'      => huy_lich_kham($maBacSi, $ma),
+      'huy'      => huy_lich_kham($maBacSi, $ma, (string)($dl['ly_do_huy'] ?? '')),
     };
   } catch (Throwable $e) {
     error_log('lich-kham: ' . $e->getMessage());

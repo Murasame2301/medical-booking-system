@@ -67,11 +67,10 @@ document.addEventListener("DOMContentLoaded", function () {
         (!tuNgay || k.ngay >= tuNgay) && (!denNgay || k.ngay <= denNgay);
       const dungTrangThai =
         !trangThai || trangThai === TAT_CA || k.trangThai === trangThai;
+      // chi tim theo ten (khong dau, khong phan biet hoa thuong) hoac so dien thoai
       const dungTuKhoa =
         !tk ||
         chuanHoa(k.ten).includes(tk) ||
-        chuanHoa(k.lyDo).includes(tk) ||
-        String(k.ma).includes(tk) ||
         (tkSo !== "" && k.sdt.includes(tkSo));
       return dungNgay && dungTrangThai && dungTuKhoa;
     });
@@ -163,6 +162,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // hoi ly do huy: tra ve null neu bam Cancel, chuoi (co the rong) neu dong y
+  function hoiLyDoHuy(ten) {
+    const v = prompt(
+      "Hủy lịch khám của " + ten + ".\nNhập lý do hủy (có thể để trống):",
+      "",
+    );
+    return v === null ? null : v.trim();
+  }
+
   // xac nhan hoac huy
   async function doiTrangThai(ma, hanhDong, cauHoi) {
     if (dangGui) return;
@@ -170,11 +178,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const lich = danhSachLichKham.find(function (k) {
       return k.ma === ma;
     });
-    if (!lich || !confirm(cauHoi(lich))) return;
+    if (!lich) return;
+
+    const duLieu = { ma: ma };
+    if (hanhDong === "huy") {
+      const lyDo = hoiLyDoHuy(lich.ten);
+      if (lyDo === null) return;
+      duLieu.ly_do_huy = lyDo;
+    } else if (!confirm(cauHoi(lich))) {
+      return;
+    }
 
     dangGui = true;
     try {
-      const xong = await guiYeuCauLK(hanhDong, { ma: ma });
+      const xong = await guiYeuCauLK(hanhDong, duLieu);
       if (xong) await taiLichKham(false); // lay trang thai that tu DB
     } finally {
       dangGui = false;

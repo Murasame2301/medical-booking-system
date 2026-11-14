@@ -105,7 +105,7 @@ function lay_danh_sach_lich_lam_viec(int $maBacSi, string $tuNgay, string $denNg
     $kieu .= str_repeat('s', count($tt));
     $thamSo = array_merge($thamSo, $tt);
   }
-  $sql .= " ORDER BY llv.thoigianbatdau ASC";
+  $sql .= " ORDER BY llv.thoigianbatdau DESC";
 
   return ket_qua(true, 'Lấy danh sách lịch làm việc thành công.', ['danh_sach' => truy_van($sql, $kieu, $thamSo)]);
 }
