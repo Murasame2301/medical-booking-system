@@ -73,6 +73,11 @@ main {
 .menu a:hover {
   color: var(--chinh);
 }
+.menu a.dang-chon {
+  color: var(--chinh);
+  border-bottom: 2px solid var(--chinh);
+  padding-bottom: 4px;
+}
 .tai-khoan {
   display: flex;
   align-items: center;
@@ -262,7 +267,7 @@ main {
   background: var(--nen-nhat);
   color: var(--chinh);
   font-weight: bold;
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .khung select {

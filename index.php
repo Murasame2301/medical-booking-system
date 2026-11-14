@@ -31,7 +31,7 @@ hien_dau_trang('Trang chủ');
     <div class="luoi">
         <?php
         foreach ($dsChuyenKhoa as $khoa) {
-            hien_the('+', $khoa['ChuyenKhoa']);
+            hien_the(bieu_tuong_chuyen_khoa($khoa['ChuyenKhoa']), $khoa['ChuyenKhoa']);
         }
         ?>
     </div>

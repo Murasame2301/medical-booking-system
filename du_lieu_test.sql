@@ -1,72 +1,307 @@
 -- =====================================================================
--- DU LIEU MAU DE TEST - do an Dat lich kham
--- Chay SAU KHI da import DATLICHKHAM_FINAL.sql (CSDL dat_lich_kham).
--- Chi chay MOT LAN. Chay lai se bao trung du lieu; muon chay lai tu dau
--- thi import lai DATLICHKHAM_FINAL.sql truoc (file do co DROP DATABASE).
+-- DU LIEU MAU LON - do an Dat lich kham (CSDL dat_lich_kham)
+-- Gom: 1 quan tri, 11 bac si, 12 benh nhan, 5 khoa, 13 chuyen khoa,
+--      lich lam viec 3 ngay toi (+ vai ngay da qua), 15 lich kham, 3 ho so.
+--
+-- CACH DUNG:
+--   1. Nhap DATLICHKHAM_FINAL (1).sql  (file nay tu DROP roi tao lai CSDL)
+--   2. Chay file nay MOT LAN, tren CSDL moi tinh.
+--   KHONG chay chung voi du_lieu_mau.sql cu (se trung ma so).
+--   Muon chay lai: nhap lai file CSDL o buoc 1 truoc.
+--
+-- MAT KHAU: tat ca tai khoan deu la 123456
+--   Quan tri : 0123456789
+--   Bac si   : 0900000001 ... 0900000011
+--   Benh nhan: 0911000001 ... 0911000012 (0911000012 dang bi khoa)
+-- Ngay gio lam viec tinh theo CURDATE(), nen luon la "ngay mai, ngay kia...".
 -- =====================================================================
 
 USE dat_lich_kham;
 SET NAMES utf8mb4;
 
--- 1. Khoa
+-- 1. Khoa (makhoa 1..5 theo thu tu)
 INSERT INTO KHOA (tenkhoa) VALUES
 ('Khoa Nội'),
+('Khoa Ngoại'),
 ('Khoa Nhi'),
+('Khoa Sản'),
 ('Khoa Khám chuyên khoa');
 
--- 2. Chuyen khoa (makhoa: 1 = Noi, 2 = Nhi, 3 = Kham chuyen khoa)
+-- 2. Chuyen khoa (machuyenkhoa 1..13 theo thu tu)
+--    1 Tim mach, 2 Tieu hoa, 3 Ho hap, 4 Than kinh, 5 Noi tiet, 6 Co xuong khop,
+--    7 Tiet nieu, 8 Nhi khoa, 9 San phu khoa, 10 Da lieu, 11 Tai Mui Hong, 12 Mat, 13 Rang Ham Mat
 INSERT INTO CHUYEN_KHOA (makhoa, tenchuyenkhoa) VALUES
-(1, 'Tim mạch'),       -- machuyenkhoa = 1
-(1, 'Tiêu hóa'),       -- machuyenkhoa = 2
-(2, 'Nhi khoa'),       -- machuyenkhoa = 3
-(3, 'Da liễu'),        -- machuyenkhoa = 4
-(3, 'Tai Mũi Họng');   -- machuyenkhoa = 5
+(1, 'Tim mạch'),
+(1, 'Tiêu hóa'),
+(1, 'Hô hấp'),
+(1, 'Thần kinh'),
+(1, 'Nội tiết'),
+(2, 'Cơ xương khớp'),
+(2, 'Tiết niệu'),
+(3, 'Nhi khoa'),
+(4, 'Sản phụ khoa'),
+(5, 'Da liễu'),
+(5, 'Tai Mũi Họng'),
+(5, 'Mắt'),
+(5, 'Răng Hàm Mặt');
 
--- 3. Bac si mau: mavaitro = 2 (bac_si)
--- Mat khau gia nen cac tai khoan nay CHUA dang nhap duoc (chi de hien ra tren web)
-INSERT INTO NGUOI_DUNG (manguoidung, mavaitro, hoten, sdt, matkhau) VALUES
-(1, 2, 'BS. Nguyễn Văn An',  '0900000001', 'chua_dat_mat_khau'),
-(2, 2, 'BS. Trần Thị Bình',  '0900000002', 'chua_dat_mat_khau'),
-(3, 2, 'BS. Lê Minh Châu',   '0900000003', 'chua_dat_mat_khau'),
-(4, 2, 'BS. Phạm Quốc Dũng', '0900000004', 'chua_dat_mat_khau');
+-- 3. Nguoi dung: id 1 = quan tri, 2..12 = bac si, 13..24 = benh nhan
+INSERT INTO NGUOI_DUNG (manguoidung, mavaitro, hoten, sdt, email, matkhau, ngaysinh, gioitinh, diachi, trangthai, cccd, dantoc, bhyt) VALUES
+(1, 3, 'admin', '0123456789', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', NULL, NULL, NULL, 'hoat_dong', NULL, NULL, NULL),
+(2, 2, 'BS. Nguyễn Văn An', '0900000001', 'an.nguyen@phongkham.vn', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1978-03-15', 'nam', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(3, 2, 'BS. Trần Thị Bình', '0900000002', 'binh.tran@phongkham.vn', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1982-08-21', 'nu', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(4, 2, 'BS. Lê Minh Châu', '0900000003', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1975-11-02', 'nam', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(5, 2, 'BS. Phạm Quốc Dũng', '0900000004', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1980-05-27', 'nam', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(6, 2, 'BS. Võ Thị Hạnh', '0900000005', 'hanh.vo@phongkham.vn', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1985-01-09', 'nu', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(7, 2, 'BS. Đặng Hoàng Nam', '0900000006', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1973-09-30', 'nam', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(8, 2, 'BS. Bùi Thanh Tâm', '0900000007', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1984-12-12', 'nu', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(9, 2, 'BS. Huỳnh Gia Bảo', '0900000008', 'bao.huynh@phongkham.vn', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1979-06-18', 'nam', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(10, 2, 'BS. Ngô Mỹ Linh', '0900000009', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1988-04-04', 'nu', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(11, 2, 'BS. Phan Đức Thịnh', '0900000010', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1976-02-23', 'nam', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(12, 2, 'BS. Dương Khánh Vy', '0900000011', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1986-10-08', 'nu', 'Cần Thơ', 'hoat_dong', NULL, NULL, NULL),
+(13, 1, 'Nguyễn Thị Lan', '0911000001', 'lan.nguyen@example.com', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '2000-05-12', 'nu', 'Quận Ninh Kiều, Cần Thơ', 'hoat_dong', '092200000013', 'Kinh', 'DN4790000013'),
+(14, 1, 'Trần Văn Hùng', '0911000002', 'hung.tran@example.com', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1998-09-03', 'nam', 'Quận Cái Răng, Cần Thơ', 'hoat_dong', '092200000014', 'Kinh', 'DN4790000014'),
+(15, 1, 'Lê Thu Hà', '0911000003', 'ha.le@example.com', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '2003-01-25', 'nu', 'Quận Bình Thủy, Cần Thơ', 'hoat_dong', '092200000015', 'Kinh', 'DN4790000015'),
+(16, 1, 'Phạm Minh Khoa', '0911000004', 'khoa.pham@example.com', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1995-11-30', 'nam', 'Huyện Phong Điền, Cần Thơ', 'hoat_dong', '092200000016', 'Kinh', 'DN4790000016'),
+(17, 1, 'Võ Ngọc Ánh', '0911000005', 'anh.vo@example.com', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1999-07-08', 'nu', 'Quận Ô Môn, Cần Thơ', 'hoat_dong', '092200000017', 'Kinh', 'DN4790000017'),
+(18, 1, 'Đỗ Thành Đạt', '0911000006', 'dat.do@example.com', '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1988-03-17', 'nam', 'Quận Thốt Nốt, Cần Thơ', 'hoat_dong', '092200000018', 'Khmer', 'DN4790000018'),
+(19, 1, 'Hoàng Kim Ngân', '0911000007', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '2001-12-02', 'nu', 'Quận Ninh Kiều, Cần Thơ', 'hoat_dong', NULL, 'Kinh', NULL),
+(20, 1, 'Lý Quốc Việt', '0911000008', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1992-06-21', 'nam', 'Quận Cái Răng, Cần Thơ', 'hoat_dong', NULL, 'Hoa', NULL),
+(21, 1, 'Trương Bích Phượng', '0911000009', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1985-09-14', 'nu', 'Quận Bình Thủy, Cần Thơ', 'hoat_dong', NULL, 'Kinh', NULL),
+(22, 1, 'Mai Anh Tuấn', '0911000010', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '2005-04-09', 'nam', 'Quận Ninh Kiều, Cần Thơ', 'hoat_dong', NULL, 'Kinh', NULL),
+(23, 1, 'Cao Thị Mỹ Duyên', '0911000011', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1978-01-26', 'nu', 'Quận Ô Môn, Cần Thơ', 'hoat_dong', NULL, 'Kinh', NULL),
+(24, 1, 'Dương Văn Lộc', '0911000012', NULL, '$2y$10$UrzPeglXJAqttJD2GOnxNuQdrWBNAFsdWHRR4HqFfh4GxL/MAuYZC', '1969-10-05', 'nam', 'Huyện Vĩnh Thạnh, Cần Thơ', 'bi_khoa', NULL, 'Kinh', NULL);
 
-INSERT INTO BAC_SI (manguoidung, trinhdo) VALUES
-(1, 'Thạc sĩ'),
-(2, 'Bác sĩ CKI'),
-(3, 'Tiến sĩ'),
-(4, 'Bác sĩ CKII');
+-- 4. Bac si
+INSERT INTO BAC_SI (manguoidung, trinhdo, gioithieu) VALUES
+(2, 'Thạc sĩ', 'Hơn 15 năm kinh nghiệm tim mạch và tiêu hóa.'),
+(3, 'Bác sĩ CKI', 'Chuyên khám và theo dõi sức khỏe trẻ em.'),
+(4, 'Tiến sĩ', 'Chuyên điều trị tăng huyết áp, suy tim.'),
+(5, 'Bác sĩ CKII', 'Khám da liễu và tai mũi họng.'),
+(6, 'Thạc sĩ', 'Theo dõi thai kỳ và khám phụ khoa.'),
+(7, 'Tiến sĩ', 'Điều trị đau đầu, rối loạn giấc ngủ, đột quỵ.'),
+(8, 'Bác sĩ CKI', 'Khám mắt, cận thị, các bệnh về võng mạc.'),
+(9, 'Thạc sĩ', 'Điều trị thoái hóa khớp, chấn thương thể thao.'),
+(10, 'Bác sĩ CKI', 'Nha khoa tổng quát, chỉnh nha.'),
+(11, 'Bác sĩ CKII', 'Điều trị hen, viêm phổi, bệnh phổi tắc nghẽn.'),
+(12, 'Thạc sĩ', 'Đái tháo đường, tuyến giáp, bệnh lý tiết niệu.');
 
--- 4. Bac si - chuyen khoa (BS An co 2 chuyen khoa, BS Dung co 2 chuyen khoa)
+-- 5. Bac si - chuyen khoa
 INSERT INTO BAC_SI_CHUYEN_KHOA (manguoidung, machuyenkhoa) VALUES
-(1, 1), (1, 2),
-(2, 3),
-(3, 1),
-(4, 4), (4, 5);
+(2, 1),
+(2, 2),
+(3, 8),
+(4, 1),
+(5, 10),
+(5, 11),
+(6, 9),
+(7, 4),
+(8, 12),
+(9, 6),
+(10, 13),
+(11, 3),
+(12, 5),
+(12, 7);
 
--- 5. Khung gio lam viec: moi bac si 3 khung (2 khung ngay mai, 1 khung ngay kia)
--- LUU Y: khong viet "INSERT INTO LICH_LAM_VIEC ... SELECT ... FROM BAC_SI",
--- vi trigger cua LICH_LAM_VIEC co khoa bang BAC_SI (loi #1442).
--- Cac so 1-4 trong bang d la manguoidung cua 4 bac si o tren.
-INSERT INTO LICH_LAM_VIEC (manguoidung, thoigianbatdau, thoigianketthuc)
-SELECT d.id,
-       CONCAT(CURDATE() + INTERVAL g.ngay DAY, ' ', g.batdau),
-       CONCAT(CURDATE() + INTERVAL g.ngay DAY, ' ', g.ketthuc)
-FROM (
-    SELECT 1 AS id
-    UNION ALL SELECT 2
-    UNION ALL SELECT 3
-    UNION ALL SELECT 4
-) d
-CROSS JOIN (
-    SELECT 1 AS ngay, '08:00:00' AS batdau, '08:30:00' AS ketthuc
-    UNION ALL SELECT 1, '08:30:00', '09:00:00'
-    UNION ALL SELECT 2, '14:00:00', '14:30:00'
-) g;
+-- 6. Lich lam viec (id tu 1). Da qua: 3 khung; sap toi: moi bac si 15 khung (3 ngay x 5 khung)
+INSERT INTO LICH_LAM_VIEC (malichlamviec, manguoidung, thoigianbatdau, thoigianketthuc, trangthai) VALUES
+(1, 2, TIMESTAMP(CURDATE() - INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() - INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(2, 5, TIMESTAMP(CURDATE() - INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() - INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(3, 6, TIMESTAMP(CURDATE() - INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() - INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(4, 2, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(5, 2, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(6, 2, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(7, 2, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(8, 2, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(9, 2, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(10, 2, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(11, 2, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(12, 2, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(13, 2, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(14, 2, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(15, 2, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(16, 2, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(17, 2, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(18, 2, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'con_trong'),
+(19, 3, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(20, 3, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(21, 3, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(22, 3, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(23, 3, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(24, 3, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(25, 3, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(26, 3, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(27, 3, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(28, 3, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(29, 3, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(30, 3, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(31, 3, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(32, 3, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(33, 3, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'ngung_nhan'),
+(34, 4, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(35, 4, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(36, 4, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(37, 4, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(38, 4, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(39, 4, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(40, 4, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(41, 4, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(42, 4, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(43, 4, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(44, 4, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(45, 4, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(46, 4, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(47, 4, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(48, 4, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'con_trong'),
+(49, 5, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(50, 5, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(51, 5, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(52, 5, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(53, 5, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(54, 5, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(55, 5, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(56, 5, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(57, 5, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(58, 5, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(59, 5, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(60, 5, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(61, 5, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(62, 5, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(63, 5, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'con_trong'),
+(64, 6, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(65, 6, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(66, 6, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(67, 6, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(68, 6, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(69, 6, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(70, 6, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(71, 6, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(72, 6, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(73, 6, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(74, 6, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(75, 6, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(76, 6, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(77, 6, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(78, 6, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'ngung_nhan'),
+(79, 7, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(80, 7, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(81, 7, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(82, 7, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(83, 7, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(84, 7, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(85, 7, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(86, 7, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(87, 7, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(88, 7, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(89, 7, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(90, 7, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(91, 7, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(92, 7, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(93, 7, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'con_trong'),
+(94, 8, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(95, 8, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(96, 8, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(97, 8, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(98, 8, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(99, 8, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(100, 8, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(101, 8, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(102, 8, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(103, 8, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(104, 8, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(105, 8, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(106, 8, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(107, 8, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(108, 8, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'con_trong'),
+(109, 9, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(110, 9, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(111, 9, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(112, 9, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(113, 9, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(114, 9, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(115, 9, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(116, 9, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(117, 9, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(118, 9, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(119, 9, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(120, 9, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(121, 9, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(122, 9, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(123, 9, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'ngung_nhan'),
+(124, 10, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(125, 10, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(126, 10, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(127, 10, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(128, 10, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(129, 10, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(130, 10, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(131, 10, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(132, 10, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(133, 10, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(134, 10, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(135, 10, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(136, 10, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(137, 10, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(138, 10, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'con_trong'),
+(139, 11, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(140, 11, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(141, 11, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(142, 11, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(143, 11, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(144, 11, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(145, 11, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(146, 11, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(147, 11, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(148, 11, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(149, 11, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(150, 11, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(151, 11, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(152, 11, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(153, 11, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'con_trong'),
+(154, 12, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), 'con_trong'),
+(155, 12, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), 'con_trong'),
+(156, 12, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '09:30:00'), 'con_trong'),
+(157, 12, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), 'con_trong'),
+(158, 12, TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 1 DAY, '15:00:00'), 'con_trong'),
+(159, 12, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), 'con_trong'),
+(160, 12, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), 'con_trong'),
+(161, 12, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '09:30:00'), 'con_trong'),
+(162, 12, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), 'con_trong'),
+(163, 12, TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 2 DAY, '15:00:00'), 'con_trong'),
+(164, 12, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), 'con_trong'),
+(165, 12, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '08:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), 'con_trong'),
+(166, 12, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '09:30:00'), 'con_trong'),
+(167, 12, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:00:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), 'con_trong'),
+(168, 12, TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '14:30:00'), TIMESTAMP(CURDATE() + INTERVAL 3 DAY, '15:00:00'), 'ngung_nhan');
+
+-- 7. Lich kham: 3 da kham, 4 da xac nhan, 6 cho xac nhan, 2 da huy.
+--    Lich 13 va 15 cung mot khung gio: lich 13 da huy nen khung do duoc dat lai (lich 15).
+INSERT INTO LICH_KHAM (malichkham, manguoidung, malichlamviec, lydo, trangthai, lydohuy, nguoihuy) VALUES
+(1, 14, 1, 'Đau bụng, đầy hơi sau ăn', 'da_kham', NULL, NULL),
+(2, 16, 2, 'Viêm họng kéo dài hơn 2 tuần', 'da_kham', NULL, NULL),
+(3, 15, 3, 'Khám sức khỏe sinh sản định kỳ', 'da_kham', NULL, NULL),
+(4, 19, 95, 'Mờ mắt, nhức mắt khi dùng máy tính', 'da_xac_nhan', NULL, NULL),
+(5, 20, 114, 'Đau khớp gối khi lên xuống cầu thang', 'da_xac_nhan', NULL, NULL),
+(6, 21, 137, 'Đau răng, sưng nướu', 'da_xac_nhan', NULL, NULL),
+(7, 13, 44, 'Tái khám tim mạch', 'da_xac_nhan', NULL, NULL),
+(8, 13, 4, 'Đau tức ngực, khó thở khi leo cầu thang', 'cho_xac_nhan', NULL, NULL),
+(9, 15, 26, 'Bé bị sốt và ho 3 ngày', 'cho_xac_nhan', NULL, NULL),
+(10, 16, 52, 'Nổi mẩn đỏ, ngứa ở hai tay', 'cho_xac_nhan', NULL, NULL),
+(11, 17, 70, 'Khám thai định kỳ', 'cho_xac_nhan', NULL, NULL),
+(12, 18, 81, 'Đau đầu kéo dài, khó ngủ', 'cho_xac_nhan', NULL, NULL),
+(13, 17, 12, 'Hồi hộp, tim đập nhanh', 'da_huy', 'Bệnh nhân tự hủy', 17),
+(14, 18, 140, 'Ho kéo dài về đêm', 'da_huy', 'Bác sĩ có việc đột xuất, xin dời lịch', 11),
+(15, 21, 12, 'Tim đập nhanh, chóng mặt', 'cho_xac_nhan', NULL, NULL);
+
+-- 8. Ho so benh nhan cho 3 lich da kham
+INSERT INTO HO_SO_BENH_NHAN (malichkham, chuandoan, loidan) VALUES
+(1, 'Rối loạn tiêu hóa chức năng', 'Ăn chậm, tránh đồ cay nóng và cà phê. Uống thuốc theo toa, tái khám sau 2 tuần nếu còn đau.'),
+(2, 'Viêm họng mạn', 'Súc họng nước muối ấm, hạn chế đồ lạnh. Tái khám nếu sốt hoặc khó nuốt.'),
+(3, 'Sức khỏe sinh sản bình thường', 'Khám phụ khoa định kỳ 6 tháng một lần.');
 
 -- =====================================================================
--- CAU LENH KIEM TRA (chay rieng tung dong khi can)
+-- CAU LENH KIEM TRA (chay rieng tung dong)
 -- =====================================================================
--- SELECT COUNT(*) FROM LICH_LAM_VIEC;   -- ket qua dung: 12
--- SELECT * FROM NGUOI_DUNG;             -- 4 bac si (benh nhan dang ky tu trang web)
--- SELECT * FROM BAC_SI_CHUYEN_KHOA;     -- 6 dong
--- SELECT * FROM LICH_KHAM;              -- rong cho den khi dat lich tren web
+-- SELECT mavaitro, COUNT(*) FROM NGUOI_DUNG GROUP BY mavaitro;   -- 1:12, 2:11, 3:1
+-- SELECT COUNT(*) FROM LICH_LAM_VIEC;                           -- 168
+-- SELECT trangthai, COUNT(*) FROM LICH_KHAM GROUP BY trangthai; -- da_kham 3, da_xac_nhan 4, cho_xac_nhan 6, da_huy 2

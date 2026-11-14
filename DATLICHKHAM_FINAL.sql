@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS dat_lich_kham;
 CREATE DATABASE IF NOT EXISTS dat_lich_kham
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
@@ -98,7 +99,7 @@ CREATE TABLE LICH_LAM_VIEC (
     manguoidung INT UNSIGNED NOT NULL,
     thoigianbatdau DATETIME NOT NULL,
     thoigianketthuc DATETIME NOT NULL,
-    trangthai ENUM('mo', 'ngung_nhan') NOT NULL DEFAULT 'mo',
+    trangthai ENUM('con_trong', 'ngung_nhan') NOT NULL DEFAULT 'con_trong',
 
     CONSTRAINT chk_lich_lam_viec_thoi_gian
         CHECK (thoigianketthuc > thoigianbatdau),

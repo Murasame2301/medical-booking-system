@@ -44,7 +44,13 @@ function hien_dau_trang($tieude) {
 function hien_khu_tai_khoan() {
     ?>
     <?php if (isset($_SESSION['id'])): ?>
-        <span>Xin chào, <a href="thong_tin_ca_nhan.php"><strong><?php echo h($_SESSION['hoten']); ?></strong></a></span>
+        <span>Xin chào,
+            <?php if (($_SESSION['vaitro'] ?? '') == 'quan_tri'): ?>
+                <strong><?php echo h($_SESSION['hoten']); ?></strong>
+            <?php else: ?>
+                <a href="thong_tin_ca_nhan.php"><strong><?php echo h($_SESSION['hoten']); ?></strong></a>
+            <?php endif; ?>
+        </span>
         <a href="xuly/xuly_dang_xuat.php" class="nut-nho nut-vien">Đăng xuất</a>
     <?php else: ?>
         <a href="dang_nhap.php" class="nut-nho nut-vien">Đăng nhập</a>
@@ -159,26 +165,37 @@ function o_an($ten, $giatri) {
     <?php
 }
 
-// In các mục menu, đổi theo vai trò của người đang đăng nhập
+// In một mục menu. Nếu đang ở đúng trang đó thì thêm class "dang-chon".
+function lien_ket_menu($duong_dan, $chu, $trang_phu = []) {
+    $trang_hien_tai = basename($_SERVER['SCRIPT_NAME']);          
+    $trang_cua_muc = basename(strtok($duong_dan, '?#'));          
+    $la_mo_neo = strpos($duong_dan, '#') !== false;             
+
+    $dang_chon = !$la_mo_neo
+        && ($trang_hien_tai == $trang_cua_muc || in_array($trang_hien_tai, $trang_phu));
+    ?>
+    <a href="<?php echo h($duong_dan); ?>"<?php if ($dang_chon) { echo ' class="dang-chon"'; } ?>><?php echo h($chu); ?></a>
+    <?php
+}
+
 function hien_menu() {
     $vaitro = $_SESSION['vaitro'] ?? '';   // '' nghĩa là khách chưa đăng nhập
-    ?>
-    <?php if ($vaitro == 'quan_tri'): ?>
-        <a href="qt_trang_chu.php">Tổng quan</a>
-        <a href="qt_nguoi_dung.php">Người dùng</a>
-        <a href="qt_bac_si.php">Quản lý bác sĩ</a>
-    <?php else: ?>
-        <a href="index.php">Trang chủ</a>
-        <a href="index.php#chuyen-khoa">Chuyên khoa</a>
-        <a href="bac_si.php">Bác sĩ</a>
-        <?php if ($vaitro == '' || $vaitro == 'benh_nhan'): ?>
-            <a href="dat_lich.php">Đặt lịch</a>
-        <?php endif; ?>
-        <?php if ($vaitro == 'benh_nhan'): ?>
-            <a href="lich_cua_toi.php">Lịch khám của tôi</a>
-        <?php endif; ?>
-    <?php endif; ?>
-    <?php
+
+    if ($vaitro == 'quan_tri') {
+        lien_ket_menu('qt_trang_chu.php', 'Tổng quan');
+        lien_ket_menu('qt_nguoi_dung.php', 'Người dùng');
+        lien_ket_menu('qt_bac_si.php', 'Quản lý bác sĩ', ['qt_bac_si_form.php']);
+    } else {
+        lien_ket_menu('index.php', 'Trang chủ');
+        lien_ket_menu('index.php#chuyen-khoa', 'Chuyên khoa');
+        lien_ket_menu('bac_si.php', 'Bác sĩ');
+        if ($vaitro == '' || $vaitro == 'benh_nhan') {
+            lien_ket_menu('dat_lich.php', 'Đặt lịch');
+        }
+        if ($vaitro == 'benh_nhan') {
+            lien_ket_menu('lich_cua_toi.php', 'Lịch khám của tôi');
+        }
+    }
 }
 
 // In một ô nhập nhiều dòng
@@ -201,6 +218,86 @@ function o_tich_chon($nhan, $ten, $luachon, $da_chon = []) {
                 <?php echo h($chu); ?>
             </label>
         <?php endforeach; ?>
+    </div>
+    <?php
+}
+
+// Chọn emoji theo tên chuyên khoa. Không khớp từ khóa nào thì dùng 🩺
+function bieu_tuong_chuyen_khoa($ten) {
+    $ten = mb_strtolower($ten, 'UTF-8');
+
+    $bang = [
+        'tim mạch'     => '❤️',
+        'tiêu hóa'     => '🍽️',
+        'nhi khoa'     => '🧒',
+        'da liễu'      => '🧴',
+        'tai mũi họng' => '👂',
+        'thần kinh'    => '🧠',
+        'xương'        => '🦴',
+        'răng'         => '🦷',
+        'mắt'          => '👁️',
+        'sản'          => '🤰',
+    ];
+
+    foreach ($bang as $tukhoa => $icon) {
+        if (mb_strpos($ten, $tukhoa) !== false) {
+            return $icon;
+        }
+    }
+    return '🩺';
+}
+
+// In bảng danh sách người dùng (hoặc dòng "không tìm thấy" nếu rỗng)
+function hien_bang_nguoi_dung($ds, $tukhoa, $vaitro) {
+    if (count($ds) == 0) {
+        echo '<p class="trong">Không tìm thấy người dùng nào.</p>';
+        return;
+    }
+    ?>
+    <div class="bang-cuon">
+        <table class="bang">
+            <tr>
+                <th>Họ tên</th>
+                <th>Số điện thoại</th>
+                <th>Vai trò</th>
+                <th>Ngày tạo</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+            <?php foreach ($ds as $u): ?>
+                <tr>
+                    <td><?php echo h($u['HoTen']); ?></td>
+                    <td><?php echo h($u['SDT']); ?></td>
+                    <td><?php echo h($u['TenVaiTro']); ?></td>
+                    <td><?php echo h(date('d/m/Y', strtotime($u['NgayTao']))); ?></td>
+                    <td class="o-trang-thai">
+                        <?php if ($u['TrangThai'] == 'hoat_dong'): ?>
+                            <span class="trangthai tt-xacnhan">Hoạt động</span>
+                        <?php else: ?>
+                            <span class="trangthai tt-huy">Bị khóa</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($u['VaiTro'] == 'quan_tri'): ?>
+                            <span class="trong">—</span>
+                        <?php else: ?>
+                            <form method="post" action="xuly/xuly_khoa_mo_tai_khoan.php" class="form-khoa-mo">
+                                <?php
+                                o_an('id', $u['ID']);
+                                o_an('tukhoa', $tukhoa);
+                                o_an('vaitro', $vaitro);
+                                ?>
+                                <?php if ($u['TrangThai'] == 'hoat_dong'): ?>
+                                    <button type="submit" name="hanhdong" value="khoa" class="nut-huy">Khóa</button>
+                                <?php else: ?>
+                                    <button type="submit" name="hanhdong" value="mo" class="nut-mo">Mở khóa</button>
+                                <?php endif; ?>
+                            </form>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
     </div>
     <?php
 }

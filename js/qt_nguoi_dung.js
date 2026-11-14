@@ -42,10 +42,41 @@ function gui_khoa_mo(form, nut_bam) {
     });
 }
 
-document.querySelectorAll(".form-khoa-mo").forEach(function (form) {
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    if (!confirm("Ban chac chan muon thuc hien thao tac nay?")) return;
-    gui_khoa_mo(form, e.submitter);
+// Gắn sự kiện cho tất cả form khóa/mở khóa đang có trong trang
+function gan_su_kien_khoa_mo() {
+  document.querySelectorAll(".form-khoa-mo").forEach(function (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!confirm("Bạn chắc chắn muốn thực hiện thao tác này?")) return;
+      gui_khoa_mo(form, e.submitter);
+    });
   });
+}
+
+// Tìm kiếm bằng AJAX: lấy dữ liệu ô lọc, nhận về bảng mới và thay vào trang
+function tim_nguoi_dung(form_loc) {
+  const tham_so = new URLSearchParams(new FormData(form_loc)).toString();
+
+  fetch("xuly/ajax_tim_nguoi_dung.php?" + tham_so)
+    .then(function (phan_hoi) {
+      if (!phan_hoi.ok) {
+        throw new Error("Lỗi " + phan_hoi.status);
+      }
+      return phan_hoi.text();
+    })
+    .then(function (html) {
+      document.getElementById("khu_bang").innerHTML = html;
+      gan_su_kien_khoa_mo(); // bảng mới có form mới, gắn lại sự kiện
+    })
+    .catch(function (loi) {
+      console.error(loi);
+      hien_thong_bao_ajax("Không tìm kiếm được: " + loi.message, false);
+    });
+}
+
+gan_su_kien_khoa_mo();
+
+document.querySelector(".bo-loc").addEventListener("submit", function (e) {
+  e.preventDefault();
+  tim_nguoi_dung(e.target);
 });
