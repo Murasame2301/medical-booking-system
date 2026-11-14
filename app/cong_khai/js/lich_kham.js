@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const SO_COT = 9;
   const URL_AJAX = "index.php?trang=lichkham&ajax=";
 
-  // ************ CHON PHAN TU ($ lay tu tien_ich.js)
   const formLoc = $("form-loc-kham");
   const locTuKhoa = $("loc-tu-khoa");
   const locTu = $("loc-tu");
@@ -37,9 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .toLowerCase()
       .trim();
   }
-
-  // gia tri ENUM trong DB ('nam', 'nu') -> chu hien thi
-  const NHAN_GIOI_TINH = { nam: "Nam", nu: "Nữ" };
 
   // 1 dong tu server -> doi tuong phia client
   function chuyenLichKham(k) {
@@ -110,7 +106,10 @@ document.addEventListener("DOMContentLoaded", function () {
       taoO("td", k.ngaySinh),
       taoO("td", k.gioiTinh),
       taoO("td", dinhDangSdt(k.sdt)),
-      taoO("td", hienNgay(k.ngay) + " " + gioDauCuoi(k.gioBatDau, k.gioKetThuc)),
+      taoO(
+        "td",
+        hienNgay(k.ngay) + " " + gioDauCuoi(k.gioBatDau, k.gioKetThuc),
+      ),
       taoO("td", k.lyDo),
       taoThaoTac(k),
     );
@@ -239,9 +238,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const nutHuy = e.target.closest("[data-huy]");
 
     if (nutXacNhan) {
-      doiTrangThai(Number(nutXacNhan.dataset.xacnhan), "xac-nhan", function (l) {
-        return "Xác nhận lịch khám của " + l.ten + "?";
-      });
+      doiTrangThai(
+        Number(nutXacNhan.dataset.xacnhan),
+        "xac-nhan",
+        function (l) {
+          return "Xác nhận lịch khám của " + l.ten + "?";
+        },
+      );
     } else if (nutHuy) {
       doiTrangThai(Number(nutHuy.dataset.huy), "huy", function (l) {
         return "Bạn muốn HỦY lịch khám của " + l.ten + "?";

@@ -698,3 +698,50 @@ select.chon-tt option {
   gap: 8px;
   margin-top: 8px;
 }
+
+/* VE BANG CHO KHAM BENH  */
+
+.bang-cuon {
+  max-height: 260px;  
+  overflow-y: auto;
+}
+
+/* giữ tiêu đề cố định khi cuộn */
+.bang-cuon thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8fafc;   
+}
+
+
+/* ===== Thông báo (toast) của trang cá nhân ===== */
+#toast-ca-nhan {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9999;
+  max-width: 340px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+#toast-ca-nhan.hien { opacity: 1; transform: none; }
+#toast-ca-nhan.ok   { background: #12805c; }
+#toast-ca-nhan.loi  { background: #c0392b; }
+
+/* ===== Khung ảnh đại diện (phần tử có data-chu) ===== */
+[data-chu].dang-tai {
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+[data-chu].co-anh {
+  color: transparent; /* ẩn chữ viết tắt khi đã có ảnh */
+}

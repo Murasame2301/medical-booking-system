@@ -1,8 +1,4 @@
 <?php
-require_once __DIR__ . '/../chung/hang_so.php';
-require_once __DIR__ . '/../chung/co_so_du_lieu.php';
-require_once __DIR__ . '/../chung/tien_ich.php';
-
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
@@ -219,22 +215,6 @@ function xoa_lich_lam_viec(int $maBacSi, int $maLichLamViec): array
 if (($_GET['trang'] ?? '') === 'lichlamviec' && isset($_GET['ajax'])) {
   $maBacSi = (int)($_SESSION[SS_MA_NGUOI_DUNG] ?? 0);
   $hanhDong = (string)$_GET['ajax'];
-
-  if ($maBacSi <= 0 || (int)($_SESSION[SS_VAI_TRO] ?? 0) !== VT_BAC_SI) {
-    http_response_code(401);
-    tra_json(ket_qua(false, 'Bạn cần đăng nhập bằng tài khoản bác sĩ.'));
-  }
-
-  if (!in_array($hanhDong, ['lich-lam-viec', 'tao', 'sua', 'xoa'], true)) {
-    http_response_code(400);
-    tra_json(ket_qua(false, 'Yêu cầu không hợp lệ.'));
-  }
-
-  // tao / sua / xoa bat buoc POST
-  if ($hanhDong !== 'lich-lam-viec' && ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-    http_response_code(405);
-    tra_json(ket_qua(false, 'Phương thức không được hỗ trợ.'));
-  }
 
   try {
     // cac ham ben duoi tu kiem tra du lieu

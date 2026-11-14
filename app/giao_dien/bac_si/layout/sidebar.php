@@ -1,4 +1,6 @@
 <?php
+$maNd  = (int)($_SESSION[SS_MA_NGUOI_DUNG] ?? 0);
+$hoTen = (string)($_SESSION['ho_ten'] ?? 'Bác sĩ');
 $trang_hien_tai = $_GET['trang'] ?? 'tongquan';
 if (!function_exists('lop_muc')) {
   function lop_muc(string|array $cacTrang): string
@@ -19,8 +21,8 @@ if (!function_exists('tao_link')) {
 <aside class="side">
   <div>
     <div class="user">
-      <span class="av-lon-home av-lon"></span>
-      <span class="ten"><?= h($_SESSION['ho_ten'] ?? 'Bác sĩ') ?></span>
+      <?= html_avatar($maNd, $hoTen, 'av-lon-home av-lon') ?>
+      <span class="ten" data-ten><?= h($hoTen) ?></span>
     </div>
     <nav>
       <a class="<?= lop_muc('tongquan') ?>" href="<?= tao_link('tongquan') ?>"><i>📊</i>Tổng quan</a>
