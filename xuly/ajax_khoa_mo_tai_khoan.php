@@ -9,7 +9,7 @@ if(!$la_quan_tri){
     http_response_code(403);
     echo json_encode([
         'ok' => false,
-        'thong_bao' => 'Ban khong co quyen thuc hien thao tac nay',
+        'thong_bao' => 'Bạn không có quyền thực hiện thao tác này',
     ]);
     exit;
 }
@@ -18,7 +18,7 @@ if($_SERVER['REQUEST_METHOD'] != 'POST'){
     http_response_code(405);
     echo json_encode([
         'ok' => false,
-        'thong_bao' => 'Chi chap nhan yeu cau POST',
+        'thong_bao' => 'Chỉ chấp nhận yêu cầu POST',
     ]);
     exit;
 }
