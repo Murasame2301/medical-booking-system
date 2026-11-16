@@ -77,3 +77,32 @@ function tai_khoan_bi_khoa($conn, $id) {
     $dong = $stmt->get_result()->fetch_assoc();
     return !$dong || $dong['trangthai'] == 'bi_khoa';
 }
+
+// Kiểm tra một trường (sdt hoặc email) của người dùng.
+// $bo_qua_id: mã người đang sửa, để không tính chính họ là "trùng".
+// Trả về mảng: hop_le (true/false) và thong_bao (câu để hiện).
+function kiem_tra_truong_nguoi_dung($conn, $cot, $giatri, $bo_qua_id = 0) {
+    $giatri = trim($giatri);
+
+    if ($cot == 'sdt') {
+        if (!sdt_hop_le($giatri)) {
+            return ['hop_le' => false, 'thong_bao' => 'Số điện thoại phải gồm 10 chữ số, bắt đầu bằng số 0.'];
+        }
+        $ten = 'Số điện thoại';
+    } elseif ($cot == 'email') {
+        if ($giatri == '') {   // email không bắt buộc
+            return ['hop_le' => true, 'thong_bao' => ''];
+        }
+        if (!filter_var($giatri, FILTER_VALIDATE_EMAIL)) {
+            return ['hop_le' => false, 'thong_bao' => 'Email không hợp lệ.'];
+        }
+        $ten = 'Email';
+    } else {
+        return ['hop_le' => false, 'thong_bao' => 'Trường không hợp lệ.'];
+    }
+
+    if (da_co_nguoi_dung($conn, $cot, $giatri, $bo_qua_id)) {
+        return ['hop_le' => false, 'thong_bao' => $ten . ' này đã được người khác sử dụng.'];
+    }
+    return ['hop_le' => true, 'thong_bao' => $ten . ' có thể dùng.'];
+}

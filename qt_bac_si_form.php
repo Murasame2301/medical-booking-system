@@ -37,7 +37,9 @@ hien_dau_trang($id > 0 ? 'Sửa bác sĩ' : 'Thêm bác sĩ');
         o_an('id', $id);
         nhap('Họ tên *', 'hoten', 'text', $bs['hoten']);
         nhap('Số điện thoại * (dùng để đăng nhập)', 'sdt', 'tel', $bs['sdt']);
+        echo '<span id="thong_bao_sdt"></span>';
         nhap('Email', 'email', 'email', $bs['email'] ?? '', false);
+        echo '<span id="thong_bao_email"></span>';
         // Thêm mới: mật khẩu bắt buộc. Sửa: để trống nghĩa là giữ nguyên mật khẩu cũ.
         nhap($id > 0 ? 'Mật khẩu mới (để trống nếu không đổi)' : 'Mật khẩu ban đầu *',
                'matkhau', 'password', '', $id == 0);
@@ -50,5 +52,6 @@ hien_dau_trang($id > 0 ? 'Sửa bác sĩ' : 'Thêm bác sĩ');
 
     <a class="lien-ket" href="qt_bac_si.php">Quay lại danh sách</a>
 </div>
+<script src="js/qt_bac_si_form.js"></script>
 <?php
 hien_cuoi_trang();
