@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/khoitao.php';
+require_once __DIR__ . '/app/Core/khoitao.php';
 
 // Đã đăng nhập rồi thì không cần đăng ký
 if (isset($_SESSION['id'])) {
@@ -17,7 +17,7 @@ hien_dau_trang('Đăng ký');
 
     <?php hien_thong_bao_phien(); ?>
 
-    <form method="post" action="xuly/xuly_dang_ky.php">
+    <form method="post" action="app/Controllers/xuly_dang_ky.php">
         <?php
         nhap('Họ tên *', 'hoten', 'text', $cu['hoten'] ?? '');
         nhap('Ngày sinh *', 'ngaysinh', 'date', $cu['ngaysinh'] ?? '');
@@ -32,6 +32,6 @@ hien_dau_trang('Đăng ký');
 
     <a class="lien-ket" href="dang_nhap.php">Đã có tài khoản? Đăng nhập ngay</a>
 </div>
-<script src="js/dang_ky.js"></script>
+<script src="assets/js/dang_ky.js"></script>
 <?php
 hien_cuoi_trang();

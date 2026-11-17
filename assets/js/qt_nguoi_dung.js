@@ -3,13 +3,13 @@ function cap_nhat_dong(dong, trangthai) {
   const nut = dong.querySelector('button[name="hanhdong"]');
 
   if (trangthai === "bi_khoa") {
-    o_trang_thai.innerHTML = '<span class="trangthai tt-huy">Bi khoa</span>';
+    o_trang_thai.innerHTML = '<span class="trangthai tt-huy">Bị khóa</span>';
     nut.value = "mo";
-    nut.textContent = "Mo khoa";
+    nut.textContent = "Mở khóa";
     nut.className = "nut-mo";
   } else {
     o_trang_thai.innerHTML =
-      '<span class="trangthai tt-xacnhan">Hoat dong</span>';
+      '<span class="trangthai tt-xacnhan">Hoạt động</span>';
     nut.value = "khoa";
     nut.textContent = "Khóa";
     nut.className = "nut-huy";
@@ -25,7 +25,7 @@ function hien_thong_bao_ajax(noidung, thanh_cong) {
 function gui_khoa_mo(form, nut_bam) {
   const du_lieu = new FormData(form, nut_bam);
 
-  fetch("xuly/ajax_khoa_mo_tai_khoan.php", {
+  fetch("app/Controllers/ajax_khoa_mo_tai_khoan.php", {
     method: "POST",
     body: du_lieu,
   })
@@ -38,7 +38,7 @@ function gui_khoa_mo(form, nut_bam) {
     })
     .catch(function (loi) {
       console.error(loi);
-      hien_thong_bao_ajax("Co loi: " + loi.message, false);
+      hien_thong_bao_ajax("Có lỗi: " + loi.message, false);
     });
 }
 
@@ -57,7 +57,7 @@ function gan_su_kien_khoa_mo() {
 function tim_nguoi_dung(form_loc) {
   const tham_so = new URLSearchParams(new FormData(form_loc)).toString();
 
-  fetch("xuly/ajax_tim_nguoi_dung.php?" + tham_so)
+  fetch("app/Controllers/ajax_tim_nguoi_dung.php?" + tham_so)
     .then(function (phan_hoi) {
       if (!phan_hoi.ok) {
         throw new Error("Lỗi " + phan_hoi.status);

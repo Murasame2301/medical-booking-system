@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/khoitao.php';
+require_once __DIR__ . '/app/Core/khoitao.php';
 
 bat_buoc_quan_tri();
 
@@ -34,6 +34,6 @@ hien_dau_trang('Quản lý người dùng');
         <?php hien_bang_nguoi_dung($ds, $tukhoa, $vaitro) ?>
     </div>
 </section>
-<script src="js/qt_nguoi_dung.js"></script>
+<script src="assets/js/qt_nguoi_dung.js"></script>
 <?php
 hien_cuoi_trang();

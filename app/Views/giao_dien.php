@@ -14,7 +14,7 @@ function hien_dau_trang($tieude) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo h($tieude); ?> - Đặt Lịch Khám</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
@@ -48,10 +48,10 @@ function hien_khu_tai_khoan() {
             <?php if (($_SESSION['vaitro'] ?? '') == 'quan_tri'): ?>
                 <strong><?php echo h($_SESSION['hoten']); ?></strong>
             <?php else: ?>
-                <a href="thong_tin_ca_nhan.php"><strong><?php echo h($_SESSION['hoten']); ?></strong></a>
+                <a href="#"><strong><?php echo h($_SESSION['hoten']); ?></strong></a>
             <?php endif; ?>
         </span>
-        <a href="xuly/xuly_dang_xuat.php" class="nut-nho nut-vien">Đăng xuất</a>
+        <a href="app/Controllers/xuly_dang_xuat.php" class="nut-nho nut-vien">Đăng xuất</a>
     <?php else: ?>
         <a href="dang_nhap.php" class="nut-nho nut-vien">Đăng nhập</a>
         <a href="dang_ky.php" class="nut-nho">Đăng ký</a>
@@ -188,12 +188,12 @@ function hien_menu() {
     } else {
         lien_ket_menu('index.php', 'Trang chủ');
         lien_ket_menu('index.php#chuyen-khoa', 'Chuyên khoa');
-        lien_ket_menu('bac_si.php', 'Bác sĩ');
+        lien_ket_menu('#', 'Bác sĩ');
         if ($vaitro == '' || $vaitro == 'benh_nhan') {
-            lien_ket_menu('dat_lich.php', 'Đặt lịch');
+            lien_ket_menu('#', 'Đặt lịch');
         }
         if ($vaitro == 'benh_nhan') {
-            lien_ket_menu('lich_cua_toi.php', 'Lịch khám của tôi');
+            lien_ket_menu('#', 'Lịch khám của tôi');
         }
     }
 }
@@ -281,7 +281,7 @@ function hien_bang_nguoi_dung($ds, $tukhoa, $vaitro) {
                         <?php if ($u['VaiTro'] == 'quan_tri'): ?>
                             <span class="trong">—</span>
                         <?php else: ?>
-                            <form method="post" action="xuly/xuly_khoa_mo_tai_khoan.php" class="form-khoa-mo">
+                            <form method="post" action="app/Controllers/xuly_mo_khoa_tai_khoan.php" class="form-khoa-mo">
                                 <?php
                                 o_an('id', $u['ID']);
                                 o_an('tukhoa', $tukhoa);

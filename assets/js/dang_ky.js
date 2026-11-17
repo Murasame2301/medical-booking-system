@@ -2,7 +2,10 @@ function kiem_tra_sdt() {
   const o_sdt = document.getElementById("sdt");
   const cho_hien = document.getElementById("thong_bao_sdt");
 
-  fetch("xuly/ajax_kiem_tra_sdt.php?sdt=" + encodeURIComponent(o_sdt.value))
+  fetch(
+    "app/Controllers/ajax_kiem_tra_sdt.php?sdt=" +
+      encodeURIComponent(o_sdt.value),
+  )
     .then(function (phan_hoi) {
       return phan_hoi.json();
     })

@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/khoitao.php';
+require_once __DIR__ . '/app/Core/khoitao.php';
 
 if (isset($_SESSION['id'])) {
     chuyen_trang('index.php');
@@ -14,7 +14,7 @@ hien_dau_trang('Đăng nhập');
 
     <?php hien_thong_bao_phien(); ?>
 
-    <form method="post" action="xuly/xuly_dang_nhap.php">
+    <form method="post" action="app/Controllers/xuly_dang_nhap.php">
         <?php
         nhap('Số điện thoại', 'sdt', 'tel', $cu['sdt'] ?? '');
         nhap('Mật khẩu', 'matkhau', 'password');

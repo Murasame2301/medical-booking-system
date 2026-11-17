@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/khoitao.php';
+require_once __DIR__ . '/app/Core/khoitao.php';
 
 bat_buoc_quan_tri();
 

@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/khoitao.php';
+require_once __DIR__ . '/app/Core/khoitao.php';
 
 bat_buoc_quan_tri();
 
@@ -32,7 +32,7 @@ hien_dau_trang($id > 0 ? 'Sửa bác sĩ' : 'Thêm bác sĩ');
 
     <?php hien_thong_bao_phien(); ?>
 
-    <form method="post" action="xuly/xuly_luu_bac_si.php">
+    <form method="post" action="app/Controllers/xuly_luu_bac_si.php">
         <?php
         o_an('id', $id);
         nhap('Họ tên *', 'hoten', 'text', $bs['hoten']);
@@ -52,6 +52,6 @@ hien_dau_trang($id > 0 ? 'Sửa bác sĩ' : 'Thêm bác sĩ');
 
     <a class="lien-ket" href="qt_bac_si.php">Quay lại danh sách</a>
 </div>
-<script src="js/qt_bac_si_form.js"></script>
+<script src="assets/js/qt_bac_si_form.js"></script>
 <?php
 hien_cuoi_trang();

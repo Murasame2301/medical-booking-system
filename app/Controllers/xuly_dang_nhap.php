@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/khoitao.php';
+require_once __DIR__ . '/../Core/khoitao.php';
 
 if (isset($_SESSION['id'])) {
     chuyen_trang(trang_chu_theo_vai_tro($_SESSION['vaitro']));
@@ -13,13 +13,13 @@ $user = tim_nguoi_dung($conn, $sdt);
 if (!$user || !password_verify($matkhau, $user['MatKhau'])) {
     luu_du_lieu_cu(['sdt' => $sdt]);
     dat_thong_bao('loi', 'Sai số điện thoại hoặc mật khẩu.');
-    chuyen_trang('../dang_nhap.php');
+    chuyen_trang('../../dang_nhap.php');
 }
 
 if ($user['TrangThai'] == 'bi_khoa') {
     luu_du_lieu_cu(['sdt' => $sdt]);
     dat_thong_bao('loi', 'Tài khoản của bạn đã bị khóa.');
-    chuyen_trang('../dang_nhap.php');
+    chuyen_trang('../../dang_nhap.php');
 }
 
 // Đăng nhập thành công: lưu thông tin vào session
@@ -28,4 +28,4 @@ $_SESSION['id'] = $user['ID'];
 $_SESSION['hoten'] = $user['HoTen'];
 $_SESSION['vaitro'] = $user['VaiTro'];   // 'benh_nhan', 'bac_si' hoặc 'quan_tri'
 
-chuyen_trang('../' . trang_chu_theo_vai_tro($_SESSION['vaitro']));
+chuyen_trang('../../' . trang_chu_theo_vai_tro($_SESSION['vaitro']));

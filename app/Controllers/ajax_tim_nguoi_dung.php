@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/khoitao.php';
+require_once __DIR__ . '/../Core/khoitao.php';
 
 // Chỉ quản trị viên được dùng (không dùng bat_buoc_quan_tri vì hàm đó chuyển trang)
 $la_quan_tri = isset($_SESSION['id']) && lay_vai_tro_cua($conn, $_SESSION['id']) == 'quan_tri';

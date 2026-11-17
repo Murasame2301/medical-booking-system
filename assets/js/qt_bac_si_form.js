@@ -10,7 +10,7 @@ function kiem_tra_truong(o_nhap, cot) {
     bo_qua_id: bo_qua_id,
   });
 
-  fetch("xuly/ajax_kiem_tra_trung.php?" + tham_so.toString())
+  fetch("app/Controllers/ajax_kiem_tra_trung.php?" + tham_so.toString())
     .then(function (phan_hoi) {
       return phan_hoi.json();
     })

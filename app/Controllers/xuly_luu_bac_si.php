@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . '/../includes/khoitao.php';
+require_once __DIR__ . '/../Core/khoitao.php';
 
-bat_buoc_quan_tri('../');
+bat_buoc_quan_tri('../../');
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    chuyen_trang('../qt_bac_si.php');
+    chuyen_trang('../../qt_bac_si.php');
 }
 
 $id = (int)($_POST['id'] ?? 0);   // 0 = thêm mới
@@ -21,12 +21,12 @@ $matkhau = $_POST['matkhau'] ?? '';
 $chuyenkhoa = array_unique(array_map('intval', (array)($_POST['chuyenkhoa'] ?? [])));
 
 // Khi lỗi thì quay về form (đúng chế độ thêm hoặc sửa)
-$ve_form = '../qt_bac_si_form.php' . ($id > 0 ? '?id=' . $id : '');
+$ve_form = '../../qt_bac_si_form.php' . ($id > 0 ? '?id=' . $id : '');
 
 // Đang sửa thì bác sĩ đó phải tồn tại
 if ($id > 0 && !lay_bac_si_chi_tiet($conn, $id)) {
     dat_thong_bao('loi', 'Không tìm thấy bác sĩ.');
-    chuyen_trang('../qt_bac_si.php');
+    chuyen_trang('../../qt_bac_si.php');
 }
 
 $nguoi_cung_sdt = tim_nguoi_dung($conn, $d['sdt']);   // người đang dùng SĐT này (nếu có)
@@ -82,4 +82,4 @@ if (!$thanhcong) {
 }
 
 dat_thong_bao('ok', $loi_ok);
-chuyen_trang('../qt_bac_si.php');
+chuyen_trang('../../qt_bac_si.php');

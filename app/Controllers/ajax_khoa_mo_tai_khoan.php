@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/khoitao.php';
+require_once __DIR__ . '/../Core/khoitao.php';
 
 header('Content-Type: application/json; charset=utf-8');
 

@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . '/../includes/khoitao.php';
+require_once __DIR__ . '/../Core/khoitao.php';
 
-bat_buoc_quan_tri('../');
+bat_buoc_quan_tri('../../');
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    chuyen_trang('../qt_nguoi_dung.php');
+    chuyen_trang('../../qt_nguoi_dung.php');
 }
 
 $id = (int)($_POST['id'] ?? 0);
@@ -12,7 +12,7 @@ $hanhdong = $_POST['hanhdong'] ?? '';   // 'khoa' hoặc 'mo'
 
 // Quay về đúng danh sách đang xem (giữ nguyên ô tìm kiếm và bộ lọc).
 // http_build_query tự đổi mảng thành chuỗi dạng "tukhoa=abc&vaitro=2" và mã hóa ký tự đặc biệt.
-$ve = '../qt_nguoi_dung.php?' . http_build_query([
+$ve = '../../qt_nguoi_dung.php?' . http_build_query([
     'tukhoa' => $_POST['tukhoa'] ?? '',
     'vaitro' => (int)($_POST['vaitro'] ?? 0),
 ]);

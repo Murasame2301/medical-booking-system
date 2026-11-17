@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/khoitao.php';
+require_once __DIR__ . '/../Core/khoitao.php';
 
 // File này chỉ XỬ LÝ, không in HTML. Chỉ nhận dữ liệu gửi bằng POST.
 if (isset($_SESSION['id'])) {
@@ -35,16 +35,16 @@ if ($hoten == "" || $ngaysinh == "" || $sdt == "") {
 if ($loi != "") {
     luu_du_lieu_cu($_POST);
     dat_thong_bao('loi', $loi);
-    chuyen_trang('../dang_ky.php');
+    chuyen_trang('../../dang_ky.php');
 }
 
 // Bước 2: dữ liệu hợp lệ thì lưu vào DB
 $mk = password_hash($matkhau, PASSWORD_DEFAULT);
 if (tao_benh_nhan($conn, $hoten, $sdt, $email, $mk, $ngaysinh)) {
     dat_thong_bao('ok', 'Đăng ký thành công, hãy đăng nhập.');
-    chuyen_trang('../dang_nhap.php');
+    chuyen_trang('../../dang_nhap.php');
 }
 
 luu_du_lieu_cu($_POST);
 dat_thong_bao('loi', 'Có lỗi khi tạo tài khoản, vui lòng thử lại.');
-chuyen_trang('../dang_ky.php');
+chuyen_trang('../../dang_ky.php');
