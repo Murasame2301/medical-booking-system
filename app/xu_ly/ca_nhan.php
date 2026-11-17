@@ -1,12 +1,12 @@
 <?php
 const MAT_KHAU_TOI_THIEU   = 8;
-const MAT_KHAU_TOI_DA_BYTE = 72;              // bcrypt chỉ dùng 72 byte đầu
+const MAT_KHAU_TOI_DA_BYTE = 72;              
 const ANH_TOI_DA_BYTE      = 2 * 1024 * 1024; // 2MB
-const ANH_TOI_DA_DIEM_ANH  = 25000000;        // chặn ảnh có số điểm ảnh quá lớn
+const ANH_TOI_DA_DIEM_ANH  = 25000000;       
 const ANH_THU_MUC          = 'uploads/avatar/';
 const GIOI_THIEU_TOI_DA    = 1000;
 
-// ===== Thông tin cá nhân =====
+// ===== CA NHAN =====
 function lay_thong_tin_ca_nhan(int $maNguoiDung): array
 {
   $r = truy_van_mot(
@@ -22,7 +22,7 @@ function lay_thong_tin_ca_nhan(int $maNguoiDung): array
   return ket_qua(true, '', array_map('strval', $r));
 }
 
-// lỗi 1062 -> cho biết trùng email hay số điện thoại
+
 function thong_bao_trung(Throwable $loi): string
 {
   $msg = $loi->getMessage();
@@ -41,7 +41,6 @@ function cap_nhat_trang_ca_nhan(int $ma, array $dl): array
   $email    = trim((string)($dl['email'] ?? ''));
   $diaChi   = trim((string)($dl['dia_chi'] ?? ''));
 
-  // giới thiệu: tùy chọn, chỉ cập nhật khi form có gửi trường này
   $coGioiThieu = array_key_exists('gioi_thieu', $dl);
   $gioiThieu   = $coGioiThieu ? trim((string)$dl['gioi_thieu']) : null;
 
@@ -49,7 +48,6 @@ function cap_nhat_trang_ca_nhan(int $ma, array $dl): array
       || $sdt === '' || $email === '' || $diaChi === '') {
     return ket_qua(false, 'Vui lòng nhập đầy đủ thông tin.');
   }
-  // độ dài khớp cột DB
   if (mb_strlen($ten) > 100 || mb_strlen($trinhDo) > 100
       || mb_strlen($email) > 100 || mb_strlen($diaChi) > 255) {
     return ket_qua(false, 'Thông tin nhập quá dài.');
@@ -101,12 +99,12 @@ function cap_nhat_trang_ca_nhan(int $ma, array $dl): array
     return ket_qua(false, 'Không cập nhật được thông tin, vui lòng thử lại.');
   }
 
-  // đọc lại từ DB để form và avatar hiển thị đúng giá trị đã lưu
+
   $moi = lay_thong_tin_ca_nhan($ma);
   return ket_qua(true, 'Đã cập nhật thông tin cá nhân.', $moi['data'] ?? ['hoten' => $ten]);
 }
 
-// ===== Đổi mật khẩu =====
+// ===== DOI MATKHAU =====
 function thay_doi_mat_khau(int $ma, array $dl): array
 {
   $hienTai = (string)($dl['mat_khau_hien_tai'] ?? '');
@@ -138,13 +136,12 @@ function thay_doi_mat_khau(int $ma, array $dl): array
     [password_hash($moi, PASSWORD_DEFAULT), $ma]
   )->close();
 
-  // đổi mật khẩu xong thì cấp lại mã phiên (chống chiếm phiên cũ)
   if (session_status() === PHP_SESSION_ACTIVE) session_regenerate_id(true);
 
   return ket_qua(true, 'Đã đổi mật khẩu.');
 }
 
-// ===== Ảnh đại diện: lưu tệp vào uploads/avatar/, lưu đường dẫn vào DB =====
+// ===== AVT=====
 function thu_muc_anh(): string
 {
   return rtrim(dirname($_SERVER['SCRIPT_FILENAME']), '/\\') . '/' . ANH_THU_MUC;
@@ -157,7 +154,6 @@ function xoa_tep_anh(?string $duongDan): void
   if (is_file($tep)) @unlink($tep);
 }
 
-// tạo thư mục ảnh (nếu chưa có) và cấm chạy mã PHP trong đó
 function chuan_bi_thu_muc_anh(): ?string
 {
   $thuMuc = thu_muc_anh();
@@ -190,7 +186,7 @@ function luu_anh_dai_dien(int $ma, ?array $file): array
   if ($file['size'] > ANH_TOI_DA_BYTE) return ket_qua(false, 'Ảnh tối đa 2MB.');
   if (!is_uploaded_file($file['tmp_name'])) return ket_qua(false, 'Tệp tải lên không hợp lệ.');
 
-  // Kiểm tra loại ảnh thật bằng nội dung tệp, không tin tên tệp
+
   $info = @getimagesize($file['tmp_name']);
   $duoi = [IMAGETYPE_JPEG => 'jpg', IMAGETYPE_PNG => 'png', IMAGETYPE_WEBP => 'webp'][$info[2] ?? 0] ?? null;
   if ($duoi === null) return ket_qua(false, 'Chỉ chấp nhận ảnh JPG, PNG hoặc WEBP.');
@@ -210,11 +206,11 @@ function luu_anh_dai_dien(int $ma, ?array $file): array
     $cu = truy_van_mot("SELECT anhdaidien FROM nguoi_dung WHERE manguoidung = ?", 'i', [$ma]);
     thi_hanh("UPDATE nguoi_dung SET anhdaidien = ? WHERE manguoidung = ?", 'si', [$duongDan, $ma])->close();
   } catch (Throwable $e) {
-    @unlink($tepMoi); // DB lỗi -> không để lại tệp mồ côi
+    @unlink($tepMoi);
     throw $e;
   }
 
-  xoa_tep_anh($cu['anhdaidien'] ?? null); // xóa ảnh cũ sau khi lưu ảnh mới xong
+  xoa_tep_anh($cu['anhdaidien'] ?? null);
   return ket_qua(true, 'Đã cập nhật ảnh đại diện.', ['anh' => $duongDan]);
 }
 
