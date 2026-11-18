@@ -164,8 +164,7 @@ select {
   font-weight: 600;
 }
 .search-field input,
-.search-field select,
-.reason-input {
+.search-field select {
   width: 100%;
   height: 47px;
   padding: 0 13px;
@@ -175,18 +174,18 @@ select {
   color: var(--appointment-ink);
 }
 .search-field input:focus,
-.search-field select:focus,
-.reason-input:focus {
+.search-field select:focus {
   outline: 3px solid #1559b71a;
   border-color: var(--appointment-blue);
 }
 .search-button,
-.book-button {
+.detail-button {
   min-height: 47px;
   border: 0;
   border-radius: 7px;
   background: var(--appointment-blue);
   color: var(--appointment-paper);
+  font: inherit;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -202,13 +201,22 @@ select {
   gap: 8px;
   white-space: nowrap;
 }
-.search-button svg {
-  width: 17px;
-  height: 17px;
+.detail-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.search-button i {
+  font-size: 17px;
+  line-height: 1;
 }
 .search-button:hover,
-.book-button:hover {
+.detail-button:hover {
   background: var(--appointment-blue-deep);
+  color: var(--appointment-paper);
   transform: translateY(-1px);
 }
 .appointment-alert {
@@ -305,21 +313,12 @@ select {
   font-weight: 600;
 }
 .booking-form {
-  display: grid;
-  grid-template-columns: minmax(140px, 1fr) auto;
-  gap: 8px;
+  display: flex;
+  justify-content: flex-end;
   align-items: center;
 }
-.book-button {
-  padding: 0 16px;
-  white-space: nowrap;
-}
-.reason-input {
-  height: 43px;
-  font-size: 12px;
-}
-.reason-input::placeholder {
-  color: var(--appointment-muted);
+.detail-button {
+  min-width: 140px;
 }
 .empty-state {
   padding: 56px 24px;
@@ -333,9 +332,9 @@ select {
   margin: 0 auto 12px;
   color: #7da0c4;
 }
-.empty-icon svg {
-  width: 100%;
-  height: 100%;
+.empty-icon i {
+  font-size: 48px;
+  line-height: 1;
 }
 .empty-state h3 {
   margin: 0 0 8px;
@@ -377,7 +376,6 @@ select {
   }
   .booking-form {
     grid-column: 1 / -1;
-    grid-template-columns: 1fr auto;
   }
   .slot-time {
     padding-right: 16px;
@@ -454,13 +452,11 @@ select {
     font-size: 14px;
   }
   .booking-form {
-    display: block;
+    display: flex;
+    justify-content: stretch;
     margin-top: 16px;
   }
-  .reason-input {
-    margin-bottom: 8px;
-  }
-  .book-button {
+  .detail-button {
     width: 100%;
   }
 }
@@ -474,4 +470,14 @@ select {
   *::after {
     transition: none !important;
   }
+}
+
+/* Trang thai dang tai khi loc khung gio qua AJAX. */
+.search-form.is-loading .search-button,
+#slot-results.is-loading {
+  opacity: 0.55;
+  pointer-events: none;
+}
+.search-button[disabled] {
+  cursor: progress;
 }

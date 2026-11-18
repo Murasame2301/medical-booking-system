@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../Helpers/csrf.php';
+
 class AuthController
 {
     private $nguoiDung;
@@ -21,6 +23,12 @@ class AuthController
         $phonenumber = '';
 
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            if (!csrf_validate()) {
+                $_SESSION['auth_message'] = 'Phiên làm việc đã hết hạn. Vui lòng thử lại.';
+                header('Location: dang-nhap.php', true, 303);
+                exit;
+            }
+
             $phonenumber = isset($_POST['sdt']) && is_string($_POST['sdt'])
                 ? trim($_POST['sdt'])
                 : '';
@@ -36,6 +44,7 @@ class AuthController
 
                     if ($user && password_verify($rawPassword, $user['matkhau'])) {
                         session_regenerate_id(true);
+                        csrf_rotate();
                         $_SESSION['manguoidung'] = $user['manguoidung'];
                         $_SESSION['is_logged_in'] = true;
 
@@ -70,6 +79,12 @@ class AuthController
         $phonenumber = '';
 
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            if (!csrf_validate()) {
+                $_SESSION['auth_message'] = 'Phiên làm việc đã hết hạn. Vui lòng thử lại.';
+                header('Location: dang-ky-tai-khoan.php', true, 303);
+                exit;
+            }
+
             $fullname = isset($_POST['hoten']) && is_string($_POST['hoten'])
                 ? trim($_POST['hoten'])
                 : '';
@@ -98,6 +113,7 @@ class AuthController
                     );
 
                     session_regenerate_id(true);
+                    csrf_rotate();
                     $_SESSION['manguoidung'] = $manguoidung;
 
                     header('Location: tao-ho-so.php');

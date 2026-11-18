@@ -95,9 +95,9 @@ input {
   color: var(--auth-muted);
   font-size: 13px;
 }
-.header-link svg {
-  width: 17px;
-  height: 17px;
+.header-link i {
+  font-size: 17px;
+  line-height: 1;
 }
 
 .auth-layout {
@@ -297,12 +297,19 @@ input {
 .password-toggle[hidden] {
   display: none;
 }
-.password-toggle svg {
-  width: 20px;
-  height: 20px;
+.password-toggle i {
+  font-size: 17px;
+  line-height: 1;
+  grid-area: 1 / 1;
 }
-.password-toggle[aria-pressed="true"] .eye-slash {
+.password-toggle .fa-eye-slash {
   display: none;
+}
+.password-toggle[aria-pressed="true"] .fa-eye {
+  display: none;
+}
+.password-toggle[aria-pressed="true"] .fa-eye-slash {
+  display: block;
 }
 .primary-button {
   width: 100%;
@@ -355,6 +362,67 @@ input {
   margin-bottom: 24px;
 }
 
+/* Trang ho so: giu tieu de "Hoan thien ho so kham benh" tren mot dong. */
+.profile-page .auth-content h1 {
+  font-size: clamp(19px, 4.6vw, 27px);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+/* Form ho so dung chung (partial ho-so-form.php) tren trang tao ho so. */
+.ho-so-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.ho-so-field-wide {
+  grid-column: 1 / -1;
+}
+.ho-so-form .gender-field {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.ho-so-form .gender-field .field-label {
+  margin: 0;
+  flex: none;
+}
+.ho-so-submit {
+  width: 100%;
+  min-height: 51px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--auth-blue);
+  color: var(--auth-paper);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 12px 20px;
+}
+.ho-so-submit:hover {
+  background: #104a9b;
+}
+.field-optional {
+  color: var(--auth-muted);
+  font-weight: 400;
+}
+.ho-so-alert {
+  background: var(--auth-danger-bg);
+  color: var(--auth-danger);
+  border-left: 3px solid var(--auth-danger);
+  padding: 12px 14px;
+  margin-bottom: 22px;
+  border-radius: 0 6px 6px 0;
+  font-size: 13px;
+}
+.ho-so-form .password-control {
+  position: relative;
+}
+.ho-so-form .password-control input {
+  padding-right: 53px;
+}
+
 @media (min-width: 1600px) {
   .auth-layout {
     max-width: 1600px;
@@ -391,7 +459,7 @@ input {
   .header-link {
     font-size: 12px;
   }
-  .header-link svg {
+  .header-link i {
     display: none;
   }
   .auth-layout {

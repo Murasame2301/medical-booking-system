@@ -1,7 +1,8 @@
 <?php
 session_start();
 
-require_once __DIR__ . '/include/mysqlConnect.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/app/Helpers/csrf.php';
 require_once __DIR__ . '/app/Models/NguoiDung.php';
 require_once __DIR__ . '/app/Controllers/AuthController.php';
 

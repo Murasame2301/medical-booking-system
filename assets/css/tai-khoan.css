@@ -1,0 +1,525 @@
+/* Quan ly tai khoan: the thong tin + form mo tai cho bang <details>.
+   Dung bien --appointment-* nap tu appointment.css. */
+
+.account-main {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 28px clamp(24px, 5.5vw, 64px) 70px;
+}
+.account-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 28px;
+  color: var(--appointment-muted);
+  font-size: 12px;
+}
+.account-breadcrumb a {
+  color: var(--appointment-blue);
+  font-weight: 600;
+}
+.account-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.account-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22px;
+  margin-bottom: 22px;
+}
+.account-eyebrow {
+  margin: 0 0 7px;
+  color: var(--appointment-blue);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.account-heading h1 {
+  margin: 0;
+  color: var(--appointment-ink);
+  font-size: clamp(25px, 3vw, 34px);
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+.account-heading p:last-child {
+  margin: 9px 0 0;
+  color: var(--appointment-muted);
+  font-size: 13px;
+}
+.account-badge {
+  flex: none;
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.account-badge-active {
+  background: var(--appointment-mint);
+  color: var(--appointment-success-ink);
+}
+.account-badge-locked {
+  background: #eef1f5;
+  color: var(--appointment-muted);
+}
+
+.account-alert {
+  margin-bottom: 18px;
+  padding: 13px 16px;
+  border: 1px solid;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.account-alert-error {
+  border-color: #f0c9c6;
+  background: var(--appointment-danger-bg);
+  color: var(--appointment-danger);
+}
+.account-alert-success {
+  border-color: #bfe4dc;
+  background: var(--appointment-mint);
+  color: var(--appointment-success-ink);
+}
+
+/* Tab chuyen giua "Thong tin tai khoan" va "Doi mat khau". */
+.account-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--appointment-line);
+}
+.account-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: -1px;
+  padding: 10px 14px;
+  border-bottom: 3px solid transparent;
+  color: var(--appointment-muted);
+  font-size: 13px;
+  font-weight: 600;
+  transition: color .15s ease, border-color .15s ease;
+}
+.account-tab:hover {
+  color: var(--appointment-blue);
+  text-decoration: none;
+}
+.account-tab i {
+  font-size: 12px;
+}
+.account-tab-active {
+  border-bottom-color: var(--appointment-blue);
+  color: var(--appointment-ink);
+  font-weight: 700;
+}
+.account-tab-active i {
+  color: var(--appointment-blue);
+}
+.account-card-standalone {
+  border-top-color: var(--appointment-danger);
+}
+
+.account-card {
+  margin-bottom: 18px;
+  border: 1px solid var(--appointment-line);
+  border-top: 3px solid var(--appointment-blue);
+  background: var(--appointment-paper);
+  box-shadow: 0 12px 30px rgba(33, 72, 110, .06);
+}
+.account-card-profile {
+  border-top-color: var(--appointment-green);
+}
+.account-card-security {
+  border-top-color: var(--appointment-danger);
+}
+.account-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px clamp(18px, 3vw, 26px);
+  border-bottom: 1px solid var(--appointment-line);
+}
+.account-card-head h2 {
+  margin: 0;
+  color: var(--appointment-ink);
+  font-size: 17px;
+}
+.account-card-head p {
+  margin: 3px 0 0;
+  color: var(--appointment-muted);
+  font-size: 12px;
+}
+.account-card-icon {
+  color: var(--appointment-line);
+  font-size: 20px;
+}
+.account-card-profile .account-card-icon {
+  color: var(--appointment-mint);
+}
+.account-card-security .account-card-icon {
+  color: #f4d9d7;
+}
+
+.account-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 24px;
+  margin: 0;
+  padding: 18px clamp(18px, 3vw, 26px);
+}
+.account-fields dt {
+  color: var(--appointment-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.account-fields dd {
+  margin: 3px 0 0;
+  color: var(--appointment-ink);
+  font-size: 13px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.account-field-wide {
+  grid-column: 1 / -1;
+}
+
+.account-note {
+  margin: 16px clamp(18px, 3vw, 26px) 0;
+  padding: 11px 13px;
+  border-left: 3px solid #d9a021;
+  border-radius: 0 6px 6px 0;
+  background: #fff8e8;
+  color: #6f4c00;
+  font-size: 12px;
+}
+.account-hint {
+  margin: 0;
+  padding: 13px clamp(18px, 3vw, 26px);
+  border-top: 1px solid var(--appointment-line);
+  background: #fbfcfe;
+  color: var(--appointment-muted);
+  font-size: 12px;
+}
+.account-hint a {
+  color: var(--appointment-blue);
+  font-weight: 600;
+}
+.account-hint a:hover {
+  text-decoration: underline;
+}
+
+/* Drawer: form mo ngay tai cho, khong can JavaScript. */
+.account-drawer {
+  border-top: 1px solid var(--appointment-line);
+  background: #fbfcfe;
+}
+.account-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px clamp(18px, 3vw, 26px);
+  color: var(--appointment-blue);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+.account-toggle::-webkit-details-marker {
+  display: none;
+}
+.account-toggle::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform .15s ease;
+}
+.account-drawer[open] .account-toggle::before {
+  transform: rotate(45deg);
+}
+.account-toggle:hover {
+  text-decoration: underline;
+}
+.account-toggle i {
+  margin-right: 2px;
+  font-size: 12px;
+}
+.account-toggle-close {
+  display: none;
+}
+.account-drawer[open] .account-toggle-open {
+  display: none;
+}
+.account-drawer[open] .account-toggle-close {
+  display: inline;
+}
+.account-drawer-profile .account-toggle {
+  color: var(--appointment-green);
+}
+.account-drawer-security .account-toggle {
+  color: var(--appointment-danger);
+}
+
+.account-form,
+.ho-so-form {
+  padding: 4px clamp(18px, 3vw, 26px) 22px;
+}
+.account-form-grid,
+.ho-so-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 18px;
+}
+.ho-so-field-wide,
+.account-form .account-field-wide {
+  grid-column: 1 / -1;
+}
+
+.account-form .field,
+.ho-so-form .field {
+  margin-bottom: 16px;
+}
+.account-form label,
+.ho-so-form label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--appointment-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+.account-form input,
+.ho-so-form input {
+  display: block;
+  width: 100%;
+  height: 47px;
+  padding: 0 13px;
+  border: 1px solid var(--appointment-field-line);
+  border-radius: 7px;
+  background: var(--appointment-paper);
+  color: var(--appointment-ink);
+  font: inherit;
+  font-size: 13px;
+  transition: border-color .15s;
+}
+.account-form input:focus,
+.ho-so-form input:focus {
+  border-color: var(--appointment-focus);
+  outline: 3px solid rgba(57, 135, 213, .18);
+  outline-offset: 1px;
+}
+.account-form input[readonly],
+.ho-so-form input[readonly] {
+  background: #f5f8fc;
+  color: var(--appointment-muted);
+}
+.account-form input::placeholder,
+.ho-so-form input::placeholder {
+  color: #8a9aad;
+  font-size: 12px;
+}
+.field-note {
+  margin: 6px 0 0;
+  color: var(--appointment-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.field-optional {
+  color: var(--appointment-muted);
+  font-weight: 400;
+}
+
+/* Gioi tinh: radio nam ngang trong form ho so. */
+.account-form .gender-field,
+.ho-so-form .gender-field {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.account-form .gender-field .field-label,
+.ho-so-form .gender-field .field-label {
+  flex: none;
+  margin: 0;
+  color: var(--appointment-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+.account-form .gender-options,
+.ho-so-form .gender-options {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.account-form .radio-option,
+.ho-so-form .radio-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: var(--appointment-ink);
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+}
+.account-form .field label.radio-option,
+.ho-so-form .field label.radio-option {
+  display: inline-flex;
+  margin-bottom: 0;
+}
+.account-form .radio-option input,
+.ho-so-form .radio-option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--appointment-blue);
+}
+
+/* Mat khau: nut hien/an nam trong .password-control. */
+.account-form .password-control,
+.ho-so-form .password-control {
+  position: relative;
+}
+.account-form .password-control input,
+.ho-so-form .password-control input {
+  padding-right: 46px;
+}
+.account-password-toggle {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 39px;
+  height: 39px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--appointment-muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.account-password-toggle[hidden] {
+  display: none;
+}
+.account-password-toggle:hover {
+  background: var(--appointment-canvas);
+}
+.account-password-toggle i {
+  grid-area: 1 / 1;
+  font-size: 16px;
+  line-height: 1;
+}
+.account-password-toggle .fa-eye-slash {
+  display: none;
+}
+.account-password-toggle[aria-pressed="true"] .fa-eye {
+  display: none;
+}
+.account-password-toggle[aria-pressed="true"] .fa-eye-slash {
+  display: block;
+}
+
+.account-submit,
+.ho-so-submit {
+  min-height: 47px;
+  margin-top: 4px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--appointment-blue);
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.account-submit:hover,
+.ho-so-submit:hover {
+  background: var(--appointment-blue-deep);
+}
+.account-submit-danger {
+  background: var(--appointment-danger);
+}
+.account-submit-danger:hover {
+  background: #8d2421;
+}
+.account-form .form-note,
+.ho-so-form .form-note {
+  margin: 12px 0 0;
+  color: var(--appointment-muted);
+  font-size: 12px;
+}
+.ho-so-alert {
+  margin-bottom: 16px;
+  padding: 11px 14px;
+  border-left: 3px solid var(--appointment-danger);
+  border-radius: 0 6px 6px 0;
+  background: var(--appointment-danger-bg);
+  color: var(--appointment-danger);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Nhac nhe khi drawer vua mo sau redirect. */
+.account-drawer[open] .account-form,
+.account-drawer[open] .ho-so-form {
+  animation: account-open .28s ease;
+}
+@keyframes account-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .account-main {
+    padding: 22px 16px 56px;
+  }
+  .account-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .account-fields {
+    grid-template-columns: 1fr;
+  }
+  .account-form-grid,
+  .ho-so-grid {
+    grid-template-columns: 1fr;
+  }
+  .account-submit,
+  .ho-so-submit {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-drawer[open] .account-form,
+  .account-drawer[open] .ho-so-form {
+    animation: none;
+  }
+}
+
+/* Luu ho so qua AJAX. */
+.ho-so-form .ho-so-submit[disabled] {
+  cursor: progress;
+  opacity: 0.7;
+}
+.ho-so-form.is-loading {
+  opacity: 0.7;
+  pointer-events: none;
+}

@@ -72,10 +72,12 @@
     gap: 8px;
 }
 .footer-contact-icon {
-    width: 17px;
-    height: 17px;
     flex: none;
+    width: 17px;
     margin-top: 2px;
+    font-size: 13px;
+    line-height: 1.35;
+    text-align: center;
     color: currentColor;
 }
 .site-footer-hours {
@@ -107,13 +109,11 @@
     border: 2px solid var(--footer-paper);
     border-radius: 50%;
     color: var(--footer-paper);
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    font-weight: 700;
+}
+.site-footer-socials a i {
+    font-size: 14px;
     line-height: 1;
 }
-.site-footer-socials a:nth-child(2) { font-size: 24px; font-weight: 400; }
-.site-footer-socials a:nth-child(3) { border-radius: 7px; font-size: 13px; }
 .site-footer-bottom {
     max-width: 1260px;
     margin: 0 auto;

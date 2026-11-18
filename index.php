@@ -3,18 +3,23 @@ session_start();
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Xem lịch trống và đặt lịch khám bệnh trực tuyến.">
     <title>Đặt lịch khám</title>
-    <link rel="stylesheet" href="assets/css/home.css?v=3">
-    <link rel="stylesheet" href="assets/css/footer.css?v=1">
+    <link rel="stylesheet" href="assets/css/home.css?v=4">
+    <link rel="stylesheet" href="assets/css/nav-menu.css?v=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/footer.css?v=4">
 </head>
+
 <body class="home-page">
     <header class="home-header">
         <a class="home-brand" href="index.php" aria-label="Đặt lịch khám — Trang chủ">
-            <img class="home-brand-logo" src="assets/images/logo.jpg?v=2" width="28" height="28" alt="Logo cổng đặt lịch khám">
+            <img class="home-brand-logo" src="assets/images/logo.png?v=2" width="28" height="28"
+                alt="Logo cổng đặt lịch khám">
             <span>
                 <span class="home-brand-name">Đặt lịch khám</span>
                 <span class="home-brand-description">Cổng đặt lịch khám bệnh trực tuyến</span>
@@ -22,7 +27,7 @@ session_start();
         </a>
 
         <div class="home-nav">
-            <?php require __DIR__ . '/include/menu.php'; ?>
+            <?php require __DIR__ . '/app/Views/partials/menu.php'; ?>
         </div>
     </header>
 
@@ -30,7 +35,8 @@ session_start();
         <section class="home-hero" aria-labelledby="home-title">
             <div class="hero-copy">
                 <h1 id="home-title">Tìm lịch khám<br>phù hợp với bạn.</h1>
-                <p class="hero-description">Xem khung giờ còn trống theo ngày, chuyên khoa và bác sĩ trước khi đặt lịch.</p>
+                <p class="hero-description">Xem khung giờ còn trống theo ngày, chuyên khoa và bác sĩ trước khi đặt lịch.
+                </p>
                 <div class="hero-actions">
                     <a class="hero-button hero-button-primary" href="dat-kham.php">Tìm lịch khám</a>
                     <a class="hero-button hero-button-secondary" href="tao-ho-so.php">Mở hồ sơ</a>
@@ -63,6 +69,7 @@ session_start();
         </section>
     </main>
 
-    <?php require __DIR__ . '/include/footer.php'; ?>
+    <?php require __DIR__ . '/app/Views/partials/footer.php'; ?>
 </body>
+
 </html>

@@ -1,5 +1,4 @@
 <?php
-
 class LichKham
 {
     private $conn;
@@ -11,8 +10,11 @@ class LichKham
 
     public function layDanhSachChuyenKhoa()
     {
-        $sql = "SELECT machuyenkhoa, tenchuyenkhoa
+        // Mot ten chuyen khoa co the ung voi nhieu machuyenkhoa (moi khoa mot ma),
+        // nen gom theo ten de danh sach chi hien thi moi chuyen khoa mot lan.
+        $sql = "SELECT MIN(machuyenkhoa) AS machuyenkhoa, tenchuyenkhoa
                 FROM CHUYEN_KHOA
+                GROUP BY tenchuyenkhoa
                 ORDER BY tenchuyenkhoa ASC";
 
         return $this->layNhieuDong($sql);
@@ -24,10 +26,15 @@ class LichKham
                 FROM BAC_SI bs
                 INNER JOIN NGUOI_DUNG nd ON nd.manguoidung = bs.manguoidung
                 INNER JOIN BAC_SI_CHUYEN_KHOA bsck
-                    ON bsck.manguoidung = bs.manguoidung";
+                    ON bsck.manguoidung = bs.manguoidung
+                INNER JOIN CHUYEN_KHOA ck
+                    ON ck.machuyenkhoa = bsck.machuyenkhoa";
 
         if ($machuyenkhoa !== null) {
-            $sql .= " WHERE bsck.machuyenkhoa = ?";
+            // Loc theo ten chuyen khoa de gom ca cac machuyenkhoa cung ten.
+            $sql .= " WHERE ck.tenchuyenkhoa = (
+                          SELECT tenchuyenkhoa FROM CHUYEN_KHOA WHERE machuyenkhoa = ?
+                      )";
         }
 
         $sql .= " ORDER BY nd.hoten ASC";
@@ -80,7 +87,10 @@ class LichKham
         $params = [$ngay];
 
         if ($machuyenkhoa !== null) {
-            $sql .= " AND bsck.machuyenkhoa = ?";
+            // Loc theo ten chuyen khoa de gom ca cac machuyenkhoa cung ten.
+            $sql .= " AND ck.tenchuyenkhoa = (
+                          SELECT tenchuyenkhoa FROM CHUYEN_KHOA WHERE machuyenkhoa = ?
+                      )";
             $types .= 'i';
             $params[] = $machuyenkhoa;
         }
@@ -117,24 +127,166 @@ class LichKham
         return $slots;
     }
 
-    public function coBenhNhan($manguoidung)
+    public function layChiTietKhungGio($malichlamviec)
     {
-        $sql = "SELECT 1 FROM BENH_NHAN WHERE manguoidung = ? LIMIT 1";
+        $sql = "SELECT llv.malichlamviec,
+                       llv.thoigianbatdau,
+                       llv.thoigianketthuc,
+                       nd.manguoidung AS mabacsi,
+                       nd.hoten AS tenbacsi,
+                       bs.trinhdo,
+                       bs.gioithieu,
+                       GROUP_CONCAT(DISTINCT ck.tenchuyenkhoa ORDER BY ck.tenchuyenkhoa SEPARATOR ', ') AS chuyenkhoa
+                FROM LICH_LAM_VIEC llv
+                INNER JOIN BAC_SI bs ON bs.manguoidung = llv.manguoidung
+                INNER JOIN NGUOI_DUNG nd ON nd.manguoidung = bs.manguoidung
+                INNER JOIN BAC_SI_CHUYEN_KHOA bsck
+                    ON bsck.manguoidung = bs.manguoidung
+                INNER JOIN CHUYEN_KHOA ck ON ck.machuyenkhoa = bsck.machuyenkhoa
+                WHERE llv.malichlamviec = ?
+                  AND llv.trangthai = 'con_trong'
+                  AND llv.thoigianbatdau >= NOW()
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM LICH_KHAM lk
+                      WHERE lk.malichlamviec = llv.malichlamviec
+                        AND lk.trangthai IN ('cho_xac_nhan', 'da_xac_nhan', 'da_kham')
+                  )
+                GROUP BY llv.malichlamviec,
+                         llv.thoigianbatdau,
+                         llv.thoigianketthuc,
+                         nd.manguoidung,
+                         nd.hoten,
+                         bs.trinhdo,
+                         bs.gioithieu
+                LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
-            throw new RuntimeException('Không thể kiểm tra hồ sơ bệnh nhân.');
+            throw new RuntimeException('Không thể chuẩn bị thông tin khung giờ.');
+        }
+
+        $stmt->bind_param('i', $malichlamviec);
+        if (!$stmt->execute()) {
+            $stmt->close();
+            throw new RuntimeException('Không thể tải thông tin khung giờ.');
+        }
+
+        $slot = $stmt->get_result()->fetch_assoc() ?: null;
+        $stmt->close();
+
+        return $slot;
+    }
+
+    public function layHoSoBenhNhan($manguoidung)
+    {
+        $sql = "SELECT manguoidung, hoten, sdt, email, ngaysinh, gioitinh, diachi, bhyt
+                FROM NGUOI_DUNG
+                WHERE manguoidung = ? AND mavaitro = 1
+                LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new RuntimeException('Không thể chuẩn bị hồ sơ bệnh nhân.');
         }
 
         $stmt->bind_param('i', $manguoidung);
         if (!$stmt->execute()) {
             $stmt->close();
-            throw new RuntimeException('Không thể kiểm tra hồ sơ bệnh nhân.');
+            throw new RuntimeException('Không thể tải hồ sơ bệnh nhân.');
         }
 
-        $hasPatientProfile = $stmt->get_result()->num_rows > 0;
+        $patient = $stmt->get_result()->fetch_assoc() ?: null;
         $stmt->close();
 
-        return $hasPatientProfile;
+        return $patient;
+    }
+
+    public function layLichSuDatKham($manguoidung)
+    {
+        // Chuyen khoa dung LEFT JOIN de lich van hien khi bac si chua duoc gan chuyen khoa.
+        $sql = "SELECT lk.malichkham,
+                       lk.trangthai,
+                       lk.lydo,
+                       lk.lydohuy,
+                       lk.ngaytao,
+                       lk.ngaycapnhat,
+                       llv.malichlamviec,
+                       llv.thoigianbatdau,
+                       llv.thoigianketthuc,
+                       nd.hoten AS tenbacsi,
+                       bs.trinhdo,
+                       GROUP_CONCAT(DISTINCT ck.tenchuyenkhoa
+                                    ORDER BY ck.tenchuyenkhoa
+                                    SEPARATOR ', ') AS chuyenkhoa
+                FROM LICH_KHAM lk
+                INNER JOIN LICH_LAM_VIEC llv
+                    ON llv.malichlamviec = lk.malichlamviec
+                INNER JOIN BAC_SI bs
+                    ON bs.manguoidung = llv.manguoidung
+                INNER JOIN NGUOI_DUNG nd
+                    ON nd.manguoidung = bs.manguoidung
+                LEFT JOIN BAC_SI_CHUYEN_KHOA bsck
+                    ON bsck.manguoidung = bs.manguoidung
+                LEFT JOIN CHUYEN_KHOA ck
+                    ON ck.machuyenkhoa = bsck.machuyenkhoa
+                WHERE lk.manguoidung = ?
+                GROUP BY lk.malichkham,
+                         lk.trangthai,
+                         lk.lydo,
+                         lk.lydohuy,
+                         lk.ngaytao,
+                         lk.ngaycapnhat,
+                         llv.malichlamviec,
+                         llv.thoigianbatdau,
+                         llv.thoigianketthuc,
+                         nd.hoten,
+                         bs.trinhdo
+                ORDER BY llv.thoigianbatdau DESC, lk.malichkham DESC";
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new RuntimeException('Không thể chuẩn bị danh sách lịch sử đặt khám.');
+        }
+
+        $stmt->bind_param('i', $manguoidung);
+        if (!$stmt->execute()) {
+            $stmt->close();
+            throw new RuntimeException('Không thể tải lịch sử đặt khám.');
+        }
+
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        return $rows;
+    }
+
+    public function huyLich($malichkham, $manguoidung, $lydo)
+    {
+        // Toan bo dieu kien nam trong WHERE: khong co khe ho giua luc kiem tra va luc ghi.
+        $sql = "UPDATE LICH_KHAM lk
+                INNER JOIN LICH_LAM_VIEC llv
+                    ON llv.malichlamviec = lk.malichlamviec
+                SET lk.trangthai = 'da_huy',
+                    lk.lydohuy = ?,
+                    lk.nguoihuy = ?
+                WHERE lk.malichkham = ?
+                  AND lk.manguoidung = ?
+                  AND lk.trangthai IN ('cho_xac_nhan', 'da_xac_nhan')
+                  AND llv.thoigianbatdau >= NOW()";
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new RuntimeException('Không thể chuẩn bị huỷ lịch khám.');
+        }
+
+        $stmt->bind_param('siii', $lydo, $manguoidung, $malichkham, $manguoidung);
+        if (!$stmt->execute()) {
+            $errorCode = $stmt->errno;
+            $stmt->close();
+            throw new RuntimeException('Không thể huỷ lịch khám.', $errorCode);
+        }
+
+        $affected = $stmt->affected_rows;
+        $stmt->close();
+
+        return $affected === 1;
     }
 
     public function datLich($manguoidung, $malichlamviec, $lydo)

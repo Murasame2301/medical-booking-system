@@ -10,16 +10,17 @@ $phonenumber = $viewData['phonenumber'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập</title>
-    <link rel="stylesheet" href="assets/css/auth.css?v=3">
-    <link rel="stylesheet" href="assets/css/footer.css?v=1">
+    <link rel="stylesheet" href="assets/css/auth.css?v=8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/footer.css?v=4">
     <script src="assets/js/auth.js" defer></script>
 </head>
 
 <body>
-    <?php require __DIR__ . '/../../../include/auth-header.php'; ?>
+    <?php require __DIR__ . '/../partials/auth-header.php'; ?>
 
     <main class="auth-layout">
-        <?php require __DIR__ . '/../../../include/auth-story.php'; ?>
+        <?php require __DIR__ . '/../partials/auth-story.php'; ?>
         <section class="auth-panel" aria-labelledby="auth-title">
             <div class="auth-content">
                 <h1 id="auth-title">Chào mừng bạn trở lại</h1>
@@ -31,7 +32,8 @@ $phonenumber = $viewData['phonenumber'] ?? '';
                     </div>
                 <?php endif; ?>
 
-                <form action="" method="post">
+                <form action="dang-nhap.php" method="post">
+                    <?php echo csrf_field('dang_nhap'); ?>
                     <div class="field">
                         <label for="sdt">Số điện thoại</label>
                         <input
@@ -56,7 +58,7 @@ $phonenumber = $viewData['phonenumber'] ?? '';
                                 required>
                             <?php
                             $passwordFieldId = 'mat_khau';
-                            require __DIR__ . '/../../../include/auth-password-toggle.php';
+                            require __DIR__ . '/../partials/password-toggle.php';
                             ?>
                         </div>
                     </div>
@@ -69,7 +71,7 @@ $phonenumber = $viewData['phonenumber'] ?? '';
         </section>
     </main>
 
-    <?php require __DIR__ . '/../../../include/footer.php'; ?>
+    <?php require __DIR__ . '/../partials/footer.php'; ?>
 </body>
 
 </html>
