@@ -102,8 +102,8 @@ function quan_tri_bac_si_luu($conn)
     $matKhau = is_string($_POST['matkhau'] ?? null) ? $_POST['matkhau'] : '';
 
     $veForm = $ma > 0
-        ? 'index.php?page=quan-tri/bac-si-form&id=' . $ma
-        : 'index.php?page=quan-tri/bac-si-form';
+        ? 'index.php?page=quan-tri/bac-si/sua&id=' . $ma
+        : 'index.php?page=quan-tri/bac-si/them';
 
     if ($ma > 0 && quan_tri_lay_bac_si_chi_tiet($conn, $ma) === null) {
         quan_tri_dat_flash('loi', 'Không tìm thấy bác sĩ.');

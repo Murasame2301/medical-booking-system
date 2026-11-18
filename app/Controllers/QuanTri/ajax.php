@@ -67,3 +67,12 @@ function quan_tri_ajax_kiem_tra_trung($conn)
 
     tra_json(quan_tri_kiem_tra_truong($conn, $cot, $giatri, $boQuaMa));
 }
+
+/* Mo thang duong dan kiem tra trung (khong AJAX): ve form bac si. */
+function quan_tri_kiem_tra_trung_trang($conn)
+{
+    $ma = chung_so_nguyen($_GET['bo_qua_id'] ?? 0);
+    chuyen_trang($ma > 0
+        ? 'index.php?page=quan-tri/bac-si/sua&id=' . $ma
+        : 'index.php?page=quan-tri/bac-si/them');
+}
