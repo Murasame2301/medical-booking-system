@@ -1,75 +1,137 @@
 <?php
-session_start();
-?>
-<!DOCTYPE html>
-<html lang="vi">
+/* Router chung: moi request deu di qua index.php?page=...
+   Nhiem vu:
+     1. Nap cau hinh va helper dung chung.
+     2. Doc 'page', tra bang dinh tuyen.
+     3. Chan tai khoan da bi khoa (kiem tra lai moi request).
+     4. Kiem tra dang nhap + dung vai tro.
+     5. Kiem tra CSRF cho moi POST.
+     6. Goi controller, roi render view (kieu trang day du hoac theo khung). */
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Xem lịch trống và đặt lịch khám bệnh trực tuyến.">
-    <title>Đặt lịch khám</title>
-    <link rel="stylesheet" href="assets/css/home.css?v=4">
-    <link rel="stylesheet" href="assets/css/nav-menu.css?v=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/footer.css?v=4">
-</head>
+require_once __DIR__ . '/config/constants.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/app/Helpers/utils.php';
+require_once __DIR__ . '/app/Helpers/csrf.php';
+require_once __DIR__ . '/app/Helpers/ajax.php';
+require_once __DIR__ . '/app/Helpers/session.php';
+require_once __DIR__ . '/app/Helpers/db.php';
+require_once __DIR__ . '/app/Models/nguoi_dung.php';
 
-<body class="home-page">
-    <header class="home-header">
-        <a class="home-brand" href="index.php" aria-label="Đặt lịch khám — Trang chủ">
-            <img class="home-brand-logo" src="assets/images/logo.png?v=2" width="28" height="28"
-                alt="Logo cổng đặt lịch khám">
-            <span>
-                <span class="home-brand-name">Đặt lịch khám</span>
-                <span class="home-brand-description">Cổng đặt lịch khám bệnh trực tuyến</span>
-            </span>
-        </a>
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-        <div class="home-nav">
-            <?php require __DIR__ . '/app/Views/partials/menu.php'; ?>
-        </div>
-    </header>
+$danhSachTrang = require __DIR__ . '/config/routes.php';
 
-    <main>
-        <section class="home-hero" aria-labelledby="home-title">
-            <div class="hero-copy">
-                <h1 id="home-title">Tìm lịch khám<br>phù hợp với bạn.</h1>
-                <p class="hero-description">Xem khung giờ còn trống theo ngày, chuyên khoa và bác sĩ trước khi đặt lịch.
-                </p>
-                <div class="hero-actions">
-                    <a class="hero-button hero-button-primary" href="dat-kham.php">Tìm lịch khám</a>
-                    <a class="hero-button hero-button-secondary" href="tao-ho-so.php">Mở hồ sơ</a>
-                </div>
-            </div>
+$trang = (string) ($_GET['page'] ?? 'trang-chu');
 
-            <section class="home-actions" aria-labelledby="home-actions-title">
-                <h2 id="home-actions-title">Bạn muốn làm gì?</h2>
-                <div class="home-action-list">
-                    <a class="home-action" href="dat-kham.php">
-                        <span class="home-action-copy">
-                            <strong>Tìm lịch khám</strong>
-                            <span>Chọn ngày, chuyên khoa và bác sĩ.</span>
-                        </span>
-                    </a>
-                    <a class="home-action" href="xem-lich-kham.php">
-                        <span class="home-action-copy">
-                            <strong>Xem lịch đã đặt</strong>
-                            <span>Theo dõi các lịch hẹn của bạn.</span>
-                        </span>
-                    </a>
-                    <a class="home-action" href="tao-ho-so.php">
-                        <span class="home-action-copy">
-                            <strong>Cập nhật hồ sơ</strong>
-                            <span>Bổ sung thông tin trước buổi khám.</span>
-                        </span>
-                    </a>
-                </div>
-            </section>
-        </section>
-    </main>
+/* Chi cho phep ten trang don gian: chu thuong, so, gach ngang, toi da hai
+   dau '/'. Chan ca chuoi co dau cham hoac duong dan tuyet doi. */
+if (!preg_match('#^[a-z0-9-]+(/[a-z0-9-]+){0,2}$#', $trang) || !isset($danhSachTrang[$trang])) {
+    http_response_code(404);
+    require __DIR__ . '/app/Views/loi/404.php';
+    exit;
+}
 
-    <?php require __DIR__ . '/app/Views/partials/footer.php'; ?>
-</body>
+$cauHinh = $danhSachTrang[$trang];
+$laAjax = isset($_GET['ajax']) || ajax_is_request();
+$vaiTroYeuCau = $cauHinh['quyen'] ?? null;
 
-</html>
+/* Tai khoan bi khoa giua phien: day ra ngay, khong doi het phien.
+   Kiem tra o day, khong chi luc dang nhap, de quan tri khoa duoc ngay. */
+if (da_dang_nhap()) {
+    $nguoiDungHienTai = nguoi_dung_lay_tai_khoan($conn, ma_nguoi_dung_hien_tai());
+    if ($nguoiDungHienTai === null || $nguoiDungHienTai['trangthai'] === TK_BI_KHOA) {
+        $_SESSION = [];
+        session_destroy();
+        session_start();
+        $_SESSION['auth_message'] = 'Tài khoản của bạn đã bị khoá. Vui lòng liên hệ quản trị viên.';
+
+        if ($laAjax) {
+            tra_json(ket_qua(false, $_SESSION['auth_message']), 401);
+        }
+        chuyen_trang('index.php?page=dang-nhap');
+    }
+}
+
+/* Trang cong khai thi khong chan. Trang co quyen thi bat buoc dang nhap
+   va dung vai tro. */
+if ($vaiTroYeuCau !== null) {
+    bat_buoc_dang_nhap($vaiTroYeuCau);
+}
+
+/* Trang dang nhap / dang ky: nguoi da dang nhap thi ve trang chu cua minh. */
+if ($trang === 'dang-nhap' || $trang === 'dang-ky') {
+    if (da_dang_nhap()) {
+        chuyen_trang(trang_chu_theo_vai_tro(vai_tro_hien_tai()));
+    }
+}
+
+if ($trang === 'dang-xuat') {
+    dang_xuat();
+}
+
+/* CSRF: moi POST deu phai co token, tru cac trang auth (tu kiem tra rieng
+   vi trang dang nhap co the chua co token trong phien). */
+$laTrangAuth = in_array($trang, ['dang-nhap', 'dang-ky'], true);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$laTrangAuth && !csrf_validate()) {
+    if ($laAjax) {
+        tra_json(ket_qua(false, 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.'), 419);
+    }
+    http_response_code(419);
+    require __DIR__ . '/app/Views/loi/419.php';
+    exit;
+}
+
+require_once __DIR__ . '/' . $cauHinh['controller'];
+
+/* Trang bac si: nap them __nap.php de cac ham dung chung (VD: lop_muc trong
+   sidebar, cac ham trong model) co mat truoc khi render khung. */
+if (str_starts_with($trang, 'bac-si/')) {
+    require_once __DIR__ . '/app/Controllers/BacSi/__nap.php';
+}
+
+$viewData = [];
+$ham = $cauHinh['ham'];
+
+/* Nhanh AJAX cua trang (bac si): controller tu tra JSON va exit. */
+if ($laAjax) {
+    $hamXuLy = $cauHinh['xu_ly'] ?? null;
+    if (!is_callable($hamXuLy)) {
+        tra_json(ket_qua(false, 'Trang này chưa hỗ trợ yêu cầu AJAX.'), 400);
+    }
+    $hamXuLy($conn);
+    bat_buoc_ajax();
+}
+
+$viewData = $ham($conn);
+
+/* Trang dang xuat khong co view. */
+if (!isset($cauHinh['view'])) {
+    exit;
+}
+
+$viewFile = __DIR__ . '/app/Views/' . $cauHinh['view'];
+
+/* Kieu 1: view tu la mot trang HTML day du (benh nhan, auth). */
+if (!isset($cauHinh['khung'])) {
+    require $viewFile;
+    exit;
+}
+
+/* Kieu 2: render trong khung cua vai tro. Khung nao co sidebar thi chen
+   sidebar (bac si dung menu trai); khung quan tri chi co header/footer vi
+   menu nam ngang tren header. */
+$tieuDe = $cauHinh['tieu_de'] ?? 'Phòng khám';
+$jsTrang = $cauHinh['js'] ?? [];
+$khung = $cauHinh['khung'];
+$thuMucKhung = __DIR__ . '/app/Views/' . $khung . '/layout/';
+
+require $thuMucKhung . 'header.php';
+
+if (is_file($thuMucKhung . 'sidebar.php')) {
+    require $thuMucKhung . 'sidebar.php';
+}
+
+require $viewFile;
+require $thuMucKhung . 'footer.php';

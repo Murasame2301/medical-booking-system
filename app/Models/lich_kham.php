@@ -107,13 +107,7 @@ function lich_kham_tim_khung_gio($conn, $ngay, $machuyenkhoa = null, $manguoidun
             INNER JOIN CHUYEN_KHOA ck ON ck.machuyenkhoa = bsck.machuyenkhoa
             WHERE llv.trangthai = 'con_trong'
               AND DATE(llv.thoigianbatdau) = ?
-              AND llv.thoigianbatdau >= NOW()
-              AND NOT EXISTS (
-                  SELECT 1
-                  FROM LICH_KHAM lk
-                  WHERE lk.malichlamviec = llv.malichlamviec
-                    AND lk.trangthai IN ('cho_xac_nhan', 'da_xac_nhan', 'da_kham')
-              )";
+              AND llv.thoigianbatdau >= NOW()";
     $types = 's';
     $params = [$ngay];
 
@@ -177,12 +171,6 @@ function lich_kham_lay_chi_tiet_khung_gio($conn, $malichlamviec)
             WHERE llv.malichlamviec = ?
               AND llv.trangthai = 'con_trong'
               AND llv.thoigianbatdau >= NOW()
-              AND NOT EXISTS (
-                  SELECT 1
-                  FROM LICH_KHAM lk
-                  WHERE lk.malichlamviec = llv.malichlamviec
-                    AND lk.trangthai IN ('cho_xac_nhan', 'da_xac_nhan', 'da_kham')
-              )
             GROUP BY llv.malichlamviec,
                      llv.thoigianbatdau,
                      llv.thoigianketthuc,
@@ -289,35 +277,76 @@ function lich_kham_lay_lich_su_dat_kham($conn, $manguoidung)
     return $rows;
 }
 
+/**
+ * Huy lich cua chinh benh nhan dang dang nhap.
+ *
+ * Khong dung UPDATE ... INNER JOIN LICH_LAM_VIEC: trigger tren LICH_KHAM co
+ * UPDATE vao LICH_LAM_VIEC, va MySQL khong cho mot cau vua doc vua ghi cung
+ * bang qua trigger. Vi vay tach thanh hai buoc trong cung transaction:
+ *   1. SELECT ... FOR UPDATE khoa dong lich kham va doc gio kham.
+ *   2. UPDATE LICH_KHAM theo khoa chinh (khong dung toi LICH_LAM_VIEC).
+ *
+ * @return bool true neu huy duoc.
+ */
 function lich_kham_huy_lich($conn, $malichkham, $manguoidung, $lydo)
 {
-    // Toan bo dieu kien nam trong WHERE: khong co khe ho giua luc kiem tra va luc ghi.
-    $sql = "UPDATE LICH_KHAM lk
-            INNER JOIN LICH_LAM_VIEC llv
-                ON llv.malichlamviec = lk.malichlamviec
-            SET lk.trangthai = 'da_huy',
-                lk.lydohuy = ?,
-                lk.nguoihuy = ?
-            WHERE lk.malichkham = ?
-              AND lk.manguoidung = ?
-              AND lk.trangthai IN ('cho_xac_nhan', 'da_xac_nhan')
-              AND llv.thoigianbatdau >= NOW()";
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        throw new RuntimeException('Không thể chuẩn bị huỷ lịch khám.');
-    }
+    $conn->begin_transaction();
 
-    $stmt->bind_param('siii', $lydo, $manguoidung, $malichkham, $manguoidung);
-    if (!$stmt->execute()) {
-        $errorCode = $stmt->errno;
+    try {
+        $sql = "SELECT lk.malichkham
+                FROM LICH_KHAM lk
+                INNER JOIN LICH_LAM_VIEC llv
+                    ON llv.malichlamviec = lk.malichlamviec
+                WHERE lk.malichkham = ?
+                  AND lk.manguoidung = ?
+                  AND lk.trangthai IN ('cho_xac_nhan', 'da_xac_nhan')
+                  AND llv.thoigianbatdau >= NOW()
+                FOR UPDATE";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new RuntimeException('Không thể chuẩn bị huỷ lịch khám.');
+        }
+
+        $stmt->bind_param('ii', $malichkham, $manguoidung);
+        if (!$stmt->execute()) {
+            $stmt->close();
+            throw new RuntimeException('Không thể kiểm tra lịch khám.');
+        }
+
+        $conHuyDuoc = $stmt->get_result()->num_rows > 0;
         $stmt->close();
-        throw new RuntimeException('Không thể huỷ lịch khám.', $errorCode);
+
+        if (!$conHuyDuoc) {
+            $conn->rollback();
+
+            return false;
+        }
+
+        $update = $conn->prepare(
+            "UPDATE LICH_KHAM
+             SET trangthai = 'da_huy', lydohuy = ?, nguoihuy = ?
+             WHERE malichkham = ? AND manguoidung = ?"
+        );
+        if (!$update) {
+            throw new RuntimeException('Không thể chuẩn bị cập nhật lịch khám.');
+        }
+
+        $update->bind_param('siii', $lydo, $manguoidung, $malichkham, $manguoidung);
+        if (!$update->execute()) {
+            $errorCode = $update->errno;
+            $update->close();
+            throw new RuntimeException('Không thể huỷ lịch khám.', $errorCode);
+        }
+
+        $affected = $update->affected_rows;
+        $update->close();
+        $conn->commit();
+
+        return $affected === 1;
+    } catch (Throwable $exception) {
+        $conn->rollback();
+        throw $exception;
     }
-
-    $affected = $stmt->affected_rows;
-    $stmt->close();
-
-    return $affected === 1;
 }
 
 /**

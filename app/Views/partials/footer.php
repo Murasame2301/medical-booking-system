@@ -1,6 +1,6 @@
 <footer class="site-footer">
     <div class="site-footer-main">
-        <a class="site-footer-brand" href="index.php" aria-label="Đặt lịch khám — Trang chủ">
+        <a class="site-footer-brand" href="index.php?page=trang-chu" aria-label="Đặt lịch khám — Trang chủ">
             <img src="assets/images/logo.png?v=2" width="28" height="28" alt="Logo cổng đặt lịch khám">
             <span>Đặt lịch khám</span>
         </a>
@@ -26,9 +26,9 @@
 
         <nav class="site-footer-section" aria-labelledby="footer-links-title">
             <h2 id="footer-links-title">Liên kết nhanh</h2>
-            <a href="dang-nhap.php">Đăng nhập</a>
-            <a href="dang-ky-tai-khoan.php">Tạo tài khoản</a>
-            <a href="thong-tin-tai-khoan.php">Quản lý tài khoản</a>
+            <a href="index.php?page=dang-nhap">Đăng nhập</a>
+            <a href="index.php?page=dang-ky">Tạo tài khoản</a>
+            <a href="index.php?page=thong-tin-tai-khoan">Quản lý tài khoản</a>
         </nav>
 
         <section class="site-footer-section" aria-labelledby="footer-social-title">

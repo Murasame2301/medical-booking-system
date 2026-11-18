@@ -10,17 +10,17 @@ $phonenumber = $viewData['phonenumber'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập</title>
-    <link rel="stylesheet" href="assets/css/auth.css?v=8">
+    <link rel="stylesheet" href="assets/css/benh-nhan/auth.css?v=8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/footer.css?v=4">
-    <script src="assets/js/auth.js" defer></script>
+    <link rel="stylesheet" href="assets/css/benh-nhan/footer.css?v=4">
+    <script src="assets/js/benh-nhan/auth.js" defer></script>
 </head>
 
 <body>
-    <?php require __DIR__ . '/../partials/auth-header.php'; ?>
+    <?php require __DIR__ . '/auth-header.php'; ?>
 
     <main class="auth-layout">
-        <?php require __DIR__ . '/../partials/auth-story.php'; ?>
+        <?php require __DIR__ . '/auth-story.php'; ?>
         <section class="auth-panel" aria-labelledby="auth-title">
             <div class="auth-content">
                 <h1 id="auth-title">Chào mừng bạn trở lại</h1>
@@ -32,7 +32,7 @@ $phonenumber = $viewData['phonenumber'] ?? '';
                     </div>
                 <?php endif; ?>
 
-                <form action="dang-nhap.php" method="post">
+                <form action="index.php?page=dang-nhap" method="post">
                     <?php echo csrf_field('dang_nhap'); ?>
                     <div class="field">
                         <label for="sdt">Số điện thoại</label>
@@ -58,7 +58,7 @@ $phonenumber = $viewData['phonenumber'] ?? '';
                                 required>
                             <?php
                             $passwordFieldId = 'mat_khau';
-                            require __DIR__ . '/../partials/password-toggle.php';
+                            require __DIR__ . '/password-toggle.php';
                             ?>
                         </div>
                     </div>
@@ -66,7 +66,7 @@ $phonenumber = $viewData['phonenumber'] ?? '';
                     <button class="primary-button" type="submit">Đăng nhập</button>
                 </form>
 
-                <p class="auth-switch">Chưa có tài khoản? <a href="dang-ky-tai-khoan.php">Đăng ký ngay</a></p>
+                <p class="auth-switch">Chưa có tài khoản? <a href="index.php?page=dang-ky">Đăng ký ngay</a></p>
             </div>
         </section>
     </main>

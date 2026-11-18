@@ -4,14 +4,15 @@
 // Loi truy van nem RuntimeException de controller bat va bao loi cho nguoi dung.
 
 /**
- * Tim tai khoan theo so dien thoai.
+ * Tim tai khoan theo so dien thoai. Tra ve ca vai tro va trang thai de
+ * trang dang nhap chung biet re nhanh va tu choi tai khoan bi khoa.
  *
  * @return array|null
  * @throws RuntimeException Khi khong the thuc hien truy van.
  */
 function nguoi_dung_tim_theo_sdt($conn, $phonenumber)
 {
-    $sql = "SELECT manguoidung, sdt, matkhau
+    $sql = "SELECT manguoidung, mavaitro, hoten, sdt, matkhau, trangthai
             FROM NGUOI_DUNG
             WHERE sdt = ?
             LIMIT 1";
@@ -128,6 +129,18 @@ function nguoi_dung_lay_tai_khoan($conn, $manguoidung)
     $stmt->close();
 
     return $taiKhoan ?: null;
+}
+
+/**
+ * Duong dan anh dai dien cua mot tai khoan (null neu chua co).
+ *
+ * @throws RuntimeException
+ */
+function nguoi_dung_lay_anh($conn, $manguoidung)
+{
+    $r = truy_van_mot($conn, "SELECT anhdaidien FROM NGUOI_DUNG WHERE manguoidung = ?", 'i', [$manguoidung]);
+
+    return $r['anhdaidien'] ?? null;
 }
 
 /**

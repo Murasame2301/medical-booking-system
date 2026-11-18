@@ -1,0 +1,747 @@
+:root {
+  --nen: #f6f7f9;
+  --the: #fff;
+  --vien: #e4e7ec;
+  --chu: #1d2433;
+  --mo: #667085;
+  --xanh: #2563eb;
+  --xanh-nhat: #eaf1ff;
+  --hover: #f2f4f7;
+  --nen-bang: #f9fafb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  min-width: 800px;
+  overflow-x: auto;
+  margin: 0;
+  background: var(--nen);
+  color: var(--chu);
+  font:
+    14px/1.4 system-ui,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+h1 {
+  font-size: 18px;
+}
+h2 {
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+
+/* ===== Khung trang ===== */
+.app {
+  display: grid;
+  grid-template-columns: 253px 1fr;
+  height: 100vh;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 12px 6px;
+  overflow-y: auto;
+  background: var(--the);
+  border-right: 1px solid var(--vien);
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 16px;
+  font-weight: 600;
+}
+.user:hover .ten {
+  text-decoration: underline;
+}
+
+/* Avatar dùng chung, chỉ khác bo góc */
+.av-lon-home,
+.anh-dai-dien .av-lon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  background: #fb923c;
+  color: #fff;
+  font-weight: 700;
+}
+.av-lon-home {
+  flex: none;
+  border-radius: 12px;
+}
+
+.nhom {
+  margin: 18px 8px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--mo);
+}
+
+.muc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  color: #344054;
+}
+.muc i {
+  width: 16px;
+  font-style: normal;
+  text-align: center;
+}
+.muc:hover {
+  background: var(--hover);
+}
+.muc.on {
+  background: var(--xanh-nhat);
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+/* margin-top: auto đẩy khối xuống sát đáy sidebar */
+.thoat {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--vien);
+}
+
+.muc:focus-visible,
+.btn:focus-visible,
+.nhan-ghi:focus-within {
+  outline: 2px solid var(--xanh);
+  outline-offset: 1px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  height: 54px;
+  padding: 0 20px;
+  background: var(--the);
+  border-bottom: 1px solid var(--vien);
+}
+.top h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.noidung {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+}
+
+/* ===== Form và nút ===== */
+.loc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.khung {
+  margin-bottom: 16px;
+  padding: 14px;
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 10px;
+}
+.khung .loc,
+.khung .bang {
+  margin-bottom: 0;
+}
+
+.goiy {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--mo);
+}
+
+.nhan-ghi {
+  height: 36px;
+  padding: 0 10px;
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+  color: var(--chu);
+  font: inherit;
+}
+input.nhan-ghi {
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
+label.nhan-ghi {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--mo);
+}
+label.nhan-ghi input,
+label.nhan-ghi select,
+label.nhan-ghi textarea {
+  padding: 0;
+  background: none;
+  border: 0;
+  outline: 0;
+  color: var(--chu);
+  font: inherit;
+  font-size: 13px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn.xanh {
+  background: var(--xanh);
+  color: #fff;
+}
+.btn.vien {
+  background: var(--the);
+  border-color: var(--vien);
+  color: var(--chu);
+}
+.btn.do {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.btn.cam {
+  background: #f7da86;
+  color: #000;
+}
+.btn.avt {
+  background: rgb(28, 224, 238);
+}
+.btn.xam {
+  background: #f1f1f1;
+  color: #000000;
+}
+.btn.nho {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ===== Bảng và nhãn trạng thái ===== */
+.bang {
+  margin-bottom: 16px;
+  overflow-x: auto;
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+th {
+  padding: 10px;
+  text-align: left;
+  font-weight: 500;
+  color: var(--mo);
+  background: var(--nen-bang);
+  border-bottom: 1px solid var(--vien);
+}
+td {
+  padding: 10px;
+  border-bottom: 1px solid #eef0f3;
+}
+tbody tr:hover {
+  background: var(--nen-bang);
+}
+
+/* Cột cuối (nút thao tác): cách xa cột Trạng thái */
+table th:last-child,
+table td:last-child {
+  width: 1%;
+  padding-left: 40px;
+  padding-right: 30px;
+  text-align: left;
+}
+
+.nhan {
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.n-vang {
+  background: #fef3c7;
+  color: #92400e;
+}
+.n-xanh {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.n-luc {
+  background: #dcfce7;
+  color: #166534;
+}
+.n-do {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.n-xam {
+  background: #f2f4f7;
+  color: #475467;
+}
+
+/* Khung giờ đã đặt: mờ cả dòng; nút Xóa giữ opacity 1 để không bị mờ chồng */
+#than-bang tr.dong-da-dat td {
+  opacity: 0.55;
+}
+#than-bang .btn:disabled {
+  opacity: 1;
+}
+
+/* ===== Ô số tổng quan ===== */
+.the {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.the div {
+  padding: 16px;
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 10px;
+}
+.the b {
+  display: block;
+  margin-top: 4px;
+  font-size: 28px;
+  color: var(--xanh);
+}
+.the span {
+  color: var(--mo);
+}
+
+/* ===== Hồ sơ khám ===== */
+.tt {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 0 0 14px;
+}
+.tt dt {
+  font-size: 12px;
+  color: var(--mo);
+}
+.tt dd {
+  margin: 2px 0 0;
+  font-weight: 600;
+}
+
+.mau .nhan-ghi {
+  height: auto;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+.mau textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+/* ===== Trang Cá nhân: tab và form ===== */
+.tab-header {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--vien);
+}
+.tab-nut {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 4px;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--mo);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.tab-nut.on {
+  color: var(--xanh);
+  border-bottom-color: var(--xanh);
+  font-weight: 600;
+}
+
+.tab-noi-dung {
+  display: none;
+}
+.tab-noi-dung.on {
+  display: block;
+}
+
+.form-ca-nhan {
+  max-width: 600px;
+}
+.form-ca-nhan.form-bao-mat {
+  max-width: 400px;
+}
+
+.hang-doi {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.nhom-truong {
+  margin-bottom: 16px;
+}
+.nhom-truong label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.nhom-truong input,
+.nhom-truong select {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+  color: var(--chu);
+  font: inherit;
+  outline: none;
+}
+.nhom-truong input:focus,
+.nhom-truong select:focus {
+  border-color: var(--xanh);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.anh-dai-dien {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.anh-dai-dien .av-lon {
+  border-radius: 50%;
+}
+
+/* ===== Màn hình nhỏ ===== */
+@media (max-width: 800px) {
+  .app,
+  main {
+    display: block;
+    height: auto;
+  }
+  .side {
+    border-right: 0;
+    border-bottom: 1px solid var(--vien);
+  }
+}
+
+/* ===== Cỡ giao diện vừa phải (nhỏ hơn bản phóng to, lớn hơn bản gốc) ===== */
+body {
+  font-size: 15px;
+}
+h1 {
+  font-size: 19px;
+}
+h2 {
+  font-size: 16px;
+}
+
+/* Khung trang */
+.app {
+  grid-template-columns: 260px 1fr;
+}
+.side {
+  padding: 12px 8px;
+}
+.user {
+  gap: 10px;
+  padding: 4px 10px 16px;
+}
+.av-lon-home,
+.anh-dai-dien .av-lon {
+  width: 60px;
+  height: 60px;
+}
+.nhom {
+  margin: 18px 10px 6px;
+  font-size: 11px;
+}
+.muc {
+  gap: 10px;
+  padding: 9px 10px;
+}
+.muc i {
+  width: 18px;
+}
+
+.top {
+  height: 56px;
+  padding: 0 22px;
+}
+.top h1 {
+  font-size: 17px;
+}
+.noidung {
+  padding: 20px;
+}
+
+/* Form và nút */
+.khung {
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.goiy {
+  font-size: 13px;
+}
+.nhan-ghi {
+  height: 38px;
+  padding: 0 11px;
+}
+label.nhan-ghi {
+  font-size: 10px;
+}
+label.nhan-ghi input,
+label.nhan-ghi select,
+label.nhan-ghi textarea {
+  font-size: 14px;
+}
+
+.btn {
+  height: 38px;
+  padding: 0 20px;
+}
+.btn.nho {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+/* Bảng */
+table {
+  font-size: 15px;
+}
+th,
+td {
+  padding: 11px 14px;
+}
+table th:last-child,
+table td:last-child {
+  padding-left: 40px;
+  padding-right: 30px;
+}
+.nhan {
+  padding: 3px 10px;
+  font-size: 13px;
+}
+#than-bang input {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--vien);
+  border-radius: 6px;
+  font: inherit;
+}
+
+/* Trang cá nhân */
+.nhom-truong label {
+  font-size: 14px;
+}
+.nhom-truong input,
+.nhom-truong select {
+  height: 40px;
+}
+.tab-nut {
+  padding: 11px 6px;
+}
+.form-ca-nhan {
+  max-width: 640px;
+}
+.form-ca-nhan.form-bao-mat {
+  max-width: 440px;
+}
+
+/* Ô số tổng quan */
+.the {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+.the b {
+  font-size: 30px;
+}
+
+/* ===== Ô chọn trạng thái ngay trong bảng lịch khám ===== */
+select.chon-tt {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+select.chon-tt:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+select.chon-tt option {
+  background: #fff;
+  color: var(--chu);
+  font-weight: 500;
+}
+
+/* ===== Bảng lịch khám: vừa khung, không có thanh kéo ngang ===== */
+.bang-vua table {
+  font-size: 14px;
+}
+.bang-vua th,
+.bang-vua td {
+  padding: 9px 8px;
+}
+/* Họ tên (3), Giờ khám (7), Lý do (8) được xuống dòng để bảng co vừa khung */
+.bang-vua td:nth-child(3),
+.bang-vua td:nth-child(7),
+.bang-vua td:nth-child(8) {
+  white-space: normal;
+}
+.bang-vua td:nth-child(8) {
+  min-width: 110px;
+}
+/* Cột thao tác: bỏ khoảng đệm lớn để đỡ rộng */
+.bang-vua table th:last-child,
+.bang-vua table td:last-child {
+  padding-left: 8px;
+  padding-right: 12px;
+}
+
+/* ===== Hộp thoại hủy lịch khám ===== */
+#hop-huy-kham {
+  width: min(440px, 92vw);
+  padding: 22px;
+  background: var(--the);
+  color: var(--chu);
+  border: 1px solid var(--vien);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.18);
+}
+#hop-huy-kham::backdrop {
+  background: rgba(16, 24, 40, 0.45);
+}
+#hop-huy-kham h2 {
+  margin: 0 0 6px;
+}
+.huy-thong-tin {
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: var(--mo);
+}
+#hop-huy-kham textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+  color: var(--chu);
+  font: inherit;
+  outline: none;
+  resize: vertical;
+}
+#hop-huy-kham textarea:focus {
+  border-color: var(--xanh);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+.hang-nut {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* VE BANG CHO KHAM BENH  */
+
+.bang-cuon {
+  max-height: 260px;  
+  overflow-y: auto;
+}
+
+/* giữ tiêu đề cố định khi cuộn */
+.bang-cuon thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8fafc;   
+}
+
+
+/* ===== Thông báo (toast) của trang cá nhân ===== */
+#toast-ca-nhan {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9999;
+  max-width: 340px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+#toast-ca-nhan.hien { opacity: 1; transform: none; }
+#toast-ca-nhan.ok   { background: #12805c; }
+#toast-ca-nhan.loi  { background: #c0392b; }
+
+/* ===== Khung ảnh đại diện (phần tử có data-chu) ===== */
+[data-chu].dang-tai {
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+[data-chu].co-anh {
+  color: transparent; /* ẩn chữ viết tắt khi đã có ảnh */
+}

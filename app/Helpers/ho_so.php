@@ -1,23 +1,12 @@
 <?php
 
-// Validate dung chung cho form ho so (tao-ho-so.php) va trang quan ly tai khoan.
+// Kiem tra du lieu cho form ho so benh nhan (tao-ho-so) va trang tai khoan.
 // Moi ham tra ve chuoi loi; chuoi rong nghia la hop le.
 
-/**
- * Do dai tinh theo ky tu (khong phai byte) cho khop VARCHAR(n) va maxlength cua form:
- * chu co dau chiem 2-3 byte nen strlen() bao "qua dai" sai.
- */
-function ho_so_do_dai($value)
-{
-    return function_exists('mb_strlen')
-        ? mb_strlen((string) $value, 'UTF-8')
-        : strlen((string) $value);
-}
+require_once __DIR__ . '/utils.php';
 
 /**
- * Validate bo truong ho so bat buoc.
- *
- * @return string
+ * Kiem tra bo truong ho so bat buoc.
  */
 function ho_so_kiem_tra_ho_so($ngaysinh, $gioitinh, $email, $diachi, $bhyt)
 {
@@ -40,15 +29,15 @@ function ho_so_kiem_tra_ho_so($ngaysinh, $gioitinh, $email, $diachi, $bhyt)
         return 'Địa chỉ email không hợp lệ.';
     }
 
-    if (ho_so_do_dai($email) > 100) {
+    if (chung_do_dai($email) > 100) {
         return 'Email không được dài quá 100 ký tự.';
     }
 
-    if (ho_so_do_dai($diachi) > 255) {
+    if (chung_do_dai($diachi) > 255) {
         return 'Địa chỉ không được dài quá 255 ký tự.';
     }
 
-    if (ho_so_do_dai($bhyt) > 20) {
+    if (chung_do_dai($bhyt) > 20) {
         return 'Số BHYT không được dài quá 20 ký tự.';
     }
 
@@ -56,7 +45,7 @@ function ho_so_kiem_tra_ho_so($ngaysinh, $gioitinh, $email, $diachi, $bhyt)
 }
 
 /**
- * @return string
+ * Kiem tra ho ten.
  */
 function ho_so_kiem_tra_ho_ten($hoten)
 {
@@ -64,7 +53,7 @@ function ho_so_kiem_tra_ho_ten($hoten)
         return 'Vui lòng nhập họ và tên.';
     }
 
-    if (ho_so_do_dai($hoten) > 100) {
+    if (chung_do_dai($hoten) > 100) {
         return 'Họ và tên không được dài quá 100 ký tự.';
     }
 
@@ -73,8 +62,6 @@ function ho_so_kiem_tra_ho_ten($hoten)
 
 /**
  * CCCD va dan toc la tuy chon: chi kiem tra khi co nhap.
- *
- * @return string
  */
 function ho_so_kiem_tra_truong_mo_rong($cccd, $dantoc)
 {
@@ -82,14 +69,15 @@ function ho_so_kiem_tra_truong_mo_rong($cccd, $dantoc)
         return 'Số CCCD phải gồm đúng 12 chữ số.';
     }
 
-    if (ho_so_do_dai($dantoc) > 15) {
+    if (chung_do_dai($dantoc) > 15) {
         return 'Dân tộc không được dài quá 15 ký tự.';
     }
+
     return '';
 }
 
 /**
- * @return string
+ * Mat khau moi: it nhat 8 ky tu, it nhat 2 loai ky tu.
  */
 function ho_so_kiem_tra_mat_khau_moi($matKhauMoi)
 {
@@ -140,8 +128,8 @@ function ho_so_da_du($hoSo)
 }
 
 /**
- * Gia tri dien vao form ho so. Uu tien du lieu ho so vua doc tu CSDL
- * (nguoi_dung_lay_ho_so da tra du 8 truong); $taiKhoan chi bu cho truong nao thieu.
+ * Gia tri dien vao form ho so. Uu tien ho so vua doc tu CSDL; $taiKhoan
+ * chi bu cho truong nao thieu.
  */
 function ho_so_gia_tri_form($taiKhoan, $hoSo)
 {
