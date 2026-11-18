@@ -2,12 +2,8 @@
 session_start();
 
 require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/app/Helpers/csrf.php';
-require_once __DIR__ . '/app/Models/NguoiDung.php';
-require_once __DIR__ . '/app/Controllers/AuthController.php';
+require_once __DIR__ . '/app/Controllers/auth.php';
 
-$nguoiDung = new NguoiDung($conn);
-$authController = new AuthController($nguoiDung);
-$viewData = $authController->dangNhap();
+$viewData = auth_dang_nhap($conn);
 
 require __DIR__ . '/app/Views/auth/login.php';

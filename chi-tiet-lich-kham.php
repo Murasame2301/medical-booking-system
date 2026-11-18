@@ -2,12 +2,8 @@
 session_start();
 
 require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/app/Helpers/csrf.php';
-require_once __DIR__ . '/app/Models/LichKham.php';
-require_once __DIR__ . '/app/Controllers/LichKhamController.php';
+require_once __DIR__ . '/app/Controllers/lich_kham.php';
 
-$lichKham = new LichKham($conn);
-$lichKhamController = new LichKhamController($lichKham);
-$viewData = $lichKhamController->chiTiet();
+$viewData = lich_kham_chi_tiet($conn);
 
 require __DIR__ . '/app/Views/appointments/detail.php';

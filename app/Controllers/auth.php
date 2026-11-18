@@ -1,0 +1,142 @@
+<?php
+
+// Xac thuc: dang nhap / dang ky. Tra ve mang du lieu cho view, giong het
+// cau truc $viewData ma view dang doc. Ham tu chuyen trang khi can.
+
+require_once __DIR__ . '/../Helpers/csrf.php';
+require_once __DIR__ . '/../Models/nguoi_dung.php';
+
+/**
+ * Trang dang nhap.
+ *
+ * @return array message, phonenumber
+ */
+function auth_dang_nhap($conn)
+{
+    if (!empty($_SESSION['is_logged_in'])) {
+        header('Location: xem-lich-kham.php');
+        exit;
+    }
+
+    $message = $_SESSION['auth_message'] ?? '';
+    unset($_SESSION['auth_message']);
+    $phonenumber = '';
+
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+        if (!csrf_validate()) {
+            $_SESSION['auth_message'] = 'Phiên làm việc đã hết hạn. Vui lòng thử lại.';
+            header('Location: dang-nhap.php', true, 303);
+            exit;
+        }
+
+        $phonenumber = isset($_POST['sdt']) && is_string($_POST['sdt'])
+            ? trim($_POST['sdt'])
+            : '';
+        $rawPassword = isset($_POST['mat_khau']) && is_string($_POST['mat_khau'])
+            ? $_POST['mat_khau']
+            : '';
+
+        if ($phonenumber === '' || $rawPassword === '') {
+            $message = 'Vui lòng nhập đầy đủ thông tin.';
+        } else {
+            try {
+                $user = nguoi_dung_tim_theo_sdt($conn, $phonenumber);
+
+                if ($user && password_verify($rawPassword, $user['matkhau'])) {
+                    session_regenerate_id(true);
+                    csrf_rotate();
+                    $_SESSION['manguoidung'] = $user['manguoidung'];
+                    $_SESSION['is_logged_in'] = true;
+
+                    $afterLoginUrl = $_SESSION['after_login_url'] ?? 'xem-lich-kham.php';
+                    unset($_SESSION['after_login_url'], $_SESSION['auth_message']);
+                    header('Location: ' . $afterLoginUrl);
+                    exit;
+                }
+
+                $message = 'Số điện thoại hoặc mật khẩu không đúng.';
+            } catch (RuntimeException $exception) {
+                $message = 'Không thể kiểm tra thông tin đăng nhập. Vui lòng thử lại.';
+            }
+        }
+    }
+
+    return [
+        'message' => $message,
+        'phonenumber' => $phonenumber,
+    ];
+}
+
+/**
+ * Trang dang ky tai khoan benh nhan.
+ *
+ * @return array message, fullname, phonenumber
+ */
+function auth_dang_ky($conn)
+{
+    if (!empty($_SESSION['is_logged_in'])) {
+        header('Location: xem-lich-kham.php');
+        exit;
+    }
+
+    $message = '';
+    $fullname = '';
+    $phonenumber = '';
+
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+        if (!csrf_validate()) {
+            $_SESSION['auth_message'] = 'Phiên làm việc đã hết hạn. Vui lòng thử lại.';
+            header('Location: dang-ky-tai-khoan.php', true, 303);
+            exit;
+        }
+
+        $fullname = isset($_POST['hoten']) && is_string($_POST['hoten'])
+            ? trim($_POST['hoten'])
+            : '';
+        $phonenumber = isset($_POST['sdt']) && is_string($_POST['sdt'])
+            ? trim($_POST['sdt'])
+            : '';
+        $rawPassword = isset($_POST['mat_khau']) && is_string($_POST['mat_khau'])
+            ? $_POST['mat_khau']
+            : '';
+        $rawRepassword = isset($_POST['nhap_lai_mat_khau']) && is_string($_POST['nhap_lai_mat_khau'])
+            ? $_POST['nhap_lai_mat_khau']
+            : '';
+
+        if ($fullname === '' || $phonenumber === '' || $rawPassword === '' || $rawRepassword === '') {
+            $message = 'Vui lòng nhập đầy đủ thông tin.';
+        } elseif ($rawPassword !== $rawRepassword) {
+            $message = 'Mật khẩu không khớp. Vui lòng kiểm tra lại.';
+        } else {
+            $password = password_hash($rawPassword, PASSWORD_DEFAULT);
+
+            try {
+                $manguoidung = nguoi_dung_tao_tai_khoan(
+                    $conn,
+                    $fullname,
+                    $phonenumber,
+                    $password
+                );
+
+                session_regenerate_id(true);
+                csrf_rotate();
+                $_SESSION['manguoidung'] = $manguoidung;
+
+                header('Location: tao-ho-so.php');
+                exit;
+            } catch (RuntimeException $exception) {
+                if ((int) $exception->getCode() === 1062) {
+                    $message = 'Số điện thoại này đã có tài khoản. Vui lòng đăng nhập hoặc sử dụng số khác.';
+                } else {
+                    $message = 'Không thể tạo tài khoản. Vui lòng thử lại.';
+                }
+            }
+        }
+    }
+
+    return [
+        'message' => $message,
+        'fullname' => $fullname,
+        'phonenumber' => $phonenumber,
+    ];
+}

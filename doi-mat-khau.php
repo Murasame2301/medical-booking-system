@@ -2,13 +2,8 @@
 session_start();
 
 require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/app/Helpers/csrf.php';
-require_once __DIR__ . '/app/Helpers/HoSoValidator.php';
-require_once __DIR__ . '/app/Models/NguoiDung.php';
-require_once __DIR__ . '/app/Controllers/TaiKhoanController.php';
+require_once __DIR__ . '/app/Controllers/tai_khoan.php';
 
-$nguoiDung = new NguoiDung($conn);
-$taiKhoanController = new TaiKhoanController($nguoiDung);
-$viewData = $taiKhoanController->doiMatKhau();
+$viewData = tai_khoan_doi_mat_khau($conn);
 
 require __DIR__ . '/app/Views/account/password.php';
