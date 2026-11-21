@@ -179,3 +179,4 @@ function lich_lam_viec_lay_con_trong($conn, int $maBacSi, string $ngay): array
         [$maBacSi, $ngay, LLV_CON_TRONG]
     );
 }
+

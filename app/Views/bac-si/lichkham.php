@@ -31,6 +31,8 @@
             <th>Điện thoại</th>
             <th>Giờ khám</th>
             <th>Lý do</th>
+            <th>Người hủy</th>
+            <th>Lý do hủy</th>
             <th>Thao tác</th>
           </tr>
         </thead>

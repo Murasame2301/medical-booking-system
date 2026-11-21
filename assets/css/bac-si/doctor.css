@@ -763,14 +763,17 @@ select.chon-tt option {
   padding: 9px 8px;
 }
 
-/* Họ tên (3), Giờ khám (7), Lý do (8) được xuống dòng để bảng co vừa khung */
+/* Các cột nội dung dài được xuống dòng để bảng co vừa khung */
 .bang-vua td:nth-child(3),
 .bang-vua td:nth-child(7),
-.bang-vua td:nth-child(8) {
+.bang-vua td:nth-child(8),
+.bang-vua td:nth-child(9),
+.bang-vua td:nth-child(10) {
   white-space: normal;
 }
 
-.bang-vua td:nth-child(8) {
+.bang-vua td:nth-child(8),
+.bang-vua td:nth-child(10) {
   min-width: 110px;
 }
 

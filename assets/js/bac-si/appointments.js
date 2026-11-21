@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const SO_COT = 9;
+  const SO_COT = 11;
   const URL_AJAX = "index.php?page=bac-si/lich-kham&ajax=";
 
   const formLoc = $("form-loc-kham");
@@ -38,6 +38,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //Một dòng từ server -> đối tượng phía client.
   function chuyenLichKham(k) {
+    const vaiTroNguoiHuy = {
+      1: "Bệnh nhân",
+      2: "Bác sĩ",
+      3: "Quản trị viên",
+    };
+    const tenNguoiHuy = String(k.tennguoi_huy || "");
+    const nhanVaiTro = vaiTroNguoiHuy[Number(k.vai_tro_nguoi_huy)];
+
     return {
       ma: Number(k.malichkham),
       trangThai: String(k.trangthai),
@@ -49,6 +57,8 @@ document.addEventListener("DOMContentLoaded", function () {
       gioBatDau: String(k.thoigianbatdau).slice(11, 16),
       gioKetThuc: String(k.thoigianketthuc).slice(11, 16),
       lyDo: String(k.lydo || ""),
+      nguoiHuy: tenNguoiHuy ? (nhanVaiTro ? tenNguoiHuy + " (" + nhanVaiTro + ")" : tenNguoiHuy) : "—",
+      lyDoHuy: String(k.lydohuy || ""),
     };
   }
 
@@ -114,6 +124,8 @@ document.addEventListener("DOMContentLoaded", function () {
         hienNgay(k.ngay) + " " + gioDauCuoi(k.gioBatDau, k.gioKetThuc),
       ),
       taoO("td", k.lyDo),
+      taoO("td", k.trangThai === LOC_LICH_KHAM.DA_HUY ? k.nguoiHuy : "—"),
+      taoO("td", k.trangThai === LOC_LICH_KHAM.DA_HUY ? (k.lyDoHuy || "—") : "—"),
       taoThaoTac(k),
     );
     return dong;

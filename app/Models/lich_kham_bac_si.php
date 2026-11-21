@@ -23,10 +23,13 @@ function lich_kham_tim_kiem($conn, int $maBacSi, string $tuNgay, string $denNgay
     }
 
     $sql = "SELECT lk.trangthai, lk.malichkham, nd.hoten, nd.ngaysinh,
-                   nd.gioitinh, nd.sdt, lk.lydo, llv.thoigianbatdau, llv.thoigianketthuc
+                   nd.gioitinh, nd.sdt, lk.lydo, lk.lydohuy,
+                   nd_huy.hoten AS tennguoi_huy, nd_huy.mavaitro AS vai_tro_nguoi_huy,
+                   llv.thoigianbatdau, llv.thoigianketthuc
             FROM LICH_LAM_VIEC llv
             JOIN LICH_KHAM lk ON llv.malichlamviec = lk.malichlamviec
             JOIN NGUOI_DUNG nd ON lk.manguoidung = nd.manguoidung
+            LEFT JOIN NGUOI_DUNG nd_huy ON lk.nguoihuy = nd_huy.manguoidung
             WHERE llv.manguoidung = ?";
     $kieu = 'i';
     $thamSo = [$maBacSi];
