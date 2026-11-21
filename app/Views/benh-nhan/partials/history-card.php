@@ -3,8 +3,11 @@
 // Mot the lich kham trong lich su. Tach ra de sau khi huy chi can thay
 // outerHTML cua dung the vua huy.
 // Bien: $item, $isReopen, $lydoHuy.
-
-$item = is_array($item ?? null) ? $item : [];
+// Chot chan: partial nay chi dung khi vong lap truyen $item; neu bi goi le thi
+// van render mot the rong thay vi bao loi.
+if (!isset($item) || !is_array($item)) {
+    $item = [];
+}
 $isReopen = !empty($isReopen);
 $lydoHuy = (string) ($lydoHuy ?? '');
 
