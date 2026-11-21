@@ -27,7 +27,7 @@ if (!function_exists('hop_le_gio')) {
 }
 
 if (!function_exists('hop_le_sdt')) {
-    //Số điện thoại: 10 chữ số, bắt đầu bằng 0.
+    //Kiểm tra SDT
     function hop_le_sdt(string $sdt): bool
     {
         return (bool) preg_match('/^0\d{9}$/', $sdt);
