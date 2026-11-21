@@ -140,11 +140,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (baoLoi === undefined) baoLoi = true;
 
     const lanNay = ++soLanTai;
+    //Ô ngày để trống nghĩa là không lọc ngày -> hiển thị toàn bộ lịch khám.
     const params = new URLSearchParams({
       tu_ngay: locTu.value,
       den_ngay: locDen.value,
       trang_thai: layLocLichKham(locTrangThai.value),
     });
+    if (locTu.value === "") params.delete("tu_ngay");
+    if (locDen.value === "") params.delete("den_ngay");
 
     let ketQua;
     try {
@@ -158,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     if (lanNay !== soLanTai) return true; //đã có yêu cầu mới hơn
 
-    danhSachLichKham = (ketQua.data ? .danh_sach || []).map(chuyenLichKham);
+    danhSachLichKham = ((ketQua.data && ketQua.data.danh_sach) || []).map(chuyenLichKham);
     veBang();
     return true;
   }
@@ -278,7 +281,7 @@ document.addEventListener("DOMContentLoaded", function () {
     xuLyDoiBoLoc();
   }
 
-  //Mặc định luôn là 1 ngày: hôm nay.
+  //Mặc định ngày hôm nay; bỏ trống ngày thì hiển thị toàn bộ.
   function datMacDinh() {
     const homNay = layNgayThuc();
     datKhoangLoc(locTu, locDen, {
@@ -291,7 +294,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function xuLyDatLai() {
     clearTimeout(hen);
-    datMacDinh(); //FIX: formLoc.reset() làm ô ngày rỗng -> server báo "Ngày không hợp lệ"
+    datMacDinh();
     taiLichKham();
   }
 
@@ -309,10 +312,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // ************ KHỞI TẠO
   function khoiTao() {
     datMacDinh();
-    giuKhongTrong(locTu); //không cho để trống ngày (server bắt buộc có ngày)
-    giuKhongTrong(locDen);
+    //Ô ngày được phép để trống: trống = không lọc ngày (hiện toàn bộ lịch).
     ganSuKien();
-    taiLichKham(); //FIX: trước đây chỉ gọi veBang() nên không bao giờ lấy dữ liệu từ server
+    taiLichKham();
   }
 
   khoiTao();

@@ -4,13 +4,14 @@
 require_once __DIR__ . '/../Helpers/utils.php';
 require_once __DIR__ . '/lich_lam_viec.php';
 
-//Tìm lịch khám của bác sĩ trong khoảng ngày, lọc theo trạng thái.
+//Tìm lịch khám của bác sĩ. Bỏ trống ngày thì lấy toàn bộ; lọc theo trạng thái.
 function lich_kham_tim_kiem($conn, int $maBacSi, string $tuNgay, string $denNgay, string $trangThai = ''): array
 {
-    if (!hop_le_ngay($tuNgay) || !hop_le_ngay($denNgay)) {
+    //Ngày chỉ kiểm tra khi có nhập; để trống cả hai nghĩa là không lọc ngày.
+    if (($tuNgay !== '' && !hop_le_ngay($tuNgay)) || ($denNgay !== '' && !hop_le_ngay($denNgay))) {
         return ket_qua(false, 'Ngày không hợp lệ.');
     }
-    if ($tuNgay > $denNgay) {
+    if ($tuNgay !== '' && $denNgay !== '' && $tuNgay > $denNgay) {
         return ket_qua(false, 'Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.');
     }
 
@@ -26,13 +27,20 @@ function lich_kham_tim_kiem($conn, int $maBacSi, string $tuNgay, string $denNgay
             FROM LICH_LAM_VIEC llv
             JOIN LICH_KHAM lk ON llv.malichlamviec = lk.malichlamviec
             JOIN NGUOI_DUNG nd ON lk.manguoidung = nd.manguoidung
-            WHERE llv.manguoidung = ? AND llv.thoigianbatdau >= ? AND llv.thoigianketthuc <= ?";
-    $kieu = 'iss';
-    $thamSo = [
-        $maBacSi,
-        ghep_ngay_gio($tuNgay, GIO_DAU_NGAY),
-        ghep_ngay_gio($denNgay, GIO_CUOI_NGAY, ':59'),
-    ];
+            WHERE llv.manguoidung = ?";
+    $kieu = 'i';
+    $thamSo = [$maBacSi];
+
+    if ($tuNgay !== '') {
+        $sql .= ' AND llv.thoigianbatdau >= ?';
+        $kieu .= 's';
+        $thamSo[] = ghep_ngay_gio($tuNgay, GIO_DAU_NGAY);
+    }
+    if ($denNgay !== '') {
+        $sql .= ' AND llv.thoigianketthuc <= ?';
+        $kieu .= 's';
+        $thamSo[] = ghep_ngay_gio($denNgay, GIO_CUOI_NGAY, ':59');
+    }
 
     if ($tt) {
         $sql .= " AND lk.trangthai IN (" . implode(',', array_fill(0, count($tt), '?')) . ')';
