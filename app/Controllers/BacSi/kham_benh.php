@@ -1,13 +1,12 @@
 <?php
-// Trang khám bệnh: Ca khám trong ngày, hoàn tất khám, xem hồ sơ khám.
+//Trang khám bệnh: Ca khám trong ngày, hoàn tất khám, xem hồ sơ khám.
 
 require_once __DIR__ . '/../../Helpers/utils.php';
 require_once __DIR__ . '/../../Models/lich_kham_bac_si.php';
 require_once __DIR__ . '/../../Models/ho_so_kham.php';
 
-/**
- * Hoan tat kham, them du lieu tham vao (trong mot transaction).
- */
+//Hoàn tất khám: đổi trạng thái lịch sang "đã khám" và lưu chẩn đoán, lời dặn.
+//Dùng transaction để hai bước cùng thành công hoặc cùng bị huỷ.
 function bac_si_hoan_thanh_kham($conn, int $maLichKham, int $maBacSi, string $chuanDoan, string $loiDan): array
 {
     $chuanDoan = trim($chuanDoan);
@@ -24,7 +23,7 @@ function bac_si_hoan_thanh_kham($conn, int $maLichKham, int $maBacSi, string $ch
     if ($lichKham['trangthai'] !== LK_DA_XAC_NHAN) {
         return ket_qua(false, 'Chỉ khám được lượt đã xác nhận.');
     }
-    // chi kham cho ca cua ngay hien tai
+    //Chỉ khám cho ca của ngày hiện tại
     if (substr((string) $lichKham['thoigianbatdau'], 0, 10) !== date('Y-m-d')) {
         return ket_qua(false, 'Chỉ được khám các ca trong ngày hôm nay.');
     }
@@ -52,9 +51,7 @@ function bac_si_hoan_thanh_kham($conn, int $maLichKham, int $maBacSi, string $ch
     }
 }
 
-/**
- * Ho so kham da tham cua mot luot kham.
- */
+//Hồ sơ khám đã thăm của một lượt khám.
 function bac_si_lay_ho_so_kham($conn, int $maLichKham, int $maBacSi): array
 {
     $lichKham = lich_kham_lay($conn, $maBacSi, $maLichKham);
@@ -68,9 +65,7 @@ function bac_si_lay_ho_so_kham($conn, int $maLichKham, int $maBacSi): array
     return ket_qua(true, '', ho_so_kham_lay($conn, $maLichKham));
 }
 
-/**
- * Xu ly AJAX page=bac-si/kham-benh&ajax=... (ds | xem | hoan_thanh).
- */
+//Xử lý AJAX.
 function bac_si_kham_benh_ajax($conn): void
 {
     $maBacSi = ma_nguoi_dung_hien_tai();

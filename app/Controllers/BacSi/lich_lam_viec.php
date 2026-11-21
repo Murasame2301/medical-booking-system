@@ -1,18 +1,15 @@
 <?php
-/* Trang lich lam viec: tao, sua, xoa khung gio va loc theo khoang ngay. */
-
+//Trang lịch làm việc
 require_once __DIR__ . '/../../Helpers/utils.php';
 require_once __DIR__ . '/../../Models/lich_lam_viec.php';
 
-// gio ket thuc = gio bat dau + so phut (khong qua 23:59)
+//Giờ kết thúc = giờ bắt đầu + số phút (không quá 23:59).
 function bac_si_tinh_gio_ket_thuc(string $gioBatDau, int $soPhut): string
 {
     return phut_sang_gio(min(gio_sang_phut($gioBatDau) + $soPhut, CUOI_NGAY_PHUT));
 }
 
-/**
- * Tra ve noi dung loi, "" neu hop le.
- */
+//Kiểm tra khung giờ. Trả nội dung lỗi, '' nếu hợp lệ.
 function bac_si_kiem_tra_khung_gio(string $ngay, string $tuGio, int $soPhut): string
 {
     if (!hop_le_ngay($ngay)) {
@@ -39,15 +36,13 @@ function bac_si_thong_bao_trung(string $ngay, string $tuGio, string $denGio): st
     return "Khung giờ từ $tuGio đến $denGio ngày $ngay đã được tạo trong lịch làm việc.";
 }
 
-// 1062: trung gio bat dau (UNIQUE); 1644: trigger bao chong lan
+//1062: trùng giờ bắt đầu (UNIQUE); 1644: trigger báo chồng lấn.
 function bac_si_la_loi_trung(mysqli_sql_exception $e): bool
 {
     return in_array($e->getCode(), [1062, 1644], true);
 }
 
-/**
- * Tao mot khung gio moi: kiem tra du lieu, chong trung roi ghi.
- */
+//Tạo một khung giờ mới: kiểm tra dữ liệu, chống trùng rồi ghi.
 function bac_si_tao_khung_gio($conn, int $maBacSi, string $ngay, string $tuGio, int $soPhut): array
 {
     if ($loi = bac_si_kiem_tra_khung_gio($ngay, $tuGio, $soPhut)) {
@@ -74,9 +69,7 @@ function bac_si_tao_khung_gio($conn, int $maBacSi, string $ngay, string $tuGio, 
         : ket_qua(false, 'Tạo lịch làm việc thất bại.');
 }
 
-/**
- * Sua ngay / gio bat dau / so phut cua khung gio con trong va chua co luot kham.
- */
+//Sửa ngày, giờ bắt đầu, số phút của khung giờ còn trống và chưa có lượt khám.
 function bac_si_sua_khung_gio($conn, int $maBacSi, int $maLichLamViec, string $ngay, string $tuGio, int $soPhut): array
 {
     if ($loi = bac_si_kiem_tra_khung_gio($ngay, $tuGio, $soPhut)) {
@@ -118,9 +111,7 @@ function bac_si_sua_khung_gio($conn, int $maBacSi, int $maLichLamViec, string $n
         : ket_qua(false, 'Cập nhật lịch làm việc thất bại hoặc không có thay đổi.');
 }
 
-/**
- * Chi xoa khi "con trong" va khong co luot kham dang hieu luc.
- */
+//Xoá khung giờ, chỉ khi còn trống và không có lượt khám đang hiệu lực.
 function bac_si_xoa_khung_gio($conn, int $maBacSi, int $maLichLamViec): array
 {
     $lich = lich_lam_viec_lay($conn, $maBacSi, $maLichLamViec);
@@ -138,7 +129,7 @@ function bac_si_xoa_khung_gio($conn, int $maBacSi, int $maLichLamViec): array
     try {
         $soDong = lich_lam_viec_xoa($conn, $maBacSi, $maLichLamViec);
     } catch (mysqli_sql_exception $e) {
-        // 1451: van con dong tham chieu (vd: vua co nguoi dat)
+        //1451: vẫn còn dòng tham chiếu (vd: vừa có người đặt).
         if ((int) $e->getCode() === 1451) {
             return ket_qua(false, 'Không thể xoá lịch làm việc vì đã có lượt khám.');
         }
@@ -150,9 +141,7 @@ function bac_si_xoa_khung_gio($conn, int $maBacSi, int $maLichLamViec): array
         : ket_qua(false, 'Xoá lịch làm việc thất bại.');
 }
 
-/**
- * Xu ly AJAX page=bac-si/lich-lam-viec&ajax=... (lich-lam-viec | tao | sua | xoa).
- */
+//Xử lý AJAX.
 function bac_si_lich_lam_viec_ajax($conn): void
 {
     $maBacSi = ma_nguoi_dung_hien_tai();

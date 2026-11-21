@@ -1,22 +1,15 @@
 <?php
-/* Trang lich kham cua bac si: tim kiem, xac nhan, huy va doi trang thai luot kham. */
-
+//Trang lịch khám của bác sĩ
 require_once __DIR__ . '/../../Helpers/utils.php';
 require_once __DIR__ . '/../../Models/lich_kham_bac_si.php';
 
-// trang thai hien tai => cac trang thai duoc phep chuyen sang
-/* (da_kham va da_huy la trang thai cuoi). Trigger trong CSDL cung chan cac
-   duong chuyen khong hop le, day la lop kiem tra som de bao loi ro rang. */
+//Trạng thái hiện tại => các trạng thái được phép chuyển sang. Đã khám, đã huỷ là trạng thái cuối.
 const LK_CHUYEN_TRANG_THAI = [
     LK_CHO_XAC_NHAN => [LK_DA_XAC_NHAN, LK_DA_HUY],
     LK_DA_XAC_NHAN  => [LK_DA_KHAM, LK_DA_HUY],
 ];
 
-/**
- * Doi trang thai lich kham.
- * Khi huy: bat buoc ghi nguoihuy (rang buoc chk_lich_kham_huy) va lydohuy (neu co).
- * Khong con buoc "tra khung gio ve con_trong": trigger trong CSDL lo viec do.
- */
+//Đổi trạng thái lịch khám. Khi huỷ thì ghi thêm người huỷ và lý do huỷ (nếu có).
 function bac_si_doi_trang_thai_hop_le(
     $conn,
     int $maLichKham,
@@ -74,7 +67,7 @@ function bac_si_xac_nhan_lich($conn, int $maBacSi, int $maLichKham): array
     );
 }
 
-// khop nut Huy tren giao dien: cho xac nhan + da xac nhan
+//Huỷ lịch đang chờ xác nhận hoặc đã xác nhận.
 function bac_si_huy_lich($conn, int $maBacSi, int $maLichKham, ?string $lyDoHuy = null): array
 {
     return bac_si_doi_trang_thai_hop_le(
@@ -88,9 +81,7 @@ function bac_si_huy_lich($conn, int $maBacSi, int $maLichKham, ?string $lyDoHuy 
     );
 }
 
-/**
- * Doi trang thai tu o chon tren bang: kiem tra duong chuyen hop le roi ghi.
- */
+//Đổi trạng thái từ ô chọn trên bảng: kiểm tra đường chuyển hợp lệ rồi ghi.
 function bac_si_doi_theo_yeu_cau($conn, int $maBacSi, int $maLichKham, string $sangTT, ?string $lyDoHuy = null): array
 {
     if (!in_array($sangTT, LK_TRANG_THAI, true)) {
@@ -119,9 +110,7 @@ function bac_si_doi_theo_yeu_cau($conn, int $maBacSi, int $maLichKham, string $s
     );
 }
 
-/**
- * Xu ly AJAX page=bac-si/lich-kham&ajax=... (lich-kham | doi-trang-thai | xac-nhan | huy).
- */
+//Xử lý AJAX.
 function bac_si_lich_kham_ajax($conn): void
 {
     $maBacSi = ma_nguoi_dung_hien_tai();

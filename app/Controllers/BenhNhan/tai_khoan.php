@@ -187,8 +187,7 @@ function benh_nhan_lay_gia_tri_post()
     ];
 }
 
-// Kiểm tra và lưu hồ sơ: trả '' nếu thành công, ngược lại trả thông báo lỗi.
-// Không tự redirect để dùng chung cho cả AJAX (JSON) lẫn form thường (303).
+//Kiểm tra và lưu hồ sơ. Trả '' nếu thành công, ngược lại trả thông báo lỗi.
 function benh_nhan_xu_ly_cap_nhat_ho_so($conn, $manguoidung, array $taiKhoan, array $values)
 {
     $error = ho_so_kiem_tra_ho_ten($values['hoten']);

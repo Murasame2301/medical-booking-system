@@ -1,12 +1,9 @@
 <?php
-/* Trang tong quan bac si: thong ke trong ngay, lich kham va khung gio con trong. */
-
+//Trang tổng quan bác sĩ
 require_once __DIR__ . '/../../Helpers/utils.php';
 require_once __DIR__ . '/../../Models/lich_kham_bac_si.php';
 
-/**
- * Du lieu cua mot ngay: thong ke, danh sach lich va khung gio con trong.
- */
+//Dữ liệu của một ngày: thống kê, danh sách lịch và khung giờ còn trống.
 function bac_si_dashboard_du_lieu_ngay($conn, int $maBacSi, string $ngay): array
 {
     if (!hop_le_ngay($ngay)) {
@@ -20,9 +17,7 @@ function bac_si_dashboard_du_lieu_ngay($conn, int $maBacSi, string $ngay): array
     ]);
 }
 
-/**
- * Xu ly AJAX page=bac-si/tong-quan&ajax=tong-quan.
- */
+//Xử lý AJAX
 function bac_si_tong_quan_ajax($conn): void
 {
     $maBacSi = ma_nguoi_dung_hien_tai();
@@ -40,9 +35,7 @@ function bac_si_tong_quan_ajax($conn): void
     }
 }
 
-/**
- * Render trang (JS trong assets/js/bac-si/dashboard.js tu goi API o tren).
- */
+//Render trang (JS trong assets/js/bac-si/dashboard.js tự gọi API ở trên).
 function bac_si_tong_quan($conn): array
 {
     return [];
