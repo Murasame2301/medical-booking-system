@@ -1,5 +1,5 @@
 <?php
-/* Trang tong quan quan tri. */
+//Trang tổng quan quản trị.
 
 require_once __DIR__ . '/__nap.php';
 

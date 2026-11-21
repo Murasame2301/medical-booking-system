@@ -1,9 +1,9 @@
 <?php
-/* Quan ly nguoi dung: danh sach, loc, khoa / mo khoa. */
+//Quản lý người dùng
 
 require_once __DIR__ . '/__nap.php';
 
-/* Doc bo loc tu GET. Dung chung cho trang va endpoint AJAX. */
+//Đọc bộ lọc từ GET. Dùng chung cho trang và endpoint AJAX.
 function quan_tri_doc_bo_loc()
 {
     $tukhoa = chung_chuoi($_GET['tukhoa'] ?? '');
@@ -27,7 +27,7 @@ function quan_tri_nguoi_dung($conn)
     ];
 }
 
-/* Duong quay ve danh sach, giu nguyen o tim kiem va bo loc. */
+//Đường quay về danh sách, giữ nguyên ô tìm kiếm và bộ lọc.
 function quan_tri_url_ve_danh_sach($tukhoa, $vaitro)
 {
     return 'index.php?' . http_build_query([
@@ -37,8 +37,7 @@ function quan_tri_url_ve_danh_sach($tukhoa, $vaitro)
     ]);
 }
 
-/* Khoa / mo khoa khi JS bi tat: form POST thuong, xong thi chuyen trang.
-   Cung route voi AJAX (xem quan_tri_ajax_khoa_mo trong ajax.php). */
+//Khoá, mở khoá khi JS bị tắt: form POST thường, xong thì chuyển trang.
 function quan_tri_khoa_mo_tai_khoan($conn)
 {
     $tukhoa = chung_chuoi($_POST['tukhoa'] ?? '');

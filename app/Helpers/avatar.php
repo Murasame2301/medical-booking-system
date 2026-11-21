@@ -1,14 +1,10 @@
 <?php
-/* Anh dai dien: luu trong assets/uploads/avatar/, hien thi bang mot khung
-   chung cho ca ba vai tro. */
+//Ảnh đại diện: lưu trong assets/uploads/avatar/
 
 require_once __DIR__ . '/utils.php';
 
 if (!function_exists('anh_thu_muc_that')) {
-    /**
-     * Duong dan tuyet doi tren dia cua thu muc anh. Dung __DIR__ thay vi
-     * SCRIPT_FILENAME de khong phu thuoc file nao dang duoc goi.
-     */
+    //Đường dẫn tuyệt đối trên đĩa của thư mục ảnh.
     function anh_thu_muc_that(): string
     {
         return dirname(__DIR__, 2) . '/' . ANH_THU_MUC;
@@ -16,9 +12,7 @@ if (!function_exists('anh_thu_muc_that')) {
 }
 
 if (!function_exists('chu_cai_viet_tat')) {
-    /**
-     * Chu cai first cua tu cuoi trong ho ten (ten rieng).
-     */
+    //Chữ cái đầu của tên riêng (từ cuối trong họ tên).
     function chu_cai_viet_tat(string $hoTen): string
     {
         $tu = preg_split('/\s+/u', trim($hoTen), -1, PREG_SPLIT_NO_EMPTY);
@@ -31,10 +25,7 @@ if (!function_exists('chu_cai_viet_tat')) {
 }
 
 if (!function_exists('lay_anh_dai_dien')) {
-    /**
-     * Duong dan web cua anh kem ?v=<mtime> de khong bi dinh cache cu.
-     * Null neu chua co anh hoac tep khong con.
-     */
+    //Đường dẫn web của ảnh kèm ?v=<mtime> để không dính cache cũ. Null nếu chưa có ảnh.
     function lay_anh_dai_dien(?string $duongDan): ?string
     {
         static $boNho = [];
@@ -58,10 +49,7 @@ if (!function_exists('lay_anh_dai_dien')) {
 }
 
 if (!function_exists('html_avatar')) {
-    /**
-     * Khung avatar: co anh thi hien anh, chua co thi hien chu viet tat.
-     * Anh duoc in san trong HTML nen hien ngay, khong bi nhay chu.
-     */
+    //Khung avatar: có ảnh thì hiện ảnh, chưa có thì hiện chữ viết tắt.
     function html_avatar(?string $duongDanAnh, string $hoTen, string $lop = 'av-lon'): string
     {
         $anh = lay_anh_dai_dien($duongDanAnh);

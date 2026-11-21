@@ -1,5 +1,5 @@
 <?php
-/* Phien dang nhap, phan quyen va dieu huong dung chung cho ba vai tro. */
+//Session đăng nhập, phân quyền và điều hướng dùng chung cho ba vai trò.
 
 require_once __DIR__ . '/csrf.php';
 require_once __DIR__ . '/ajax.php';
@@ -40,9 +40,7 @@ if (!function_exists('ho_ten_hien_tai')) {
 }
 
 if (!function_exists('chuyen_trang')) {
-    /**
-     * Chuyen trang va dung chuong trinh.
-     */
+    //Chuyển trang và dừng chương trình.
     function chuyen_trang(string $duongDan): void
     {
         header('Location: ' . $duongDan);
@@ -51,9 +49,7 @@ if (!function_exists('chuyen_trang')) {
 }
 
 if (!function_exists('chuyen_trang_sau_post')) {
-    /**
-     * Chuyen trang sau form POST: 303 doi thanh GET de F5 khong gui lai.
-     */
+    //Chuyển trang sau form POST: 303 đổi thành GET để F5 không gửi lại.
     function chuyen_trang_sau_post(string $duongDan): void
     {
         header('Location: ' . $duongDan, true, 303);
@@ -62,9 +58,7 @@ if (!function_exists('chuyen_trang_sau_post')) {
 }
 
 if (!function_exists('mo_phien_dang_nhap')) {
-    /**
-     * Mo phien cho mot tai khoan vua xac thuc xong.
-     */
+    //Mở session cho một tài khoản vừa xác thực xong.
     function mo_phien_dang_nhap(array $nguoiDung): void
     {
         session_regenerate_id(true);
@@ -76,9 +70,7 @@ if (!function_exists('mo_phien_dang_nhap')) {
 }
 
 if (!function_exists('dang_xuat')) {
-    /**
-     * Xoa toan bo phien va ve trang dang nhap.
-     */
+    //Xoá toàn bộ session và về trang đăng nhập.
     function dang_xuat(): void
     {
         $_SESSION = [];
@@ -102,10 +94,7 @@ if (!function_exists('dang_xuat')) {
 }
 
 if (!function_exists('tra_loi_chua_dang_nhap')) {
-    /**
-     * Chua dang nhap / het phien. Request AJAX nhan JSON de fetch khong bi
-     * di theo 302 roi nhan ve ca trang HTML.
-     */
+    //Chưa đăng nhập hoặc hết session. Request AJAX nhận JSON thay vì bị chuyển trang.
     function tra_loi_chua_dang_nhap(string $thongDiep = 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.'): void
     {
         if (ajax_is_request()) {
@@ -131,9 +120,8 @@ if (!function_exists('tra_loi_khong_du_quyen')) {
 }
 
 if (!function_exists('bat_buoc_dang_nhap')) {
-    /**
-     * Bat buoc da dang nhap va (neu co) dung vai tro. Tra ve ma nguoi dung.
-     */
+    //Bắt buộc đã đăng nhập và đúng vai trò (nếu có).
+    //Trả về mã người dùng.
     function bat_buoc_dang_nhap(?int $vaiTro = null): int
     {
         if (!da_dang_nhap()) {

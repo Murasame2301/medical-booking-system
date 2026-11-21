@@ -1,7 +1,5 @@
 <?php
-/* Chong CSRF cho form POST va request AJAX.
-   Token gan voi session. Form gui qua o an csrf_token; fetch() gui qua
-   header X-CSRF-Token (xem assets/js/bac-si/api.js). */
+//Chống CSRF cho form POST và request AJAX.
 
 if (!defined('CSRF_SESSION_KEY')) {
     define('CSRF_SESSION_KEY', 'csrf_token');
@@ -19,9 +17,7 @@ if (!function_exists('csrf_token')) {
 }
 
 if (!function_exists('csrf_rotate')) {
-    /**
-     * Sinh lai token: goi sau session_regenerate_id() hoac sau khi doi quyen.
-     */
+    //Sinh lại token: gọi sau session_regenerate_id() hoặc sau khi đổi quyền.
     function csrf_rotate(): string
     {
         $_SESSION[CSRF_SESSION_KEY] = bin2hex(random_bytes(32));
@@ -31,9 +27,7 @@ if (!function_exists('csrf_rotate')) {
 }
 
 if (!function_exists('csrf_field')) {
-    /**
-     * Hidden input de nhung vao form POST.
-     */
+    //Ô ẩn chứa token để nhúng vào form POST.
     function csrf_field(): string
     {
         return '<input type="hidden" name="csrf_token" value="'
@@ -42,9 +36,7 @@ if (!function_exists('csrf_field')) {
 }
 
 if (!function_exists('csrf_gia_tri_gui_len')) {
-    /**
-     * Token client gui len: uu tien o an trong form, sau do den header cho AJAX.
-     */
+    //Token client gửi lên: ưu tiên ô ẩn trong form, sau đó đến header cho AJAX.
     function csrf_gia_tri_gui_len(): string
     {
         $tuForm = $_POST['csrf_token'] ?? null;
@@ -59,9 +51,7 @@ if (!function_exists('csrf_gia_tri_gui_len')) {
 }
 
 if (!function_exists('csrf_validate')) {
-    /**
-     * So sanh token client gui voi token session (constant-time).
-     */
+    //So sánh token client gửi với token trong session (constant-time).
     function csrf_validate(): bool
     {
         $expected = $_SESSION[CSRF_SESSION_KEY] ?? '';

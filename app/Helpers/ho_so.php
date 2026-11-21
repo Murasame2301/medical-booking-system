@@ -1,13 +1,10 @@
 <?php
 
-// Kiem tra du lieu cho form ho so benh nhan (tao-ho-so) va trang tai khoan.
-// Moi ham tra ve chuoi loi; chuoi rong nghia la hop le.
+//Kiểm tra dữ liệu form hồ sơ bệnh nhân. Mỗi hàm trả chuỗi lỗi, '' nếu hợp lệ.
 
 require_once __DIR__ . '/utils.php';
 
-/**
- * Kiem tra bo truong ho so bat buoc.
- */
+//Kiểm tra các trường hồ sơ bắt buộc.
 function ho_so_kiem_tra_ho_so($ngaysinh, $gioitinh, $email, $diachi, $bhyt)
 {
     if ($ngaysinh === '' || $gioitinh === '' || $diachi === '' || $bhyt === '') {
@@ -44,9 +41,7 @@ function ho_so_kiem_tra_ho_so($ngaysinh, $gioitinh, $email, $diachi, $bhyt)
     return '';
 }
 
-/**
- * Kiem tra ho ten.
- */
+//Kiểm tra họ tên.
 function ho_so_kiem_tra_ho_ten($hoten)
 {
     if ($hoten === '') {
@@ -60,9 +55,8 @@ function ho_so_kiem_tra_ho_ten($hoten)
     return '';
 }
 
-/**
- * CCCD va dan toc la tuy chon: chi kiem tra khi co nhap.
- */
+//CCCD và dân tộc là tuỳ chọn
+//chỉ kiểm tra khi có nhập.
 function ho_so_kiem_tra_truong_mo_rong($cccd, $dantoc)
 {
     if ($cccd !== '' && !preg_match('/^\d{12}$/', $cccd)) {
@@ -76,9 +70,7 @@ function ho_so_kiem_tra_truong_mo_rong($cccd, $dantoc)
     return '';
 }
 
-/**
- * Mat khau moi: it nhat 8 ky tu, it nhat 2 loai ky tu.
- */
+//Mật khẩu mới: ít nhất 8 ký tự, ít nhất 2 loại ký tự.
 function ho_so_kiem_tra_mat_khau_moi($matKhauMoi)
 {
     $length = strlen($matKhauMoi);
@@ -112,9 +104,7 @@ function ho_so_kiem_tra_mat_khau_moi($matKhauMoi)
     return '';
 }
 
-/**
- * Ho so da du cac truong bat buoc de dat lich chua.
- */
+//Hồ sơ đã đủ các trường bắt buộc để đặt lịch chưa.
 function ho_so_da_du($hoSo)
 {
     if (!is_array($hoSo)) {
@@ -127,10 +117,8 @@ function ho_so_da_du($hoSo)
         && trim((string) ($hoSo['bhyt'] ?? '')) !== '';
 }
 
-/**
- * Gia tri dien vao form ho so. Uu tien ho so vua doc tu CSDL; $taiKhoan
- * chi bu cho truong nao thieu.
- */
+//Giá trị điền vào form hồ sơ.
+//Ưu tiên hồ sơ từ CSDL, $taiKhoan chỉ bù trường còn thiếu.
 function ho_so_gia_tri_form($taiKhoan, $hoSo)
 {
     $nguon = (is_array($hoSo) ? $hoSo : []) + (is_array($taiKhoan) ? $taiKhoan : []);

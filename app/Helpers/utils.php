@@ -1,10 +1,8 @@
 <?php
-/* Ham dung chung cho ba vai tro: dinh dang, kiem tra du lieu, phan hoi AJAX. */
+//Hàm dùng chung cho ba vai trò: định dạng, kiểm tra dữ liệu, phản hồi AJAX.
 
 if (!function_exists('h')) {
-    /**
-     * Hien du lieu ngan XSS.
-     */
+    //Hiện dữ liệu, ngăn XSS.
     function h($s): string
     {
         return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
@@ -12,9 +10,7 @@ if (!function_exists('h')) {
 }
 
 if (!function_exists('hop_le_ngay')) {
-    /**
-     * Kiem tra chuoi dung dinh dang Y-m-d va la ngay co that.
-     */
+    //Kiểm tra chuỗi đúng định dạng Y-m-d và là ngày có thật.
     function hop_le_ngay(string $ngay): bool
     {
         $d = DateTime::createFromFormat('Y-m-d', $ngay);
@@ -31,9 +27,7 @@ if (!function_exists('hop_le_gio')) {
 }
 
 if (!function_exists('hop_le_sdt')) {
-    /**
-     * So dien thoai di dong Viet Nam: 10 chu so, bat dau bang 0.
-     */
+    //Số điện thoại: 10 chữ số, bắt đầu bằng 0.
     function hop_le_sdt(string $sdt): bool
     {
         return (bool) preg_match('/^0\d{9}$/', $sdt);
@@ -57,10 +51,7 @@ if (!function_exists('phut_sang_gio')) {
 }
 
 if (!function_exists('thoi_diem_chan_dat_lich')) {
-    /**
-     * Moc som nhat con duoc hien thi / dat: bay gio + PHUT_CHAN_DAT_TRUOC.
-     * Tinh bang gio PHP de khong phu thuoc dong ho cua MySQL.
-     */
+    //Mốc sớm nhất còn được đặt lịch: bây giờ + PHUT_CHAN_DAT_TRUOC (tính theo giờ PHP).
     function thoi_diem_chan_dat_lich(): string
     {
         return date('Y-m-d H:i:s', time() + PHUT_CHAN_DAT_TRUOC * 60);
@@ -84,9 +75,7 @@ if (!function_exists('dinh_dang_khung_gio')) {
 }
 
 if (!function_exists('ghep_ngay_gio')) {
-    /**
-     * Chuan kieu DATETIME trong MySQL.
-     */
+    //Ghép ngày giờ theo chuẩn DATETIME của MySQL.
     function ghep_ngay_gio(string $ngay, string $gio, string $giay = ':00'): string
     {
         return $ngay . ' ' . $gio . $giay;
@@ -94,9 +83,7 @@ if (!function_exists('ghep_ngay_gio')) {
 }
 
 if (!function_exists('nhan_trang_thai')) {
-    /**
-     * Nhan hien thi va lop CSS cho mot trang thai.
-     */
+    //Nhãn hiển thị và lớp CSS cho một trạng thái.
     function nhan_trang_thai(string $tt): array
     {
         $map = [
@@ -115,9 +102,7 @@ if (!function_exists('nhan_trang_thai')) {
 }
 
 if (!function_exists('ket_qua')) {
-    /**
-     * Cau truc tra ve cua controller: ok / msg / data.
-     */
+    //Cấu trúc trả về của controller: ok / msg / data.
     function ket_qua(bool $ok, string $msg = '', $data = null): array
     {
         return ['ok' => $ok, 'msg' => $msg, 'data' => $data];
@@ -140,9 +125,7 @@ if (!function_exists('tra_json')) {
 }
 
 if (!function_exists('doc_du_lieu_gui')) {
-    /**
-     * Du lieu client gui len: JSON body (fetch) hoac form POST.
-     */
+    //Dữ liệu client gửi lên: JSON body (fetch) hoặc form POST.
     function doc_du_lieu_gui(): array
     {
         $raw = file_get_contents('php://input');
@@ -153,9 +136,8 @@ if (!function_exists('doc_du_lieu_gui')) {
 }
 
 if (!function_exists('bat_buoc_ajax')) {
-    /**
-     * Ham xu ly AJAX quen tra JSON thi bao loi, khong in ca trang HTML.
-     */
+    //Hàm xử lý AJAX quên trả JSON thì báo lỗi,
+    //không thì in cả trang HTML.
     function bat_buoc_ajax(string $thongDiep = 'Yêu cầu AJAX không được xử lý.'): void
     {
         tra_json(ket_qua(false, $thongDiep), 400);
@@ -163,9 +145,7 @@ if (!function_exists('bat_buoc_ajax')) {
 }
 
 if (!function_exists('chung_chuoi')) {
-    /**
-     * Chuoi da trim, hoac '' neu gia tri khong phai chuoi.
-     */
+    //Chuỗi đã trim hoặc '' nếu giá trị không phải chuỗi.
     function chung_chuoi($value): string
     {
         return is_string($value) ? trim($value) : '';
@@ -173,9 +153,7 @@ if (!function_exists('chung_chuoi')) {
 }
 
 if (!function_exists('chung_so_duong')) {
-    /**
-     * So nguyen duong; null neu khong hop le.
-     */
+    //Số nguyên dương; null nếu không hợp lệ.
     function chung_so_duong($value): ?int
     {
         if (is_int($value) && $value > 0) {
@@ -200,9 +178,7 @@ if (!function_exists('chung_so_nguyen')) {
 }
 
 if (!function_exists('chung_do_dai')) {
-    /**
-     * Do dai theo ky tu (khong phai byte), khop VARCHAR(n) va maxlength.
-     */
+    //Độ dài theo ký tự (không phải byte), khớp VARCHAR(n) và maxlength.
     function chung_do_dai($value): int
     {
         return function_exists('mb_strlen')
@@ -212,9 +188,7 @@ if (!function_exists('chung_do_dai')) {
 }
 
 if (!function_exists('chung_dat_flash')) {
-    /**
-     * Ghi loi nhac de hien o lan tai trang ke tiep.
-     */
+    //Ghi lời nhắc để hiện ở lần tải trang kế tiếp.
     function chung_dat_flash($key, $message, $type, $extra = []): void
     {
         $_SESSION[$key] = array_merge(
@@ -228,9 +202,7 @@ if (!function_exists('chung_dat_flash')) {
 }
 
 if (!function_exists('chung_doc_flash')) {
-    /**
-     * Doc loi nhac da ghi, roi xoa de khong hien lai lan sau.
-     */
+    //Đọc lời nhắc đã ghi rồi xoá để không hiện lại lần sau.
     function chung_doc_flash($key): array
     {
         $flash = $_SESSION[$key] ?? [];
@@ -241,9 +213,7 @@ if (!function_exists('chung_doc_flash')) {
 }
 
 if (!function_exists('render_fragment')) {
-    /**
-     * Render mot view/partial thanh chuoi.
-     */
+    //Render một view/partial thành chuỗi.
     function render_fragment($__file, array $__vars = []): string
     {
         extract($__vars, EXTR_SKIP);

@@ -1,12 +1,9 @@
 <?php
-/* Cac endpoint AJAX cua khu quan tri. Router da kiem tra dang nhap, vai tro
-   quan tri va CSRF truoc khi toi day. Moi route AJAX khai bao trong
-   config/routes.php: 'ham' xu ly khi khong phai AJAX (chuyen ve trang chinh),
-   'xu_ly' xu ly request AJAX. */
+//Các endpoint AJAX của quản trị
 
 require_once __DIR__ . '/__nap.php';
 
-/* Tim nguoi dung: tra ve HTML bang (khong phai JSON). */
+//Tìm người dùng: trả về HTML bảng (không phải JSON).
 function quan_tri_ajax_tim_nguoi_dung($conn)
 {
     [$tukhoa, $vaitro] = quan_tri_doc_bo_loc();
@@ -27,14 +24,14 @@ function quan_tri_ajax_tim_nguoi_dung($conn)
     exit;
 }
 
-/* Khi mo thang duong dan tim kiem (khong AJAX): ve trang danh sach. */
+//Mở thẳng đường dẫn tìm kiếm (không AJAX): về trang danh sách.
 function quan_tri_tim_nguoi_dung_trang($conn)
 {
     [$tukhoa, $vaitro] = quan_tri_doc_bo_loc();
     chuyen_trang(quan_tri_url_ve_danh_sach($tukhoa, $vaitro));
 }
 
-/* Khoa / mo khoa tai khoan, tra JSON. */
+//Khoá, mở khoá tài khoản. Trả JSON.
 function quan_tri_ajax_khoa_mo($conn)
 {
     if (!la_vai_tro(VT_QUAN_TRI)) {
@@ -58,7 +55,7 @@ function quan_tri_ajax_khoa_mo($conn)
     tra_json($kq);
 }
 
-/* Kiem tra trung mot truong (sdt / email) cho form bac si, tra JSON. */
+//Kiểm tra trùng SĐT, email cho form bác sĩ -> Trả JSON.
 function quan_tri_ajax_kiem_tra_trung($conn)
 {
     $cot = chung_chuoi($_GET['cot'] ?? '');
@@ -68,7 +65,7 @@ function quan_tri_ajax_kiem_tra_trung($conn)
     tra_json(quan_tri_kiem_tra_truong($conn, $cot, $giatri, $boQuaMa));
 }
 
-/* Mo thang duong dan kiem tra trung (khong AJAX): ve form bac si. */
+//Mở thẳng đường dẫn kiểm tra trùng (không AJAX): về form bác sĩ.
 function quan_tri_kiem_tra_trung_trang($conn)
 {
     $ma = chung_so_nguyen($_GET['bo_qua_id'] ?? 0);

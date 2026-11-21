@@ -16,8 +16,8 @@ var password = document.getElementById('mat_khau');
 var confirmation = document.getElementById('nhap_lai_mat_khau');
 if (password && confirmation) {
     var checkPasswords = function () {
-        confirmation.setCustomValidity(confirmation.value && confirmation.value !== password.value
-            ? 'Mật khẩu nhập lại chưa khớp. Vui lòng kiểm tra lại.' : '');
+        confirmation.setCustomValidity(confirmation.value && confirmation.value !== password.value ?
+            'Mật khẩu nhập lại chưa khớp. Vui lòng kiểm tra lại.' : '');
     };
     password.addEventListener('input', checkPasswords);
     confirmation.addEventListener('input', checkPasswords);

@@ -1,5 +1,5 @@
 <?php
-/* Quan ly bac si: danh sach, form them / sua, luu. */
+//Quản lý bác sĩ
 
 require_once __DIR__ . '/__nap.php';
 
@@ -11,7 +11,7 @@ function quan_tri_bac_si($conn)
     ];
 }
 
-/* Form them (khong co ma) hoac sua (?id=...). */
+//Form thêm
 function quan_tri_bac_si_form($conn)
 {
     $ma = chung_so_nguyen($_GET['id'] ?? 0);
@@ -28,7 +28,7 @@ function quan_tri_bac_si_form($conn)
         $bs = ['hoten' => '', 'sdt' => '', 'email' => '', 'trinhdo' => '', 'gioithieu' => '', 'chuyenkhoa' => []];
     }
 
-    /* Lan truoc nhap loi thi du lieu da go de len du lieu tu CSDL. */
+    //Lần trước nhập lỗi thì dữ liệu đã gõ đè lên dữ liệu từ CSDL.
     $bs = array_merge($bs, quan_tri_lay_form_cu());
     $bs['email'] = (string) ($bs['email'] ?? '');
     $bs['trinhdo'] = (string) ($bs['trinhdo'] ?? '');
@@ -42,7 +42,8 @@ function quan_tri_bac_si_form($conn)
     ];
 }
 
-/* Kiem tra du lieu form bac si. Tra ve chuoi loi, rong la hop le. */
+//Kiểm tra dữ liệu form bác sĩ.
+//Trả chuỗi lỗi, '' nếu hợp lệ.
 function quan_tri_kiem_tra_bac_si($conn, $ma, $d, $matKhau, $dsChuyenKhoa)
 {
     if ($d['hoten'] === '' || $d['sdt'] === '') {
@@ -84,14 +85,15 @@ function quan_tri_kiem_tra_bac_si($conn, $ma, $d, $matKhau, $dsChuyenKhoa)
     return '';
 }
 
-/* Luu bac si (POST). Thanh cong ve danh sach; loi quay lai form kem du lieu da go. */
+//Lưu bác sĩ.
+//Thành công về danh sách, lỗi thì quay lại form kèm dữ liệu đã gõ.
 function quan_tri_bac_si_luu($conn)
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         chuyen_trang('index.php?page=quan-tri/bac-si');
     }
 
-    $ma = chung_so_nguyen($_POST['manguoidung'] ?? 0);   // 0 = them moi
+    $ma = chung_so_nguyen($_POST['manguoidung'] ?? 0);   //0 = thêm mới
     $d = [
         'hoten' => chung_chuoi($_POST['hoten'] ?? ''),
         'sdt' => chung_chuoi($_POST['sdt'] ?? ''),
@@ -110,7 +112,7 @@ function quan_tri_bac_si_luu($conn)
         chuyen_trang_sau_post('index.php?page=quan-tri/bac-si');
     }
 
-    /* Chi giu ma chuyen khoa co that, bo trung. */
+    //Chỉ giữ mã chuyên khoa có thật, bỏ trùng.
     $tatCa = quan_tri_lay_chuyen_khoa($conn);
     $gui = is_array($_POST['chuyenkhoa'] ?? null) ? $_POST['chuyenkhoa'] : [];
     $dsChuyenKhoa = [];
