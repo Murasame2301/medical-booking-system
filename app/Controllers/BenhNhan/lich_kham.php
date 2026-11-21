@@ -29,8 +29,8 @@ function benh_nhan_url($page, array $thamSo = [])
  */
 function benh_nhan_dat_kham($conn)
 {
-    $tomorrow = date('Y-m-d', strtotime('+1 day'));
-    $ngay = chung_chuoi($_GET['ngay'] ?? '') ?: $tomorrow;
+    // Mac dinh: hom nay. Ngay trong qua khu bi benh_nhan_kiem_tra_ngay() chan.
+    $ngay = chung_chuoi($_GET['ngay'] ?? '') ?: date('Y-m-d');
     $machuyenkhoa = chung_so_duong($_GET['machuyenkhoa'] ?? null);
     $mabacsi = chung_so_duong($_GET['mabacsi'] ?? null);
     $message = '';
