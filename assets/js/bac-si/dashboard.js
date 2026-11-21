@@ -1,0 +1,86 @@
+const thongKe = document.getElementById("the-thong-ke");
+const bangLichKham = document.getElementById("bang-lich-kham");
+
+//Ô thống kê, khoá khớp data.thong_ke server trả về.
+const oThongKe = {
+  tong_luot: $("so-tong-luot"),
+  cho_xac_nhan: $("so-cho-xac-nhan"),
+  da_kham: $("so-da-kham"),
+  khung_gio_trong: $("so-khung-gio-trong"),
+};
+const thanBangLich = $("than-bang-lich");
+
+const SO_COT_LICH = 4;
+
+//Chỉ cập nhật số; thiếu dữ liệu thì hiện 0.
+function taoThongKe(thongKe) {
+  thongKe = thongKe || {};
+  Object.keys(oThongKe).forEach(function (khoa) {
+    const phanTu = oThongKe[khoa];
+    if (!phanTu) return;
+    phanTu.textContent = thongKe[khoa] === undefined ? 0 : thongKe[khoa];
+  });
+}
+
+//Dòng thông báo nằm trong tbody (giữ nguyên tiêu đề bảng).
+function hienThongBaoBang(noiDung) {
+  if (!thanBangLich) return;
+  thanBangLich.replaceChildren(taoDongRong(SO_COT_LICH, noiDung));
+}
+
+//Tạo một dòng lịch: giờ, bệnh nhân, lý do, trạng thái.
+function taoDongLich(lich) {
+  const gio = gioDauCuoi(
+    String(lich.gio_bat_dau || "").slice(0, 5),
+    String(lich.gio_ket_thuc || "").slice(0, 5),
+  );
+  return taoOChua(
+    gio,
+  ) && (function () {
+    const dong = taoDong([gio, lich.ho_ten_benh_nhan || "", lich.lydo || ""]);
+    dong.append(taoOChua(taoNhanLK(lich.trangthai)));
+    return dong;
+  })();
+}
+
+//Hiện bảng lịch.
+function hienThiLichKham(danhSachLich) {
+  if (!thanBangLich) return;
+  veDanhSach(
+    thanBangLich,
+    danhSachLich,
+    taoDongLich,
+    SO_COT_LICH,
+    "Hôm nay chưa có lịch đặt khám",
+  );
+}
+
+//Lỗi tải dữ liệu: thống kê về 0, bảng báo lỗi.
+function hienLoiLayDuLieu(loi) {
+  console.error("Lỗi tải dữ liệu:", loi);
+  taoThongKe({});
+  hienThongBaoBang("Không thể tải lịch khám");
+}
+
+async function layDuLieuTongQuan() {
+  try {
+    const ngay = layNgayThuc();
+    const url =
+      "index.php?page=bac-si/tong-quan&ajax=tong-quan&ngay=" + encodeURIComponent(ngay);
+
+    const ketQua = await get(url);
+    if (!ketQua.ok) throw new Error(ketQua.msg || "Không thể tải dữ liệu");
+
+    const data = ketQua.data;
+    if (!data || !Array.isArray(data.danh_sach_lich)) {
+      throw new Error("Dữ liệu server không hợp lệ");
+    }
+
+    taoThongKe(data.thong_ke);
+    hienThiLichKham(data.danh_sach_lich);
+  } catch (loi) {
+    hienLoiLayDuLieu(loi);
+  }
+}
+
+window.addEventListener("DOMContentLoaded", layDuLieuTongQuan);
