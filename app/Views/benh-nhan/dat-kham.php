@@ -36,7 +36,7 @@ $formatTime = static function ($datetime) {
     <link rel="stylesheet" href="assets/css/benh-nhan/nav-menu.css?v=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="assets/css/benh-nhan/footer.css?v=4">
-    <script src="assets/js/benh-nhan/ajax.js?v=3" defer></script>
+    <script src="assets/js/benh-nhan/ajax.js?v=6" defer></script>
 </head>
 
 <body class="appointment-page">
@@ -63,7 +63,8 @@ $formatTime = static function ($datetime) {
                     <p class="section-description">Chọn ngày khám và một bộ lọc nếu bạn muốn tìm nhanh hơn.</p>
                 </div>
 
-                <form class="search-form" method="get" action="index.php?page=dat-kham" data-ajax="tim_khung_gio">
+                <form class="search-form" method="get" action="index.php" data-ajax="tim_khung_gio">
+                    <input type="hidden" name="page" value="dat-kham">
                     <div class="search-field search-field-date">
                         <label for="ngay">Ngày khám</label>
                         <input type="date" id="ngay" name="ngay" value="<?php echo $escape($ngay); ?>"

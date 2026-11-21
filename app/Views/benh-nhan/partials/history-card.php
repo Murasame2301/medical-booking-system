@@ -93,7 +93,7 @@ $meta = $statusMeta($item['trangthai'] ?? '');
             <span class="cancel-toggle-close">Đóng</span>
         </summary>
 
-        <form class="cancel-form" method="post" action="index.php?page=lich-cua-toi" data-ajax="huy_lich">
+        <form class="cancel-form" method="post" action="index.php?page=lich-su-dat-kham" data-ajax="huy_lich">
             <?php echo csrf_field('huy_lich'); ?>
             <input type="hidden" name="hanh_dong" value="huy_lich">
             <input type="hidden" name="malichkham" value="<?php echo $escape($item['malichkham'] ?? ''); ?>">

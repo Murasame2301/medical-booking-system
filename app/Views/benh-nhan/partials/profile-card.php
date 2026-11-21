@@ -95,7 +95,7 @@ if (!isset($gioiTinh) || !is_callable($gioiTinh)) {
         </summary>
 
         <?php
-        $hoSoAction = 'thong-tin-tai-khoan.php';
+        $hoSoAction = 'index.php?page=thong-tin-tai-khoan';
         $hoSoHanhDong = 'cap_nhat_ho_so';
         $hoSoNameEditable = true;
         $hoSoShowEmail = true;

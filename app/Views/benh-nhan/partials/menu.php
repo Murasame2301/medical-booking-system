@@ -7,7 +7,7 @@ $isAccountPage = in_array($currentPage, $accountPages, true);
 
 <nav aria-label="Điều hướng chính">
     <a href="index.php?page=dat-kham">Đặt khám</a>
-    <a href="index.php?page=lich-cua-toi">Lịch sử đặt khám</a>
+    <a href="index.php?page=lich-su-dat-kham">Lịch sử đặt khám</a>
 
     <?php if ($isLoggedIn): ?>
     <details class="nav-account">

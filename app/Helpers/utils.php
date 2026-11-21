@@ -56,6 +56,17 @@ if (!function_exists('phut_sang_gio')) {
     }
 }
 
+if (!function_exists('thoi_diem_chan_dat_lich')) {
+    /**
+     * Moc som nhat con duoc hien thi / dat: bay gio + PHUT_CHAN_DAT_TRUOC.
+     * Tinh bang gio PHP de khong phu thuoc dong ho cua MySQL.
+     */
+    function thoi_diem_chan_dat_lich(): string
+    {
+        return date('Y-m-d H:i:s', time() + PHUT_CHAN_DAT_TRUOC * 60);
+    }
+}
+
 if (!function_exists('dinh_dang_ngay')) {
     function dinh_dang_ngay(string $ngay): string
     {

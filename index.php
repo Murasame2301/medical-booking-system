@@ -94,9 +94,11 @@ if (str_starts_with($trang, 'bac-si/')) {
 $viewData = [];
 $ham = $cauHinh['ham'];
 
-/* Nhanh AJAX cua trang (bac si): controller tu tra JSON va exit. */
-if ($laAjax) {
-    $hamXuLy = $cauHinh['xu_ly'] ?? null;
+/* Nhanh AJAX: route nao khai bao 'xu_ly' thi goi thang ham do va bat buoc
+   ham tra JSON. Route khong khai bao thi chay tiep ham trang — cac controller
+   benh nhan tu nhan biet AJAX qua ajax_is_request() va tu tra JSON. */
+$hamXuLy = $cauHinh['xu_ly'] ?? null;
+if ($laAjax && $hamXuLy !== null) {
     if (!is_callable($hamXuLy)) {
         tra_json(ket_qua(false, 'Trang này chưa hỗ trợ yêu cầu AJAX.'), 400);
     }

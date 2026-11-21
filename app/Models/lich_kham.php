@@ -107,9 +107,9 @@ function lich_kham_tim_khung_gio($conn, $ngay, $machuyenkhoa = null, $manguoidun
             INNER JOIN CHUYEN_KHOA ck ON ck.machuyenkhoa = bsck.machuyenkhoa
             WHERE llv.trangthai = 'con_trong'
               AND DATE(llv.thoigianbatdau) = ?
-              AND llv.thoigianbatdau >= NOW()";
-    $types = 's';
-    $params = [$ngay];
+              AND llv.thoigianbatdau >= ?";
+    $types = 'ss';
+    $params = [$ngay, thoi_diem_chan_dat_lich()];
 
     if ($machuyenkhoa !== null) {
         // Loc theo ten chuyen khoa de gom ca cac machuyenkhoa cung ten.
@@ -170,7 +170,7 @@ function lich_kham_lay_chi_tiet_khung_gio($conn, $malichlamviec)
             INNER JOIN CHUYEN_KHOA ck ON ck.machuyenkhoa = bsck.machuyenkhoa
             WHERE llv.malichlamviec = ?
               AND llv.trangthai = 'con_trong'
-              AND llv.thoigianbatdau >= NOW()
+              AND llv.thoigianbatdau >= ?
             GROUP BY llv.malichlamviec,
                      llv.thoigianbatdau,
                      llv.thoigianketthuc,
@@ -184,7 +184,7 @@ function lich_kham_lay_chi_tiet_khung_gio($conn, $malichlamviec)
         throw new RuntimeException('Không thể chuẩn bị thông tin khung giờ.');
     }
 
-    $stmt->bind_param('i', $malichlamviec);
+    $stmt->bind_param('is', $malichlamviec, thoi_diem_chan_dat_lich());
     if (!$stmt->execute()) {
         $stmt->close();
         throw new RuntimeException('Không thể tải thông tin khung giờ.');
@@ -364,7 +364,7 @@ function lich_kham_dat_lich($conn, $manguoidung, $malichlamviec, $lydo)
                 FROM LICH_LAM_VIEC llv
                 WHERE llv.malichlamviec = ?
                   AND llv.trangthai = 'con_trong'
-                  AND llv.thoigianbatdau >= NOW()
+                  AND llv.thoigianbatdau >= ?
                   AND NOT EXISTS (
                       SELECT 1
                       FROM LICH_KHAM lk
@@ -377,7 +377,7 @@ function lich_kham_dat_lich($conn, $manguoidung, $malichlamviec, $lydo)
             throw new RuntimeException('Không thể chuẩn bị kiểm tra khung giờ.');
         }
 
-        $stmt->bind_param('i', $malichlamviec);
+        $stmt->bind_param('is', $malichlamviec, thoi_diem_chan_dat_lich());
         if (!$stmt->execute()) {
             $stmt->close();
             throw new RuntimeException('Không thể kiểm tra khung giờ.');

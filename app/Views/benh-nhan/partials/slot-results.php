@@ -48,7 +48,9 @@ if (!isset($formatTime) || !is_callable($formatTime)) {
             <span class="slot-specialty"><?php echo $escape($slot['chuyenkhoa']); ?></span>
         </div>
 
-        <form class="booking-form" method="get" action="index.php?page=chi-tiet-lich-kham">
+        <form class="booking-form" method="get" action="index.php">
+            <!-- Form GET bo query trong action, nen 'page' phai la o an. -->
+            <input type="hidden" name="page" value="chi-tiet-lich-kham">
             <input type="hidden" name="malichlamviec" value="<?php echo $escape($slot['malichlamviec']); ?>">
             <button class="detail-button" type="submit">Xem chi tiết</button>
         </form>

@@ -7,6 +7,12 @@
 if (!function_exists('ajax_is_request')) {
     function ajax_is_request(): bool
     {
+        // Cung dinh nghia voi $laAjax o index.php: co tham so ?ajax la du
+        // (JS cua khu bac si gui ca tham so lan header).
+        if (isset($_GET['ajax'])) {
+            return true;
+        }
+
         $requestedWith = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
 
         if (!is_string($requestedWith)) {

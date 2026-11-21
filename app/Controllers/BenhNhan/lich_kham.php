@@ -99,12 +99,12 @@ function benh_nhan_dat_kham($conn)
 }
 
 /**
- * Trang lich su dat kham (page=lich-cua-toi), kem xu ly huy lich.
+ * Trang lich su dat kham (page=lich-su-dat-kham), kem xu ly huy lich.
  */
-function benh_nhan_lich_cua_toi($conn)
+function benh_nhan_lich_su_dat_kham($conn)
 {
     if (!la_vai_tro(VT_BENH_NHAN)) {
-        $_SESSION['after_login_url'] = 'index.php?page=lich-cua-toi';
+        $_SESSION['after_login_url'] = 'index.php?page=lich-su-dat-kham';
 
         if (ajax_is_request()) {
             ajax_json([
@@ -239,7 +239,7 @@ function benh_nhan_dat_flash_lich_su($message, $type, $lydo = '', $malichkham = 
 function benh_nhan_chuyen_trang_lich_su()
 {
     // 303: doi POST thanh GET de F5 khong gui lai yeu cau huy.
-    chuyen_trang_sau_post('index.php?page=lich-cua-toi');
+    chuyen_trang_sau_post('index.php?page=lich-su-dat-kham');
 }
 
 /**

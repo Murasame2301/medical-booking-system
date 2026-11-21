@@ -55,7 +55,7 @@
                             <span>Chọn ngày, chuyên khoa và bác sĩ.</span>
                         </span>
                     </a>
-                    <a class="home-action" href="index.php?page=lich-cua-toi">
+                    <a class="home-action" href="index.php?page=lich-su-dat-kham">
                         <span class="home-action-copy">
                             <strong>Xem lịch đã đặt</strong>
                             <span>Theo dõi các lịch hẹn của bạn.</span>

@@ -47,7 +47,7 @@ $backUrl = $viewData['backUrl'] ?? 'index.php?page=dat-kham';
     <link rel="stylesheet" href="assets/css/benh-nhan/nav-menu.css?v=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="assets/css/benh-nhan/footer.css?v=4">
-    <script src="assets/js/benh-nhan/ajax.js?v=3" defer></script>
+    <script src="assets/js/benh-nhan/ajax.js?v=6" defer></script>
 </head>
 
 <body class="appointment-page appointment-detail-page">
@@ -160,7 +160,7 @@ $backUrl = $viewData['backUrl'] ?? 'index.php?page=dat-kham';
                     <div class="completed-booking">
                         <p>Lịch khám của bạn đã được ghi nhận và đang chờ cơ sở y tế xác nhận.</p>
                         <div class="completed-actions">
-                            <a class="detail-primary-button" href="index.php?page=lich-cua-toi">Xem lịch đã đặt</a>
+                            <a class="detail-primary-button" href="index.php?page=lich-su-dat-kham">Xem lịch đã đặt</a>
                             <a class="detail-secondary-button" href="<?php echo $escape($backUrl); ?>">Tìm lịch khác</a>
                         </div>
                     </div>

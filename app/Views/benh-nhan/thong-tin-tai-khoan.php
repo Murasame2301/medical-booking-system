@@ -35,7 +35,7 @@ $laHoatDong = ($taiKhoan['trangthai'] ?? '') === 'hoat_dong';
     <link rel="stylesheet" href="assets/css/benh-nhan/nav-menu.css?v=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="assets/css/benh-nhan/footer.css?v=4">
-    <script src="assets/js/benh-nhan/ajax.js?v=3" defer></script>
+    <script src="assets/js/benh-nhan/ajax.js?v=6" defer></script>
     <script src="assets/js/benh-nhan/account.js" defer></script>
 </head>
 

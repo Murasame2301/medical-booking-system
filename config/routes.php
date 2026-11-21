@@ -58,11 +58,11 @@ return [
         'ham' => 'benh_nhan_chi_tiet_lich_kham',
         'quyen' => null,
     ],
-    'lich-cua-toi' => [
+    'lich-su-dat-kham' => [
         'tieu_de' => 'Lịch sử đặt khám',
-        'view' => 'benh-nhan/lich-cua-toi.php',
+        'view' => 'benh-nhan/lich-su-dat-kham.php',
         'controller' => 'app/Controllers/BenhNhan/lich_kham.php',
-        'ham' => 'benh_nhan_lich_cua_toi',
+        'ham' => 'benh_nhan_lich_su_dat_kham',
         'quyen' => VT_BENH_NHAN,
     ],
     'thong-tin-tai-khoan' => [

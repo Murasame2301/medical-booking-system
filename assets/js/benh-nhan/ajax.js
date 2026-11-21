@@ -18,7 +18,23 @@
                 // Nhanh redirect bi fetch di theo: khong the chen HTML ca trang vao mot vung nho.
                 throw new Error('unexpected-response');
             }
-            return response.json();
+
+            return response.json().then(function (data) {
+                // Router tra {ok, msg, data} (401/403/419), controller benh nhan
+                // tra {ok, message, ...}. Quy ve 'message' de cac handler ben duoi
+                // khong nhan undefined.
+                if (data && data.message === undefined && typeof data.msg === 'string') {
+                    data.message = data.msg;
+                }
+
+                // Het phien: ve trang dang nhap, giong api.js cua khu bac si.
+                if (response.status === 401) {
+                    window.location.href = 'index.php?page=dang-nhap';
+                    throw new Error('unauthorized');
+                }
+
+                return data;
+            });
         });
     }
 
@@ -56,14 +72,14 @@
             var params = new URLSearchParams(new FormData(form));
             var parts = [];
             params.forEach(function (value, key) {
-                if (value !== '') {
+                if (value !== '' && key !== 'page') {
                     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
                 }
             });
             return 'index.php?page=dat-kham&' + parts.join('&');
         }
 
-        function tai(url, dayHistory) {
+        function tai(url) {
             var lan = ++seq;
             form.classList.add('is-loading');
 
@@ -80,9 +96,6 @@
                     doctorSelect.innerHTML = data.doctorOptionsHtml;
                     doctorSelect.value = data.mabacsi ? String(data.mabacsi) : '';
                 }
-                if (dayHistory && data.url && window.history && window.history.pushState) {
-                    window.history.pushState({ ajax: true }, '', data.url);
-                }
             }).catch(function () {
                 if (lan !== seq || !alertBox) return;
                 alertBox.innerHTML = '';
@@ -94,23 +107,21 @@
             });
         }
 
-        function guiForm(dayHistory) {
-            tai(urlTuForm(), dayHistory);
+        // Khong day bo loc vao history: thanh dia chi luon la index.php?page=dat-kham.
+        // Doi lai, F5/Back khong giu bo loc.
+        function guiForm() {
+            tai(urlTuForm());
         }
 
         // Chi tai ket qua khi nguoi dung bam "Tim lich trong"; doi ngay/chuyen khoa/
         // bac si trong form khong tu gui yeu cau.
         form.addEventListener('submit', function (event) {
             event.preventDefault();
-            guiForm(true);
-        });
-
-        window.addEventListener('popstate', function () {
-            tai('index.php?page=dat-kham' + (window.location.search ? '&' + window.location.search.slice(1) : ''), false);
+            guiForm();
         });
     }
 
-    // --- 2. Huy lich (page=lich-cua-toi) -------------------------------------
+    // --- 2. Huy lich (page=lich-su-dat-kham) -------------------------------------
     function initCancel() {
         var list = document.getElementById('history-list');
         if (!list) return;

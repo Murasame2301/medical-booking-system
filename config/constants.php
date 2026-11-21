@@ -1,6 +1,14 @@
 <?php
 /* Hang so dung chung cho ca ba vai tro. */
 
+/* Mui gio phong kham. PHP va phien MySQL phai cung mot mui de "bay gio" o
+   giao dien va trong cau SQL la cung mot thoi diem. Viet Nam khong doi gio
+   mua he nen do lech co dinh +07:00 la du. */
+const MUI_GIO_PHONG_KHAM = 'Asia/Ho_Chi_Minh';
+const MUI_GIO_MYSQL      = '+07:00';
+
+date_default_timezone_set(MUI_GIO_PHONG_KHAM);
+
 /* Vai tro: khop bang VAI_TRO trong CSDL */
 const VT_BENH_NHAN = 1;
 const VT_BAC_SI    = 2;
@@ -48,6 +56,9 @@ const GIO_CUOI_NGAY     = '23:59';
 const CUOI_NGAY_PHUT    = 23 * 60 + 59;
 const SO_PHUT_TOI_THIEU = 5;
 const SO_PHUT_TOI_DA    = 60;
+
+/* Khung gio bat dau trong vong N phut toi thi khong hien thi va khong cho dat. */
+const PHUT_CHAN_DAT_TRUOC = 30;
 
 /* Anh dai dien: thu muc that va duong dan web tuong ung */
 const ANH_THU_MUC      = 'assets/uploads/avatar/';

@@ -18,7 +18,7 @@ if (!isset($escape) || !is_callable($escape)) {
 <div class="completed-booking">
     <p>Lịch khám của bạn đã được ghi nhận và đang chờ cơ sở y tế xác nhận.</p>
     <div class="completed-actions">
-        <a class="detail-primary-button" href="index.php?page=lich-cua-toi">Xem lịch đã đặt</a>
+        <a class="detail-primary-button" href="index.php?page=lich-su-dat-kham">Xem lịch đã đặt</a>
         <a class="detail-secondary-button" href="<?php echo $escape($backUrl); ?>">Tìm lịch khác</a>
     </div>
 </div>

@@ -7,6 +7,7 @@
 require_once __DIR__ . '/../Helpers/csrf.php';
 require_once __DIR__ . '/../Helpers/utils.php';
 require_once __DIR__ . '/../Helpers/session.php';
+require_once __DIR__ . '/../Helpers/ho_so.php';   // ho_so_kiem_tra_mat_khau_moi() khi dang ky
 require_once __DIR__ . '/../Models/nguoi_dung.php';
 
 /**
