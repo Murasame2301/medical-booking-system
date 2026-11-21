@@ -136,11 +136,21 @@ function auth_dang_ky($conn)
                         password_hash($rawPassword, PASSWORD_DEFAULT)
                     );
 
-                    // Dang ky xong dang nhap luon, de khong phai go lai.
+                    // Dang ky xong dang nhap luon, roi bat buoc tao ho so.
                     $user = nguoi_dung_tim_theo_sdt($conn, $phonenumber);
                     if ($user !== null) {
+                        // Trang dang lam do truoc khi dang ky (vd. chi tiet khung gio):
+                        // tao ho so xong se quay lai do. Chi nhan duong dan noi bo.
+                        $sauDangKy = (string) ($_SESSION['after_login_url'] ?? '');
+
                         mo_phien_dang_nhap($user);
-                        chuyen_trang(trang_chu_theo_vai_tro(VT_BENH_NHAN));
+                        unset($_SESSION['after_login_url'], $_SESSION['auth_message']);
+
+                        if ($sauDangKy !== '' && str_starts_with($sauDangKy, 'index.php?page=')) {
+                            $_SESSION['after_profile_url'] = $sauDangKy;
+                        }
+
+                        chuyen_trang_sau_post('index.php?page=tao-ho-so');
                     }
 
                     $_SESSION['auth_message'] = 'Đăng ký thành công. Vui lòng đăng nhập.';

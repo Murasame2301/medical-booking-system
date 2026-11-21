@@ -184,7 +184,8 @@ function lich_kham_lay_chi_tiet_khung_gio($conn, $malichlamviec)
         throw new RuntimeException('Không thể chuẩn bị thông tin khung giờ.');
     }
 
-    $stmt->bind_param('is', $malichlamviec, thoi_diem_chan_dat_lich());
+    $mocChan = thoi_diem_chan_dat_lich();   // bind_param can bien (tham chieu)
+    $stmt->bind_param('is', $malichlamviec, $mocChan);
     if (!$stmt->execute()) {
         $stmt->close();
         throw new RuntimeException('Không thể tải thông tin khung giờ.');
@@ -377,7 +378,8 @@ function lich_kham_dat_lich($conn, $manguoidung, $malichlamviec, $lydo)
             throw new RuntimeException('Không thể chuẩn bị kiểm tra khung giờ.');
         }
 
-        $stmt->bind_param('is', $malichlamviec, thoi_diem_chan_dat_lich());
+        $mocChan = thoi_diem_chan_dat_lich();   // bind_param can bien (tham chieu)
+        $stmt->bind_param('is', $malichlamviec, $mocChan);
         if (!$stmt->execute()) {
             $stmt->close();
             throw new RuntimeException('Không thể kiểm tra khung giờ.');
