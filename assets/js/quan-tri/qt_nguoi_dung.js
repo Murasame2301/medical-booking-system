@@ -1,5 +1,5 @@
-// Quan ly nguoi dung: tim kiem bang AJAX va khoa / mo khoa tai khoan.
-// Token CSRF do layout/header.php in ra: <meta name="csrf-token" content="...">
+//Quản lý người dùng: tìm kiếm bằng AJAX và khoá/mở khoá tài khoản.
+//Token CSRF do layout/header.php in ra: <meta name="csrf-token" content="...">
 
 function layTokenCsrf() {
   const meta = document.querySelector('meta[name="csrf-token"]');
@@ -59,7 +59,7 @@ function guiKhoaMo(form) {
     });
 }
 
-// Gan su kien cho tat ca form khoa/mo dang co trong trang
+//Gắn sự kiện cho tất cả form khoá/mở đang có trong trang.
 function ganSuKienKhoaMo() {
   document.querySelectorAll(".form-khoa-mo").forEach(function (form) {
     form.addEventListener("submit", function (e) {
@@ -70,11 +70,11 @@ function ganSuKienKhoaMo() {
   });
 }
 
-// Tim kiem bang AJAX: lay du lieu o loc, nhan ve bang moi roi thay vao trang
+//Tìm kiếm bằng AJAX: lấy dữ liệu ô lọc, nhận về bảng mới rồi thay vào trang.
 function timNguoiDung(formLoc) {
-  // Form co hidden name="page" (de gui GET khi tat JS). Neu giu lai, URL se
-  // co hai tham so page va PHP lay cai sau -> roi ve trang danh sach day du
-  // thay vi endpoint AJAX. Bo page o day, URL da co page cua endpoint.
+  //Form có hidden name="page" (để gửi GET khi tắt JS). Nếu giữ lại, URL sẽ
+  //có hai tham số page và PHP lấy cái sau -> rơi về trang danh sách đầy đủ
+  //thay vì endpoint AJAX. Bỏ page ở đây, URL đã có page của endpoint.
   const duLieu = new FormData(formLoc);
   duLieu.delete("page");
   const thamSo = new URLSearchParams(duLieu).toString();
@@ -88,7 +88,7 @@ function timNguoiDung(formLoc) {
     })
     .then(function (html) {
       document.getElementById("khu_bang").innerHTML = html;
-      ganSuKienKhoaMo(); // bang moi co form moi, gan lai su kien
+      ganSuKienKhoaMo(); //bảng mới có form mới, gắn lại sự kiện
     })
     .catch(function (loi) {
       console.error(loi);

@@ -1,9 +1,9 @@
 'use strict';
 
-// Cap nhat tung phan trang qua AJAX cho 4 luong: loc khung gio, huy lich,
-// dat lich, luu ho so. Moi form chi tham gia khi server dat data-ajax len form
-// — nho vay form dung chung (partial ho-so-form) van submit thuong o trang khac.
-// Khong co JS thi cac form nay van chay theo luong POST/303 cu.
+//Cập nhật từng phần trang qua AJAX cho 4 luồng: lọc khung giờ, huỷ lịch,
+//đặt lịch, lưu hồ sơ. Mỗi form chỉ tham gia khi server đặt data-ajax lên form
+//— nhờ vậy form dùng chung (partial ho-so-form) vẫn submit thường ở trang khác.
+//Không có JS thì các form này vẫn chạy theo luồng POST/303 cũ.
 
 (function () {
     function gui(url, options) {
@@ -15,19 +15,19 @@
         return fetch(url, opts).then(function (response) {
             var contentType = response.headers.get('content-type') || '';
             if (contentType.indexOf('application/json') === -1) {
-                // Nhanh redirect bi fetch di theo: khong the chen HTML ca trang vao mot vung nho.
+                //Nhánh redirect bị fetch đi theo: không thể chèn HTML cả trang vào một vùng nhỏ.
                 throw new Error('unexpected-response');
             }
 
             return response.json().then(function (data) {
-                // Router tra {ok, msg, data} (401/403/419), controller benh nhan
-                // tra {ok, message, ...}. Quy ve 'message' de cac handler ben duoi
-                // khong nhan undefined.
+                //Router trả {ok, msg, data} (401/403/419), controller bệnh nhân
+                //trả {ok, message, ...}. Quy về 'message' để các handler bên dưới
+                //không nhận undefined.
                 if (data && data.message === undefined && typeof data.msg === 'string') {
                     data.message = data.msg;
                 }
 
-                // Het phien: ve trang dang nhap, giong api.js cua khu bac si.
+                //Hết phiên: về trang đăng nhập, giống api.js của khu bác sĩ.
                 if (response.status === 401) {
                     window.location.href = 'index.php?page=dang-nhap';
                     throw new Error('unauthorized');
@@ -58,7 +58,7 @@
 
     var LOI_KET_NOI = 'Không thể kết nối. Vui lòng thử lại.';
 
-    // --- 1. Loc khung gio (page=dat-kham) -------------------------------------
+    // --- 1. Lọc khung giờ (page=dat-kham) -------------------------------------
     function initSlotSearch() {
         var form = document.querySelector('[data-ajax="tim_khung_gio"]');
         if (!form) return;
@@ -107,21 +107,21 @@
             });
         }
 
-        // Khong day bo loc vao history: thanh dia chi luon la index.php?page=dat-kham.
-        // Doi lai, F5/Back khong giu bo loc.
+        //Không đẩy bộ lọc vào history: thanh địa chỉ luôn là index.php?page=dat-kham.
+        //Đổi lại, F5/Back không giữ bộ lọc.
         function guiForm() {
             tai(urlTuForm());
         }
 
-        // Chi tai ket qua khi nguoi dung bam "Tim lich trong"; doi ngay/chuyen khoa/
-        // bac si trong form khong tu gui yeu cau.
+        //Chỉ tải kết quả khi người dùng bấm "Tìm lịch trống"; đổi ngày/chuyên khoa/
+        //bác sĩ trong form không tự gửi yêu cầu.
         form.addEventListener('submit', function (event) {
             event.preventDefault();
             guiForm();
         });
     }
 
-    // --- 2. Huy lich (page=lich-su-dat-kham) -------------------------------------
+    // --- 2. Huỷ lịch (page=lich-su-dat-kham) -------------------------------------
     function initCancel() {
         var list = document.getElementById('history-list');
         if (!list) return;
@@ -171,7 +171,7 @@
         });
     }
 
-    // --- 3. Dat lich (page=chi-tiet-lich-kham) --------------------------------
+    // --- 3. Đặt lịch (page=chi-tiet-lich-kham) --------------------------------
     function initBooking() {
         var form = document.querySelector('[data-ajax="dat_lich"]');
         if (!form) return;
@@ -223,10 +223,10 @@
         });
     }
 
-    // --- 4. Luu ho so (page=thong-tin-tai-khoan) ------------------------------
+    // --- 4. Lưu hồ sơ (page=thong-tin-tai-khoan) ------------------------------
     function initProfileSave() {
-        // Bat submit o <main>: sau khi luu, the ho so (gom ca form) bi thay bang outerHTML,
-        // nen gan truc tiep vao form chi chay duoc lan dau.
+        //Bắt submit ở <main>: sau khi lưu, thẻ hồ sơ (gồm cả form) bị thay bằng outerHTML,
+        //nên gắn trực tiếp vào form chỉ chạy được lần đầu.
         var root = document.querySelector('.account-main');
         if (!root || !root.querySelector('[data-ajax="cap_nhat_ho_so"]')) return;
         var tabs = document.querySelector('.account-tabs');
@@ -272,8 +272,8 @@
                         return;
                     }
                     if (data.csrfToken) {
-                        // Token cu het han (vd. vua doi mat khau o tab khac): nhan token moi,
-                        // giu nguyen du lieu da nhap de nguoi dung bam luu lai.
+                        //Token cũ hết hạn (vd. vừa đổi mật khẩu ở tab khác): nhận token mới,
+                        //giữ nguyên dữ liệu đã nhập để người dùng bấm lưu lại.
                         capNhatToken(data.csrfToken);
                     }
                     if (!data.ok) {
@@ -296,7 +296,7 @@
                     hienLoi(form, LOI_KET_NOI);
                 })
                 .finally(function () {
-                    // Form cu co the da bi thay; datDangTai tren node da tach khoi DOM la vo hai.
+                    //Form cũ có thể đã bị thay; datDangTai trên node đã tách khỏi DOM là vô hại.
                     datDangTai(form, false);
                 });
         });

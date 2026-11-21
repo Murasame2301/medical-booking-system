@@ -1,27 +1,6 @@
--- ---------------------------------------------------------------------
--- Du lieu mau cho he thong dat lich kham
--- Chay SAU database/schema.sql, va co the chay lai nhieu lan:
---   mysql -u root --default-character-set=utf8mb4 < database/schema.sql
---   mysql -u root --default-character-set=utf8mb4 < database/du_lieu_mau.sql
---
--- Toan bo moc thoi gian tinh theo CURDATE() nen du lieu luon con "tuong lai"
--- moi khi import lai. Moi tai khoan duoi day dung chung mat khau: Demo@12345
---
--- Ba tai khoan demo:
---   Benh nhan : 0910000001
---   Bac si    : 0900000002
---   Quan tri  : 0900000001
---
--- Luu y: KHOA / CHUYEN_KHOA la danh muc, duoc giu lai neu da co. Cac bang
--- con lai bi xoa sach roi nap lai.
--- ---------------------------------------------------------------------
-
 USE dat_lich_kham;
 SET NAMES utf8mb4;
 
--- ---------------------------------------------------------------------
--- 0. Don du lieu cu theo dung thu tu khoa ngoai (con truoc, cha sau)
--- ---------------------------------------------------------------------
 DELETE FROM HO_SO_BENH_NHAN;
 DELETE FROM LICH_KHAM;
 DELETE FROM LICH_LAM_VIEC;
@@ -34,9 +13,6 @@ ALTER TABLE LICH_LAM_VIEC AUTO_INCREMENT = 1;
 ALTER TABLE LICH_KHAM AUTO_INCREMENT = 1;
 ALTER TABLE HO_SO_BENH_NHAN AUTO_INCREMENT = 1;
 
--- ---------------------------------------------------------------------
--- 1. Khoa va chuyen khoa (chi chen khi con trong)
--- ---------------------------------------------------------------------
 INSERT IGNORE INTO KHOA (makhoa, tenkhoa, motakhoa) VALUES
     (1, 'Nội khoa', 'Chẩn đoán và điều trị bệnh lý nội khoa'),
     (2, 'Ngoại khoa', 'Phẫu thuật và chấn thương chỉnh hình'),
@@ -54,20 +30,15 @@ INSERT IGNORE INTO CHUYEN_KHOA (machuyenkhoa, makhoa, tenchuyenkhoa, motachuyenk
     (6, 5, 'Tai Mũi Họng', 'Viêm xoang, viêm họng, ù tai'),
     (7, 6, 'Da liễu', 'Viêm da, nấm da, dị ứng da');
 
--- ---------------------------------------------------------------------
--- 2. Tai khoan — mat khau cua moi tai khoan la Demo@12345
--- ---------------------------------------------------------------------
 INSERT INTO NGUOI_DUNG
     (manguoidung, mavaitro, hoten, sdt, email, matkhau, ngaysinh, gioitinh,
      diachi, trangthai, cccd, dantoc, bhyt)
 VALUES
-    -- Quan tri
     (1, 3, 'Nguyễn Thị Quản Trị', '0900000001', 'quantri@phongkham.vn',
      '$2y$10$JlEH6DI/8G58M9889ed1SO9WFpF.wJF69OswzzhSgDK93.V2xcQKO',
      '1985-03-12', 'nu', '12 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh',
      'hoat_dong', NULL, 'Kinh', NULL),
 
-    -- Bac si
     (2, 2, 'Nguyễn Văn An', '0900000002', 'bs.an@phongkham.vn',
      '$2y$10$JlEH6DI/8G58M9889ed1SO9WFpF.wJF69OswzzhSgDK93.V2xcQKO',
      '1978-05-20', 'nam', '45 Lê Lợi, Quận Hải Châu, Đà Nẵng',
@@ -97,7 +68,6 @@ VALUES
      '1986-12-05', 'nu', '64 Trần Hưng Đạo, Quận 5, TP. Hồ Chí Minh',
      'hoat_dong', NULL, 'Kinh', NULL),
 
-    -- Benh nhan
     (101, 1, 'Trần Gia Cường', '0910000001', 'benhnhan1@example.com',
      '$2y$10$JlEH6DI/8G58M9889ed1SO9WFpF.wJF69OswzzhSgDK93.V2xcQKO',
      '1990-02-17', 'nam', '215 Lê Lợi, Quận Ninh Kiều, Cần Thơ',
@@ -147,12 +117,8 @@ VALUES
      '1983-03-03', 'nam', '39 Nguyễn Tất Thành, Quận Liên Chiểu, Đà Nẵng',
      'hoat_dong', '048083067788', 'Kinh', 'DN4120009900');
 
--- Tai khoan bi khoa de thu man hinh quan tri (khong dang nhap duoc).
 UPDATE NGUOI_DUNG SET trangthai = 'bi_khoa' WHERE manguoidung = 110;
 
--- ---------------------------------------------------------------------
--- 3. Ho so bac si kem chuyen khoa
--- ---------------------------------------------------------------------
 INSERT INTO BAC_SI (manguoidung, trinhdo, gioithieu) VALUES
     (2, 'Bác sĩ chuyên khoa II - Tim mạch',
      'Hơn 20 năm khám và điều trị tăng huyết áp, bệnh mạch vành.'),
@@ -172,12 +138,6 @@ INSERT INTO BAC_SI (manguoidung, trinhdo, gioithieu) VALUES
 INSERT INTO BAC_SI_CHUYEN_KHOA (manguoidung, machuyenkhoa) VALUES
     (2, 1), (3, 2), (4, 3), (5, 4), (6, 5), (7, 6), (8, 7);
 
--- ---------------------------------------------------------------------
--- 4. Lich lam viec
---    5 khung gio moi ngay, cho 7 bac si, trong 5 ngay: 2 ngay da qua
---    (de co lich da kham) va 3 ngay toi (de dat lich).
---    trangthai de mac dinh 'con_trong'; trigger tu bat 'da_dat' o muc 5.
--- ---------------------------------------------------------------------
 INSERT INTO LICH_LAM_VIEC (manguoidung, thoigianbatdau, thoigianketthuc)
 SELECT bs.manguoidung,
        TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL d.ngay DAY), g.gio),
@@ -199,23 +159,11 @@ CROSS JOIN (
     SELECT '14:30:00'
 ) g;
 
--- ---------------------------------------------------------------------
--- ---------------------------------------------------------------------
--- 5. Lich kham o du bon trang thai
---
---    Moi luot dung hai cau: SET @v = (...) tra ma khung gio, roi INSERT
---    bang gia tri. Khong dung INSERT ... SELECT hay subquery trong cau
---    INSERT, vi trigger tren LICH_KHAM co UPDATE vao LICH_LAM_VIEC va
---    MySQL khong cho mot cau vua doc vua ghi cung bang qua trigger.
--- ---------------------------------------------------------------------
-
--- 5.1 Da kham: 2 luot trong 2 ngay da qua
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 2 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL -2 DAY), '08:00:00'));
 INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai) VALUES (101, @v, 'Đau ngực khi gắng sức', 'da_kham');
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 2 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL -1 DAY), '08:00:00'));
 INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai) VALUES (102, @v, 'Tái khám huyết áp', 'da_kham');
 
--- 5.2 Cho xac nhan: 4 luot
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 5 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL 1 DAY), '08:30:00'));
 INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai) VALUES (104, @v, 'Sốt và đau họng ba ngày nay', 'cho_xac_nhan');
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 7 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL 2 DAY), '08:00:00'));
@@ -225,7 +173,6 @@ INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai) VALUES (109,
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 7 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL 3 DAY), '14:30:00'));
 INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai) VALUES (112, @v, 'Đau vai phải sau khi mang nặng', 'cho_xac_nhan');
 
--- 5.3 Da xac nhan: 3 luot
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 3 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00:00'));
 INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai) VALUES (103, @v, 'Đau dạ dày sau khi ăn', 'da_xac_nhan');
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 6 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL 1 DAY), '14:00:00'));
@@ -233,25 +180,17 @@ INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai) VALUES (107,
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 5 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL 3 DAY), '08:30:00'));
 INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai) VALUES (111, @v, 'Khám sức khoẻ cho bé 3 tuổi', 'da_xac_nhan');
 
--- 5.4 Da huy: 2 luot. Luot thu hai duoc nguoi khac dat lai dung khung gio
---     do, minh hoa UNIQUE(malichdangdung): khung gio chi giu mot lich
---     chua huy.
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 6 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00:00'));
 INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai, lydohuy, nguoihuy) VALUES (105, @v, 'Đau lưng', 'da_huy', 'Bận việc đột xuất', 105);
 INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai) VALUES (106, @v, 'Tư vấn sức khoẻ sinh sản', 'cho_xac_nhan');
 SET @v = (SELECT malichlamviec FROM LICH_LAM_VIEC WHERE manguoidung = 4 AND thoigianbatdau = TIMESTAMP(DATE_ADD(CURDATE(), INTERVAL 2 DAY), '14:00:00'));
 INSERT INTO LICH_KHAM (manguoidung, malichlamviec, lydo, trangthai, lydohuy, nguoihuy) VALUES (110, @v, 'Đau khớp gối', 'da_huy', 'Đổi sang bệnh viện khác', 110);
 
--- 5.5 Ho so benh nhan cho hai luot da kham
 SET @v = (SELECT malichkham FROM LICH_KHAM WHERE manguoidung = 101 AND trangthai = 'da_kham' LIMIT 1);
 INSERT INTO HO_SO_BENH_NHAN (malichkham, chuandoan, loidan) VALUES (@v, 'Tăng huyết áp độ 1, theo dõi bệnh mạch vành', 'Uống thuốc đều mỗi sáng, hạn chế muối, tái khám sau 2 tuần.');
 SET @v = (SELECT malichkham FROM LICH_KHAM WHERE manguoidung = 102 AND trangthai = 'da_kham' LIMIT 1);
 INSERT INTO HO_SO_BENH_NHAN (malichkham, chuandoan, loidan) VALUES (@v, 'Huyết áp ổn định sau điều chỉnh thuốc', 'Tiếp tục liều hiện tại, đo huyết áp tại nhà mỗi ngày.');
 
--- ---------------------------------------------------------------------
--- 6. Kiem tra: so khung gio 'da_dat' phai bang so khung gio co lich
---    khac 'da_huy' (9 khung gio), tong 12 luot lich kham.
--- ---------------------------------------------------------------------
 SELECT
     (SELECT COUNT(*) FROM LICH_LAM_VIEC WHERE trangthai = 'da_dat') AS khung_gio_da_dat,
     (SELECT COUNT(DISTINCT malichlamviec) FROM LICH_KHAM

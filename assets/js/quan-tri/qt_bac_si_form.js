@@ -1,11 +1,11 @@
-// Form them / sua bac si: kiem tra o so dien thoai va email ngay khi roi o.
+//Form thêm/sửa bác sĩ: kiểm tra ô số điện thoại và email ngay khi rời ô.
 
 function kiemTraTruong(oNhap, cot) {
   const choHien = document.getElementById("thong_bao_" + cot);
   if (!choHien) return;
 
-  // O an manguoidung: 0 khi them moi, khac 0 khi sua.
-  // Gui len de server bo qua chinh nguoi nay khi kiem tra trung.
+  //Ô ẩn manguoidung: 0 khi thêm mới, khác 0 khi sửa.
+  //Gửi lên để server bỏ qua chính người này khi kiểm tra trùng.
   const oMa = document.querySelector('input[name="manguoidung"]');
   const boQuaMa = oMa ? oMa.value : "0";
 

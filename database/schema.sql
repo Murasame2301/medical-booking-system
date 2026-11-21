@@ -1,15 +1,3 @@
--- ---------------------------------------------------------------------
--- He thong dat lich kham — schema chuan
--- Goc: lleduy/database/DATLICHKHAM_FINAL.sql
--- Thay doi so voi ban goc:
---   1. LICH_LAM_VIEC.trangthai: ('con_trong','ngung_nhan') -> ('con_trong','da_dat')
---   2. NGUOI_DUNG co them cot anhdaidien
---   3. Them trigger dong bo LICH_LAM_VIEC.trangthai tu LICH_KHAM
---      (ban goc chi nhac ten trigger trong comment, khong tao)
---
--- Chay: mysql -u root < database/schema.sql
--- ---------------------------------------------------------------------
-
 DROP DATABASE IF EXISTS dat_lich_kham;
 CREATE DATABASE IF NOT EXISTS dat_lich_kham
     CHARACTER SET utf8mb4
@@ -18,9 +6,6 @@ CREATE DATABASE IF NOT EXISTS dat_lich_kham
 USE dat_lich_kham;
 SET NAMES utf8mb4;
 
--- ---------------------------------------------------------------------
--- 1. Vai tro: benh_nhan, bac_si, quan_tri
--- ---------------------------------------------------------------------
 CREATE TABLE VAI_TRO (
     mavaitro TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     tenvaitro VARCHAR(30) NOT NULL UNIQUE,
@@ -32,11 +17,6 @@ INSERT INTO VAI_TRO (mavaitro, tenvaitro, motavaitro) VALUES
     (2, 'bac_si', 'Bác sĩ'),
     (3, 'quan_tri', 'Quản trị viên');
 
--- ---------------------------------------------------------------------
--- 2. Nguoi dung (matkhau luu chuoi bam, khong luu mat khau thuan)
---    cccd, bhyt, email: luu NULL thay vi chuoi rong '' (cot UNIQUE)
---    anhdaidien: duong dan tuong doi trong assets/uploads/avatar/
--- ---------------------------------------------------------------------
 CREATE TABLE NGUOI_DUNG (
     manguoidung INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     mavaitro TINYINT UNSIGNED NOT NULL,
@@ -58,9 +38,6 @@ CREATE TABLE NGUOI_DUNG (
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------------------
--- 3. Bac si
--- ---------------------------------------------------------------------
 CREATE TABLE BAC_SI (
     manguoidung INT UNSIGNED PRIMARY KEY,
     trinhdo VARCHAR(100) NULL,
@@ -70,9 +47,6 @@ CREATE TABLE BAC_SI (
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------------------
--- 4. Khoa, chuyen khoa
--- ---------------------------------------------------------------------
 CREATE TABLE KHOA (
     makhoa INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     tenkhoa VARCHAR(100) NOT NULL UNIQUE,
@@ -90,7 +64,6 @@ CREATE TABLE CHUYEN_KHOA (
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- Mot bac si thuoc nhieu chuyen khoa, mot chuyen khoa co nhieu bac si
 CREATE TABLE BAC_SI_CHUYEN_KHOA (
     manguoidung INT UNSIGNED NOT NULL,
     machuyenkhoa INT UNSIGNED NOT NULL,
@@ -103,12 +76,6 @@ CREATE TABLE BAC_SI_CHUYEN_KHOA (
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------------------
--- 5. Lich lam viec
---    trangthai: 'con_trong' = chua co lich kham hieu luc,
---               'da_dat'    = da co lich kham chua huy.
---    Cot nay do trigger trg_llv_dong_bo ghi; code ung dung khong UPDATE tay.
--- ---------------------------------------------------------------------
 CREATE TABLE LICH_LAM_VIEC (
     malichlamviec INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     manguoidung INT UNSIGNED NOT NULL,
@@ -127,22 +94,9 @@ CREATE TABLE LICH_LAM_VIEC (
     INDEX idx_llv_bat_dau (thoigianbatdau)
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------------------
--- 6. Lich kham
---    malichdangdung (cot sinh): = malichlamviec khi lich con hieu luc
---    (cho_xac_nhan, da_xac_nhan, da_kham); NULL khi da_huy.
---    UNIQUE(malichdangdung) => moi khung gio co toi da mot lich chua huy.
---
---    Quy tac trang thai (trigger kiem_tra_chuyen_trang_thai bao ve):
---      cho_xac_nhan -> da_xac_nhan | da_huy
---      da_xac_nhan  -> da_kham     | da_huy
---      da_kham, da_huy: ket thuc
---    manguoidung va malichlamviec khong duoc sua; muon doi khung gio thi
---    huy lich cu va tao lich moi.
--- ---------------------------------------------------------------------
 CREATE TABLE LICH_KHAM (
     malichkham INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    manguoidung INT UNSIGNED NOT NULL,          -- benh nhan dat lich
+    manguoidung INT UNSIGNED NOT NULL,
     malichlamviec INT UNSIGNED NOT NULL,
     lydo VARCHAR(255) NULL,
     trangthai ENUM('cho_xac_nhan', 'da_xac_nhan', 'da_kham', 'da_huy')
@@ -176,7 +130,6 @@ CREATE TABLE LICH_KHAM (
         FOREIGN KEY (nguoihuy) REFERENCES NGUOI_DUNG (manguoidung)
         ON UPDATE RESTRICT ON DELETE RESTRICT,
 
-    -- da_huy: bat buoc biet ai huy; chua huy: khong duoc co thong tin huy
     CONSTRAINT chk_lich_kham_huy CHECK (
         (trangthai = 'da_huy' AND nguoihuy IS NOT NULL)
         OR
@@ -187,10 +140,6 @@ CREATE TABLE LICH_KHAM (
     INDEX idx_lich_kham_trang_thai (trangthai)
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------------------
--- 7. Ho so benh nhan (benh nhan lay qua JOIN LICH_KHAM)
---    ngaylap: thoi diem nhap ho so; gio kham that nam o LICH_LAM_VIEC.
--- ---------------------------------------------------------------------
 CREATE TABLE HO_SO_BENH_NHAN (
     mahoso INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     malichkham INT UNSIGNED NOT NULL UNIQUE,
@@ -202,20 +151,8 @@ CREATE TABLE HO_SO_BENH_NHAN (
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------------------
--- 8. Trigger
--- ---------------------------------------------------------------------
-
 DELIMITER $$
 
--- 8.1 Dong bo LICH_LAM_VIEC.trangthai tu LICH_KHAM.
---     Day la duong ghi DUY NHAT cua cot trangthai: dat lich, huy lich,
---     xoa lich (ke ca thao tac tay trong phpMyAdmin) deu di qua day.
---
---     Ba trigger duoi day chi doc OLD/NEW, khong SELECT lai LICH_KHAM.
---     Ly do: UNIQUE(malichdangdung) bao dam moi khung gio co toi da mot
---     lich chua huy, nen chi can biet dong vua doi co con hieu luc hay khong
---     la du ket luan ve ca khung gio.
 DROP TRIGGER IF EXISTS trg_llv_dong_bo_ins $$
 CREATE TRIGGER trg_llv_dong_bo_ins
 AFTER INSERT ON LICH_KHAM
@@ -231,8 +168,6 @@ CREATE TRIGGER trg_llv_dong_bo_upd
 AFTER UPDATE ON LICH_KHAM
 FOR EACH ROW
 BEGIN
-    -- Chi phan ung khi trang thai thuc su doi. Khung gio khong doi duoc
-    -- (trg_khoa_truong_lich_kham da chan).
     IF NEW.trangthai <> OLD.trangthai THEN
         UPDATE LICH_LAM_VIEC
         SET trangthai = IF(NEW.trangthai <> 'da_huy', 'da_dat', 'con_trong')
@@ -245,9 +180,6 @@ CREATE TRIGGER trg_llv_dong_bo_del
 AFTER DELETE ON LICH_KHAM
 FOR EACH ROW
 BEGIN
-    -- Xoa mot lich da huy khong doi gi. Xoa lich con hieu luc thi khung gio
-    -- tro lai con trong. Khung gio co the da bi xoa truoc do, khi do cau
-    -- UPDATE khong anh huong dong nao.
     IF OLD.trangthai <> 'da_huy' THEN
         UPDATE LICH_LAM_VIEC
         SET trangthai = 'con_trong'
@@ -255,7 +187,6 @@ BEGIN
     END IF;
 END $$
 
--- 8.2 Chan chuyen trang thai sai quy tac va chan sua slot cua lich kham.
 DROP TRIGGER IF EXISTS trg_khoa_truong_lich_kham $$
 CREATE TRIGGER trg_khoa_truong_lich_kham
 BEFORE UPDATE ON LICH_KHAM
