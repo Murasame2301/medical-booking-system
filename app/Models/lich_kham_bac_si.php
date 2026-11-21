@@ -129,14 +129,15 @@ function lich_kham_ca_hom_nay($conn, int $maBacSi): array
          WHERE llv.manguoidung = ?
            AND llv.thoigianbatdau >= ?
            AND llv.thoigianbatdau <  ?
-           AND lk.trangthai = ?
+           AND lk.trangthai IN (?, ?)
          ORDER BY llv.thoigianbatdau ASC, lk.malichkham ASC",
-        'isss',
+        'issss',
         [
             $maBacSi,
             ghep_ngay_gio($homNay, '00:00'),
             ghep_ngay_gio($ngayMai, '00:00'),
             LK_DA_XAC_NHAN,
+            LK_DA_KHAM,
         ]
     );
 
