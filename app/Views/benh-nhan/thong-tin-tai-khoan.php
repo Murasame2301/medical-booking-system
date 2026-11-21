@@ -8,7 +8,7 @@ $hoSoFormValues = $viewData['hoSoFormValues'] ?? [];
 $hoSoError = $viewData['hoSoError'] ?? '';
 $hoSoIncomplete = !empty($viewData['hoSoIncomplete']);
 $moHoSo = !empty($viewData['moHoSo']);
-// Loi truy van tai khoan: khong biet trang thai that, khong hien "Bi khoa".
+//Lỗi truy vấn tài khoản
 $taiKhoanLoi = !empty($viewData['taiKhoanLoi']);
 
 $escape = static function ($value) {
@@ -67,9 +67,9 @@ $laHoatDong = ($taiKhoan['trangthai'] ?? '') === 'hoat_dong';
                 <h1>Quản lý tài khoản</h1>
             </div>
             <?php if (!$taiKhoanLoi): ?>
-            <span class="account-badge account-badge-<?php echo $laHoatDong ? 'active' : 'locked'; ?>">
-                <?php echo $laHoatDong ? 'Đang hoạt động' : 'Bị khoá'; ?>
-            </span>
+                <span class="account-badge account-badge-<?php echo $laHoatDong ? 'active' : 'locked'; ?>">
+                    <?php echo $laHoatDong ? 'Đang hoạt động' : 'Bị khoá'; ?>
+                </span>
             <?php endif; ?>
         </div>
 
@@ -100,22 +100,22 @@ $laHoatDong = ($taiKhoan['trangthai'] ?? '') === 'hoat_dong';
             </div>
 
             <?php if ($taiKhoanLoi): ?>
-            <p class="account-note" role="note">Chưa tải được thông tin tài khoản. Vui lòng tải lại trang.</p>
+                <p class="account-note" role="note">Chưa tải được thông tin tài khoản. Vui lòng tải lại trang.</p>
             <?php else: ?>
-            <dl class="account-fields">
-                <div>
-                    <dt>Số điện thoại đăng nhập</dt>
-                    <dd><?php echo $escape($taiKhoan['sdt'] ?? ''); ?></dd>
-                </div>
-                <div>
-                    <dt>Email</dt>
-                    <dd id="account-email-value"><?php echo $escape($hienThi($taiKhoan['email'] ?? '')); ?></dd>
-                </div>
-                <div>
-                    <dt>Trạng thái</dt>
-                    <dd><?php echo $laHoatDong ? 'Đang hoạt động' : 'Bị khoá'; ?></dd>
-                </div>
-            </dl>
+                <dl class="account-fields">
+                    <div>
+                        <dt>Số điện thoại đăng nhập</dt>
+                        <dd><?php echo $escape($taiKhoan['sdt'] ?? ''); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Email</dt>
+                        <dd id="account-email-value"><?php echo $escape($hienThi($taiKhoan['email'] ?? '')); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Trạng thái</dt>
+                        <dd><?php echo $laHoatDong ? 'Đang hoạt động' : 'Bị khoá'; ?></dd>
+                    </div>
+                </dl>
             <?php endif; ?>
         </section>
 

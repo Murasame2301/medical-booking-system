@@ -1,8 +1,6 @@
 <?php
 
-// The "Ho so benh nhan": phan hien thi chi doc + drawer chinh sua.
-// Tach ra de sau khi luu qua AJAX chi can thay outerHTML cua ca the.
-// Bien: $hoSo, $hoSoIncomplete, $hoSoFormValues, $hoSoError, $moHoSo.
+//Thẻ "Hồ sơ bệnh nhân": phần xem và drawer chỉnh sửa, thay outerHTML sau khi lưu qua AJAX.
 
 $hoSo = is_array($hoSo ?? null) ? $hoSo : [];
 $hoSoFormValues = is_array($hoSoFormValues ?? null) ? $hoSoFormValues : [];

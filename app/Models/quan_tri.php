@@ -1,10 +1,7 @@
 <?php
-/* Model khu quan tri: thong ke, nguoi dung, bac si.
-   Moi ham nhan $conn lam tham so dau tien. Ten cot tra ve giu nguyen ten
-   cot CSDL (manguoidung, hoten, sdt, ...); cot ghep tu nhieu dong dat ten
-   ro rang (chuyenkhoa, tenvaitro_hien_thi). */
+//Model quản trị: thống kê, người dùng, bác sĩ.
 
-/* Cac con so cho trang tong quan (mot dong duy nhat). */
+//Các con số cho trang tổng quan (một dòng duy nhất).
 function quan_tri_thong_ke($conn)
 {
     return truy_van_mot(
@@ -19,7 +16,7 @@ function quan_tri_thong_ke($conn)
     ) ?? ['benh_nhan' => 0, 'bac_si' => 0, 'lich_cho' => 0, 'tai_khoan_khoa' => 0];
 }
 
-/* Danh sach vai tro dang [mavaitro => motavaitro]. */
+//Danh sách vai trò dạng [mavaitro => motavaitro].
 function quan_tri_lay_vai_tro($conn)
 {
     $ds = [];
@@ -30,7 +27,7 @@ function quan_tri_lay_vai_tro($conn)
     return $ds;
 }
 
-/* Danh sach nguoi dung. $tukhoa tim trong hoten hoac sdt; $vaitro = 0 la tat ca. */
+//Danh sách người dùng. $tukhoa tìm trong họ tên hoặc SĐT; $vaitro = 0 là tất cả.
 function quan_tri_lay_nguoi_dung($conn, $tukhoa = '', $vaitro = 0)
 {
     $tim = '%' . addcslashes($tukhoa, '%_\\') . '%';
@@ -50,7 +47,7 @@ function quan_tri_lay_nguoi_dung($conn, $tukhoa = '', $vaitro = 0)
     );
 }
 
-/* Mot nguoi dung (ma, vai tro, trang thai), null neu khong co. */
+//Một người dùng (mã, vai trò, trạng thái).
 function quan_tri_lay_nguoi_dung_theo_ma($conn, $manguoidung)
 {
     return truy_van_mot(
@@ -72,9 +69,8 @@ function quan_tri_dat_trang_thai($conn, $manguoidung, $trangthai)
     $stmt->close();
 }
 
-/* Khoa / mo khoa tai khoan. $hanhdong: 'khoa' hoac 'mo'.
-   Quy tac: khong bao gio khoa quan tri vien, khong khoa chinh minh.
-   Tra ve ket_qua(); data = ['trangthai' => ...] khi thanh cong. */
+//Khoá, mở khoá tài khoản ($hanhdong: 'khoa' hoặc 'mo').
+//Không khoá quản trị viên và chính mình.
 function quan_tri_doi_trang_thai_tai_khoan($conn, $manguoidung, $hanhdong, $nguoiThucHien)
 {
     $dich = $manguoidung > 0 ? quan_tri_lay_nguoi_dung_theo_ma($conn, $manguoidung) : null;
@@ -101,7 +97,7 @@ function quan_tri_doi_trang_thai_tai_khoan($conn, $manguoidung, $hanhdong, $nguo
     );
 }
 
-/* Tat ca bac si (ke ca dang bi khoa). */
+//Tất cả bác sĩ (kể cả đang bị khoá).
 function quan_tri_lay_ds_bac_si($conn)
 {
     return truy_van(
@@ -117,7 +113,8 @@ function quan_tri_lay_ds_bac_si($conn)
     );
 }
 
-/* Thong tin mot bac si de dien form sua; null neu khong phai bac si. */
+//Thông tin một bác sĩ để điền form sửa;
+//trả về null nếu không phải bác sĩ.
 function quan_tri_lay_bac_si_chi_tiet($conn, $manguoidung)
 {
     return truy_van_mot(
@@ -131,7 +128,7 @@ function quan_tri_lay_bac_si_chi_tiet($conn, $manguoidung)
     );
 }
 
-/* Danh muc chuyen khoa dang [machuyenkhoa => tenchuyenkhoa]. */
+//Danh mục chuyên khoa dạng [machuyenkhoa => tenchuyenkhoa].
 function quan_tri_lay_chuyen_khoa($conn)
 {
     $ds = [];
@@ -142,7 +139,7 @@ function quan_tri_lay_chuyen_khoa($conn)
     return $ds;
 }
 
-/* Mang ma chuyen khoa cua mot bac si. */
+//Mảng mã chuyên khoa của một bác sĩ.
 function quan_tri_lay_chuyen_khoa_cua_bac_si($conn, $manguoidung)
 {
     $dong = truy_van($conn, "SELECT machuyenkhoa FROM BAC_SI_CHUYEN_KHOA WHERE manguoidung = ?", 'i', [$manguoidung]);
@@ -150,7 +147,7 @@ function quan_tri_lay_chuyen_khoa_cua_bac_si($conn, $manguoidung)
     return array_map('intval', array_column($dong, 'machuyenkhoa'));
 }
 
-/* Co nguoi khac dung gia tri nay chua? $cot chi nhan sdt hoac email. */
+//Có người khác dùng giá trị này chưa? $cot chỉ nhận sdt hoặc email.
 function quan_tri_da_co_nguoi_dung($conn, $cot, $giatri, $boQuaMa = 0)
 {
     if ($cot !== 'sdt' && $cot !== 'email') {
@@ -165,8 +162,7 @@ function quan_tri_da_co_nguoi_dung($conn, $cot, $giatri, $boQuaMa = 0)
     ) !== null;
 }
 
-/* Kiem tra tuc thi mot truong (sdt / email) cho form bac si.
-   Tra ve ket_qua(): ok = hop le. */
+//Kiểm tra tức thì SĐT, email cho form bác sĩ. Trả ket_qua(), ok = hợp lệ.
 function quan_tri_kiem_tra_truong($conn, $cot, $giatri, $boQuaMa = 0)
 {
     $giatri = trim((string) $giatri);
@@ -195,7 +191,7 @@ function quan_tri_kiem_tra_truong($conn, $cot, $giatri, $boQuaMa = 0)
     return ket_qua(true, $ten . ' có thể dùng.');
 }
 
-/* Ghi danh sach chuyen khoa cho bac si (goi trong giao dich). */
+//Ghi danh sách chuyên khoa cho bác sĩ (gọi trong transaction).
 function quan_tri_gan_chuyen_khoa($conn, $maBacSi, $dsChuyenKhoa)
 {
     foreach ($dsChuyenKhoa as $maChuyenKhoa) {
@@ -209,8 +205,7 @@ function quan_tri_gan_chuyen_khoa($conn, $maBacSi, $dsChuyenKhoa)
     }
 }
 
-/* Them bac si: NGUOI_DUNG + BAC_SI + BAC_SI_CHUYEN_KHOA trong mot giao dich.
-   Email / trinh do / gioi thieu rong thi luu NULL. */
+//Thêm bác sĩ: NGUOI_DUNG + BAC_SI + BAC_SI_CHUYEN_KHOA trong một transaction.
 function quan_tri_tao_bac_si($conn, $d, $matKhauHash, $dsChuyenKhoa)
 {
     $email = $d['email'] === '' ? null : $d['email'];
@@ -249,7 +244,7 @@ function quan_tri_tao_bac_si($conn, $d, $matKhauHash, $dsChuyenKhoa)
     }
 }
 
-/* Sua bac si. $matKhauHash = null nghia la giu mat khau cu. */
+//Sửa bác sĩ. $matKhauHash = null nghĩa là giữ mật khẩu cũ.
 function quan_tri_cap_nhat_bac_si($conn, $ma, $d, $matKhauHash, $dsChuyenKhoa)
 {
     $email = $d['email'] === '' ? null : $d['email'];
@@ -285,7 +280,7 @@ function quan_tri_cap_nhat_bac_si($conn, $ma, $d, $matKhauHash, $dsChuyenKhoa)
         );
         $stmt->close();
 
-        /* Chuyen khoa: xoa het cu roi ghi lai danh sach moi. */
+        //Chuyên khoa: xoá hết cũ rồi ghi lại danh sách mới.
         $stmt = thi_hanh($conn, "DELETE FROM BAC_SI_CHUYEN_KHOA WHERE manguoidung = ?", 'i', [$ma]);
         $stmt->close();
         quan_tri_gan_chuyen_khoa($conn, $ma, $dsChuyenKhoa);

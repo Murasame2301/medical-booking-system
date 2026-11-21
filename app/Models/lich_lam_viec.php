@@ -1,16 +1,11 @@
 <?php
-/* Truy van bang lich_lam_viec: khung gio lam viec cua bac si.
-   Moi ham nhan $conn lam tham so dau tien.
-
-   Luu y: cot trangthai do trigger trong CSDL ghi (xem database/schema.sql).
-   Khong ham nao o day UPDATE truc tiep cot do. */
+//Truy vấn khung giờ làm việc của bác sĩ.
+//Cột trangthai do trigger trong CSDL ghi.
 
 require_once __DIR__ . '/../Helpers/utils.php';
 
-/**
- * Khung gio da co luot kham chua huy chua. Dung de chan sua/xoa khung gio
- * (kiem tra nghiep vu, khong phai de suy ra trang thai).
- */
+//Khung giờ đã có lượt khám chưa huỷ chưa.
+//Dùng để chặn sửa, xoá khung giờ.
 function lich_lam_viec_co_luot_kham($conn, int $maLichLamViec): bool
 {
     $r = truy_van_mot(
@@ -23,10 +18,7 @@ function lich_lam_viec_co_luot_kham($conn, int $maLichLamViec): bool
     return (int) ($r['so_luong'] ?? 0) > 0;
 }
 
-/**
- * Khung gio bi trung voi khung gio khac cua cung bac si.
- * $boQuaMa: ma khung gio dang sua (khong tinh trung voi chinh no), 0 = khong bo qua.
- */
+//Khung giờ bị trùng với khung giờ khác của cùng bác sĩ
 function lich_lam_viec_bi_trung($conn, int $maBacSi, string $ngay, string $gioBatDau, string $gioKetThuc, int $boQuaMa = 0): bool
 {
     $r = truy_van_mot(
@@ -57,9 +49,7 @@ function lich_lam_viec_lay($conn, int $maBacSi, int $maLichLamViec): array
         : ket_qua(false, 'Không tìm thấy lịch làm việc.');
 }
 
-/**
- * Lay lich lam viec tu ngay den ngay, loc theo trang thai ('' hoac 'tat_ca' = khong loc).
- */
+//Lấy lịch làm việc từ ngày đến ngày, lọc theo trạng thái.
 function lich_lam_viec_lay_danh_sach($conn, int $maBacSi, string $tuNgay, string $denNgay, string $trangThai = ''): array
 {
     if (!hop_le_ngay($tuNgay) || !hop_le_ngay($denNgay)) {
@@ -76,9 +66,7 @@ function lich_lam_viec_lay_danh_sach($conn, int $maBacSi, string $tuNgay, string
         return ket_qua(false, 'Trạng thái không hợp lệ.');
     }
 
-    /* da_co_luot: dung de giao dien biet khung gio nao da co nguoi dat
-       (chan nut sua/xoa). Day la thong tin bo sung, khong phai nguon suy ra
-       trang thai — trang thai doc tu cot trangthai. */
+    //da_co_luot: để giao diện biết khung giờ nào đã có người đặt (chặn nút sửa, xoá).
     $sql = "SELECT llv.malichlamviec, llv.manguoidung, llv.thoigianbatdau, llv.thoigianketthuc, llv.trangthai,
                    EXISTS (SELECT 1 FROM LICH_KHAM lk
                            WHERE lk.malichlamviec = llv.malichlamviec AND lk.trangthai <> ?) AS da_co_luot
@@ -104,9 +92,7 @@ function lich_lam_viec_lay_danh_sach($conn, int $maBacSi, string $tuNgay, string
     ]);
 }
 
-/**
- * Them mot khung gio lam viec (trang thai con trong — de mac dinh cua CSDL).
- */
+//Thêm một khung giờ làm việc.
 function lich_lam_viec_tao($conn, int $maBacSi, string $batDau, string $ketThuc): int
 {
     $stmt = thi_hanh(
@@ -122,9 +108,8 @@ function lich_lam_viec_tao($conn, int $maBacSi, string $batDau, string $ketThuc)
     return $ma;
 }
 
-/**
- * Doi gio cua khung gio con trong. Tra ve so dong bi anh huong.
- */
+//Đổi giờ của khung giờ còn trống.
+//Trả về số dòng bị ảnh hưởng.
 function lich_lam_viec_cap_nhat($conn, int $maBacSi, int $maLichLamViec, string $batDau, string $ketThuc): int
 {
     $stmt = thi_hanh(
@@ -141,10 +126,8 @@ function lich_lam_viec_cap_nhat($conn, int $maBacSi, int $maLichLamViec, string 
     return $soDong;
 }
 
-/**
- * Xoa khung gio. Luot da huy khong con y nghia nen xoa truoc de khong vuong
- * khoa ngoai RESTRICT. Tra ve so dong bi anh huong.
- */
+//Xoá khung giờ (xoá trước các lượt đã huỷ để không vướng khoá ngoại).
+//Trả về số dòng bị ảnh hưởng.
 function lich_lam_viec_xoa($conn, int $maBacSi, int $maLichLamViec): int
 {
     thi_hanh(
@@ -166,9 +149,7 @@ function lich_lam_viec_xoa($conn, int $maBacSi, int $maLichLamViec): int
     return $soDong;
 }
 
-/**
- * Dem khung gio con trong cua mot ngay. Chi doc cot trangthai.
- */
+//Đếm khung giờ còn trống của một ngày.
 function lich_lam_viec_dem_con_trong($conn, int $maBacSi, string $ngay): int
 {
     $r = truy_van_mot(
@@ -183,9 +164,7 @@ function lich_lam_viec_dem_con_trong($conn, int $maBacSi, string $ngay): int
     return (int) ($r['con_trong'] ?? 0);
 }
 
-/**
- * Danh sach khung gio con trong cua mot ngay.
- */
+//Danh sách khung giờ còn trống của một ngày.
 function lich_lam_viec_lay_con_trong($conn, int $maBacSi, string $ngay): array
 {
     return truy_van(

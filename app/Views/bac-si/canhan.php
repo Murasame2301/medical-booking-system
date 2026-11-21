@@ -1,5 +1,4 @@
 <?php
-// view ca nhan: du lieu do bac_si_ca_nhan() chuan bi trong $viewData
 $maNguoiDung = (int) ($viewData['ma'] ?? ma_nguoi_dung_hien_tai());
 $tt = $viewData['thong_tin'] ?? [];
 $gt = $tt['gioitinh'] ?? '';
@@ -11,11 +10,11 @@ $gt = $tt['gioitinh'] ?? '';
   <div class="noidung">
     <div class="khung">
       <div class="tab-header" role="tablist">
-        <button type="button" class="tab-nut on" role="tab" id="tab-1" aria-controls="tab-tt" aria-selected="true"><i>🪪</i>Thông tin cá nhân</button>
-        <button type="button" class="tab-nut" role="tab" id="tab-2" aria-controls="tab-bm" aria-selected="false" tabindex="-1"><i>🛡️</i>Bảo mật</button>
+        <button type="button" class="tab-nut on" role="tab" id="tab-1" aria-controls="tab-tt"
+          aria-selected="true"><i>🪪</i>Thông tin cá nhân</button>
+        <button type="button" class="tab-nut" role="tab" id="tab-2" aria-controls="tab-bm" aria-selected="false"
+          tabindex="-1"><i>🛡️</i>Bảo mật</button>
       </div>
-
-      <!-- TAB 1: THÔNG TIN CÁ NHÂN -->
       <div id="tab-tt" class="tab-noi-dung on" role="tabpanel" aria-labelledby="tab-1">
         <form class="form-ca-nhan" id="form-thong-tin">
           <div class="anh-dai-dien">
@@ -31,20 +30,22 @@ $gt = $tt['gioitinh'] ?? '';
           <div class="hang-doi">
             <div class="nhom-truong">
               <label for="f-ten">Họ và tên</label>
-              <input type="text" id="f-ten" name="ten" maxlength="100" value="<?= h($tt['hoten'] ?? '') ?>" required />
+              <input type="text" id="f-ten" name="ten" maxlength="100"
+                value="<?= h($tt['hoten'] ?? '') ?>" required />
             </div>
             <div class="nhom-truong">
               <label for="f-sdt">Số điện thoại</label>
-              <input type="tel" id="f-sdt" name="sdt" maxlength="11" inputmode="numeric" pattern="0[0-9]{9,10}"
-                     title="10–11 chữ số, bắt đầu bằng 0" value="<?= h($tt['sdt'] ?? '') ?>" required />
+              <input type="tel" id="f-sdt" name="sdt" maxlength="11" inputmode="numeric"
+                pattern="0[0-9]{9,10}" title="10–11 chữ số, bắt đầu bằng 0"
+                value="<?= h($tt['sdt'] ?? '') ?>" required />
             </div>
           </div>
 
           <div class="hang-doi">
             <div class="nhom-truong">
               <label for="f-ngaysinh">Ngày sinh</label>
-              <input type="date" id="f-ngaysinh" name="ngay_sinh" min="1900-01-01" max="<?= date('Y-m-d') ?>"
-                     value="<?= h($tt['ngaysinh'] ?? '') ?>" required />
+              <input type="date" id="f-ngaysinh" name="ngay_sinh" min="1900-01-01"
+                max="<?= date('Y-m-d') ?>" value="<?= h($tt['ngaysinh'] ?? '') ?>" required />
             </div>
             <div class="nhom-truong">
               <label for="f-gioitinh">Giới tính</label>
@@ -56,32 +57,35 @@ $gt = $tt['gioitinh'] ?? '';
 
             <div class="nhom-truong">
               <label for="f-trinhdo">Học hàm, học vị, chuyên môn nghề nghiệp</label>
-              <input type="text" id="f-trinhdo" name="trinh_do" maxlength="100" value="<?= h($tt['trinhdo'] ?? '') ?>" required />
+              <input type="text" id="f-trinhdo" name="trinh_do" maxlength="100"
+                value="<?= h($tt['trinhdo'] ?? '') ?>" required />
             </div>
           </div>
 
           <div class="nhom-truong">
             <label for="f-email">Email</label>
-            <input type="email" id="f-email" name="email" maxlength="100" value="<?= h($tt['email'] ?? '') ?>" required />
+            <input type="email" id="f-email" name="email" maxlength="100"
+              value="<?= h($tt['email'] ?? '') ?>" required />
           </div>
 
           <div class="nhom-truong">
             <label for="f-diachi">Địa chỉ</label>
-            <input type="text" id="f-diachi" name="dia_chi" maxlength="255" value="<?= h($tt['diachi'] ?? '') ?>" required />
+            <input type="text" id="f-diachi" name="dia_chi" maxlength="255"
+              value="<?= h($tt['diachi'] ?? '') ?>" required />
           </div>
 
           <button class="btn xanh" type="submit">Cập nhật thông tin</button>
         </form>
       </div>
-
-      <!-- TAB 2: BẢO MẬT -->
       <div id="tab-bm" class="tab-noi-dung" role="tabpanel" aria-labelledby="tab-2">
         <form class="form-ca-nhan form-bao-mat" id="form-mat-khau" autocomplete="off">
           <div class="nhom-truong">
             <label for="f-mk-ht">Mật khẩu hiện tại</label>
             <div class="password-control">
-              <input type="password" id="f-mk-ht" name="mat_khau_hien_tai" placeholder="••••••••" autocomplete="current-password" required />
-              <button class="password-toggle" type="button" data-password-target="f-mk-ht" aria-pressed="false" aria-label="Hiện mật khẩu" hidden>
+              <input type="password" id="f-mk-ht" name="mat_khau_hien_tai" placeholder="••••••••"
+                autocomplete="current-password" required />
+              <button class="password-toggle" type="button" data-password-target="f-mk-ht"
+                aria-pressed="false" aria-label="Hiện mật khẩu" hidden>
                 <i class="fa-solid fa-eye" aria-hidden="true"></i>
                 <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
               </button>
@@ -90,8 +94,10 @@ $gt = $tt['gioitinh'] ?? '';
           <div class="nhom-truong">
             <label for="f-mk-moi">Mật khẩu mới (tối thiểu 8 ký tự)</label>
             <div class="password-control">
-              <input type="password" id="f-mk-moi" name="mat_khau_moi" placeholder="••••••••" minlength="8" maxlength="72" autocomplete="new-password" required />
-              <button class="password-toggle" type="button" data-password-target="f-mk-moi" aria-pressed="false" aria-label="Hiện mật khẩu" hidden>
+              <input type="password" id="f-mk-moi" name="mat_khau_moi" placeholder="••••••••"
+                minlength="8" maxlength="72" autocomplete="new-password" required />
+              <button class="password-toggle" type="button" data-password-target="f-mk-moi"
+                aria-pressed="false" aria-label="Hiện mật khẩu" hidden>
                 <i class="fa-solid fa-eye" aria-hidden="true"></i>
                 <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
               </button>
@@ -100,8 +106,10 @@ $gt = $tt['gioitinh'] ?? '';
           <div class="nhom-truong">
             <label for="f-mk-xn">Xác nhận mật khẩu mới</label>
             <div class="password-control">
-              <input type="password" id="f-mk-xn" name="xac_nhan" placeholder="••••••••" minlength="8" maxlength="72" autocomplete="new-password" required />
-              <button class="password-toggle" type="button" data-password-target="f-mk-xn" aria-pressed="false" aria-label="Hiện mật khẩu" hidden>
+              <input type="password" id="f-mk-xn" name="xac_nhan" placeholder="••••••••" minlength="8"
+                maxlength="72" autocomplete="new-password" required />
+              <button class="password-toggle" type="button" data-password-target="f-mk-xn"
+                aria-pressed="false" aria-label="Hiện mật khẩu" hidden>
                 <i class="fa-solid fa-eye" aria-hidden="true"></i>
                 <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
               </button>

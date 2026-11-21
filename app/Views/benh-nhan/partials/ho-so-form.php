@@ -1,7 +1,6 @@
 <?php
 
-// Form ho so dung chung cho tao-ho-so.php (profile/edit.php) va trang quan ly tai khoan.
-// View cha thuong da dinh nghia $escape; neu chua thi partial tu lo de khong vo khi require rieng.
+//Form hồ sơ dùng chung cho trang tạo hồ sơ và trang tài khoản.
 
 if (!isset($escape) || !is_callable($escape)) {
     $escape = static function ($value) {

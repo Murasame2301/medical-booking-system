@@ -1,4 +1,3 @@
-<?php /* Trang bao loi 404: khong tim thay trang. */ ?>
 <!DOCTYPE html>
 <html lang="vi">
 

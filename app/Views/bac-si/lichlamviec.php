@@ -4,7 +4,6 @@
   </header>
 
   <div class="noidung">
-    <!-- TẠO LỊCH -->
     <div class="khung">
       <h2>Tạo lịch làm việc</h2>
       <p class="goiy">
@@ -27,7 +26,6 @@
       </form>
     </div>
 
-    <!-- BỘ LỌC -->
     <form class="loc" id="form-loc">
       <label class="nhan-ghi">Từ
         <input type="date" id="loc-tu" required />
@@ -62,4 +60,3 @@
       </table>
     </div>
   </div>
-<!-- </main> -->

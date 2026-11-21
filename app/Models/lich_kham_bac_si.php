@@ -1,14 +1,10 @@
 <?php
-/* Truy van bang lich_kham theo goc nhin cua bac si: tim kiem, doi trang thai,
-   thong ke trong ngay. Moi ham nhan $conn lam tham so dau tien. */
+//Truy vấn lịch khám theo góc nhìn bác sĩ.
 
 require_once __DIR__ . '/../Helpers/utils.php';
 require_once __DIR__ . '/lich_lam_viec.php';
 
-/**
- * Tim kiem lich kham cua bac si trong khoang ngay, loc theo trang thai
- * ('' hoac 'tat_ca' = khong loc).
- */
+//Tìm lịch khám của bác sĩ trong khoảng ngày, lọc theo trạng thái.
 function lich_kham_tim_kiem($conn, int $maBacSi, string $tuNgay, string $denNgay, string $trangThai = ''): array
 {
     if (!hop_le_ngay($tuNgay) || !hop_le_ngay($denNgay)) {
@@ -43,8 +39,8 @@ function lich_kham_tim_kiem($conn, int $maBacSi, string $tuNgay, string $denNgay
         $kieu .= str_repeat('s', count($tt));
         $thamSo = array_merge($thamSo, $tt);
     } else {
-        /* Mac dinh "Tat ca": an lich da ket thuc. Chon mot trang thai cu the
-           (da_kham, da_huy, ...) de xem ca lich da qua. */
+        //Mặc định "Tất cả": ẩn lịch đã kết thúc.
+        //Chọn trạng thái cụ thể để xem cả lịch đã qua.
         $sql .= " AND llv.thoigianketthuc >= ?";
         $kieu .= 's';
         $thamSo[] = date('Y-m-d H:i:s');
@@ -56,9 +52,7 @@ function lich_kham_tim_kiem($conn, int $maBacSi, string $tuNgay, string $denNgay
     ]);
 }
 
-/**
- * Mot lich kham cua bac si (null neu khong co).
- */
+//Một lịch khám của bác sĩ.
 function lich_kham_lay($conn, int $maBacSi, int $maLichKham): ?array
 {
     return truy_van_mot(
@@ -72,12 +66,8 @@ function lich_kham_lay($conn, int $maBacSi, int $maLichKham): ?array
     ) ?: null;
 }
 
-/**
- * Ghi trang thai moi. Dieu kien trang thai cu nam trong WHERE: neu vua bi doi
- * thi khong ghi de. Tra ve so dong bi anh huong.
- *
- * Chi ghi LICH_KHAM; trigger trong CSDL tu cap nhat LICH_LAM_VIEC.trangthai.
- */
+//Ghi trạng thái mới nếu trạng thái cũ còn khớp.
+//Trigger tự cập nhật LICH_LAM_VIEC. Trả số dòng bị ảnh hưởng.
 function lich_kham_doi_trang_thai($conn, int $maLichKham, string $trangThaiCu, string $trangThaiMoi, ?int $nguoiHuy = null, ?string $lyDoHuy = null): int
 {
     if ($nguoiHuy !== null) {
@@ -104,9 +94,7 @@ function lich_kham_doi_trang_thai($conn, int $maLichKham, string $trangThaiCu, s
     return $soDong;
 }
 
-/**
- * Cac ca da xac nhan cua ngay hom nay (da format san cho JS).
- */
+//Các ca đã xác nhận của ngày hôm nay
 function lich_kham_ca_hom_nay($conn, int $maBacSi): array
 {
     $homNay = date('Y-m-d');
@@ -154,9 +142,7 @@ function lich_kham_ca_hom_nay($conn, int $maBacSi): array
     return $ds;
 }
 
-/**
- * Danh sach lich kham cua mot ngay (bo qua da huy neu $boDaHuy).
- */
+//Danh sách lịch khám của một ngày (bỏ qua đã huỷ nếu $boDaHuy).
 function lich_kham_theo_ngay($conn, int $maBacSi, string $ngay, bool $boDaHuy = true): array
 {
     $sql = "SELECT llv.manguoidung AS ma_bac_si,
@@ -185,10 +171,7 @@ function lich_kham_theo_ngay($conn, int $maBacSi, string $ngay, bool $boDaHuy = 
     return truy_van($conn, $sql, $kieu, $tham);
 }
 
-/**
- * Thong ke nhanh cua mot ngay: tong luot, cho xac nhan, da kham, khung gio trong.
- * Ten khoa khop voi JS.
- */
+//Thống kê nhanh của 1 ngày: tổng lượt, chờ xác nhận, đã khám, khung giờ trống.
 function lich_kham_thong_ke_ngay($conn, int $maBacSi, string $ngay): array
 {
     $r = truy_van_mot(

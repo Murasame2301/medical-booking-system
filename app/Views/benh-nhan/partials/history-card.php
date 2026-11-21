@@ -1,10 +1,6 @@
 <?php
 
-// Mot the lich kham trong lich su. Tach ra de sau khi huy chi can thay
-// outerHTML cua dung the vua huy.
-// Bien: $item, $isReopen, $lydoHuy.
-// Chot chan: partial nay chi dung khi vong lap truyen $item; neu bi goi le thi
-// van render mot the rong thay vi bao loi.
+//Một thẻ lịch khám trong lịch sử, thay outerHTML sau khi huỷ
 if (!isset($item) || !is_array($item)) {
     $item = [];
 }

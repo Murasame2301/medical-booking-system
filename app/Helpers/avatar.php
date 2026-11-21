@@ -25,7 +25,7 @@ if (!function_exists('chu_cai_viet_tat')) {
 }
 
 if (!function_exists('lay_anh_dai_dien')) {
-    //Đường dẫn web của ảnh kèm ?v=<mtime> để không dính cache cũ. Null nếu chưa có ảnh.
+    //Đường dẫn web của ảnh kèm ?v=<mtime> để không dính cache cũ.
     function lay_anh_dai_dien(?string $duongDan): ?string
     {
         static $boNho = [];

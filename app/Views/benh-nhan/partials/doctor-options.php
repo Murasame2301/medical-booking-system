@@ -1,8 +1,6 @@
 <?php
 
-// Cac <option> cua o chon bac si. Tach rieng de khi doi chuyen khoa
-// chi can thay noi dung <select> thay vi tai lai trang.
-// Bien: $doctors, $mabacsi.
+//Các <option> của ô chọn bác sĩ, thay qua AJAX khi đổi chuyên khoa
 
 $doctors = is_array($doctors ?? null) ? $doctors : [];
 $mabacsi = $mabacsi ?? null;

@@ -1,9 +1,3 @@
-<?php
-
-// Trang chu benh nhan. Giao dien giu nguyen ban cu (index.php cua nhanh
-// lengtrungtin); chi doi duong dan sang router chung.
-
-?>
 <!DOCTYPE html>
 <html lang="vi">
 

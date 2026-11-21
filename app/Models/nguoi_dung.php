@@ -1,15 +1,9 @@
 <?php
 
-// Truy van bang NGUOI_DUNG. Moi ham nhan $conn lam tham so dau tien.
-// Loi truy van nem RuntimeException de controller bat va bao loi cho nguoi dung.
+//Truy vấn bảng NGUOI_DUNG.
+//Lỗi truy vấn ném RuntimeException cho controller bắt.
 
-/**
- * Tim tai khoan theo so dien thoai. Tra ve ca vai tro va trang thai de
- * trang dang nhap chung biet re nhanh va tu choi tai khoan bi khoa.
- *
- * @return array|null
- * @throws RuntimeException Khi khong the thuc hien truy van.
- */
+//Tìm tài khoản theo số điện thoại, kèm vai trò và trạng thái cho trang đăng nhập.
 function nguoi_dung_tim_theo_sdt($conn, $phonenumber)
 {
     $sql = "SELECT manguoidung, mavaitro, hoten, sdt, matkhau, trangthai
@@ -35,12 +29,8 @@ function nguoi_dung_tim_theo_sdt($conn, $phonenumber)
     return $user ?: null;
 }
 
-/**
- * Tao tai khoan benh nhan moi.
- *
- * @return int Ma nguoi dung vua tao.
- * @throws RuntimeException Khi khong the tao tai khoan.
- */
+//Tạo tài khoản bệnh nhân mới.
+//Trả về mã người dùng vừa tạo.
 function nguoi_dung_tao_tai_khoan($conn, $fullname, $phonenumber, $password)
 {
     $sql = "INSERT INTO NGUOI_DUNG(mavaitro, hoten, sdt, matkhau)
@@ -67,12 +57,7 @@ function nguoi_dung_tao_tai_khoan($conn, $fullname, $phonenumber, $password)
     return $manguoidung;
 }
 
-/**
- * Lay ho so benh nhan theo ma nguoi dung.
- *
- * @return array|null
- * @throws RuntimeException Khi khong the truy van ho so.
- */
+//Lấy hồ sơ bệnh nhân theo mã người dùng.
 function nguoi_dung_lay_ho_so($conn, $manguoidung)
 {
     $sql = "SELECT hoten, ngaysinh, gioitinh, email, diachi, bhyt, cccd, dantoc
@@ -98,13 +83,8 @@ function nguoi_dung_lay_ho_so($conn, $manguoidung)
     return $hoSo ?: null;
 }
 
-/**
- * Lay day du thong tin tai khoan, gom ca mat khau da hash de controller xac thuc.
- * Khong dua cot matkhau vao view.
- *
- * @return array|null
- * @throws RuntimeException Khi khong the truy van tai khoan.
- */
+//Lấy đầy đủ thông tin tài khoản, gồm cả mật khẩu đã hash.
+//Không đưa cột matkhau vào view.
 function nguoi_dung_lay_tai_khoan($conn, $manguoidung)
 {
     $sql = "SELECT manguoidung, mavaitro, hoten, sdt, email, matkhau, ngaysinh,
@@ -131,11 +111,7 @@ function nguoi_dung_lay_tai_khoan($conn, $manguoidung)
     return $taiKhoan ?: null;
 }
 
-/**
- * Duong dan anh dai dien cua mot tai khoan (null neu chua co).
- *
- * @throws RuntimeException
- */
+//Đường dẫn ảnh đại diện của một tài khoản.
 function nguoi_dung_lay_anh($conn, $manguoidung)
 {
     $r = truy_van_mot($conn, "SELECT anhdaidien FROM NGUOI_DUNG WHERE manguoidung = ?", 'i', [$manguoidung]);
@@ -143,11 +119,7 @@ function nguoi_dung_lay_anh($conn, $manguoidung)
     return $r['anhdaidien'] ?? null;
 }
 
-/**
- * Cap nhat mat khau da hash.
- *
- * @throws RuntimeException Khi khong the cap nhat mat khau.
- */
+//Cập nhật mật khẩu đã hash.
 function nguoi_dung_cap_nhat_mat_khau($conn, $manguoidung, $matKhauHash)
 {
     $sql = "UPDATE NGUOI_DUNG
@@ -170,13 +142,7 @@ function nguoi_dung_cap_nhat_mat_khau($conn, $manguoidung, $matKhauHash)
     $stmt->close();
 }
 
-/**
- * Cap nhat thong tin ho so benh nhan.
- * $cccd va $dantoc nhan null de giu nguyen gia tri hien co trong DB
- * (luong tao-ho-so.php khong gui hai truong nay).
- *
- * @throws RuntimeException Khi khong the cap nhat; ma loi la errno cua MySQL.
- */
+//Cập nhật hồ sơ bệnh nhân
 function nguoi_dung_cap_nhat_ho_so(
     $conn,
     $manguoidung,

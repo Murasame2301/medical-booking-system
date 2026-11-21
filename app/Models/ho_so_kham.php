@@ -1,10 +1,7 @@
 <?php
-/* Truy van bang ho_so_benh_nhan: ket qua kham cua mot luot kham.
-   Moi ham nhan $conn lam tham so dau tien. */
+//Truy vấn bảng HO_SO_BENH_NHAN: kết quả khám của một lượt khám.
 
-/**
- * Ho so kham da lap cua mot lich kham (rong neu chua co).
- */
+//Hồ sơ khám đã lập của một lịch khám (rỗng nếu chưa có).
 function ho_so_kham_lay($conn, int $maLichKham): array
 {
     $hoSo = truy_van_mot(
@@ -20,10 +17,8 @@ function ho_so_kham_lay($conn, int $maLichKham): array
     return $hoSo;
 }
 
-/**
- * Ghi ho so kham (bang co UNIQUE(malichkham) nen dung upsert).
- * Phai goi ben trong transaction cua nguoi goi.
- */
+//Ghi hồ sơ khám (upsert vì UNIQUE(malichkham)).
+//Phải gọi trong transaction của nơi gọi.
 function ho_so_kham_luu($conn, int $maLichKham, string $chuanDoan, string $loiDan): void
 {
     thi_hanh(

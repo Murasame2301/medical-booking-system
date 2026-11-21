@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Menu trai cua khu bac si.
- * Duong dan dung router chung: index.php?page=bac-si/...
- */
+//Menu trái của khu bác sĩ.
 
 $hoTen = ho_ten_hien_tai() !== '' ? ho_ten_hien_tai() : 'Bác sĩ';
 $maNd = ma_nguoi_dung_hien_tai();

@@ -1,13 +1,6 @@
 <?php
 
-/**
- * Phan dau trang bac si: mo <html>, nap CSS cua khu bac si.
- *
- * Bien co san khi file nay chay (do index.php chuan bi truoc do):
- *   $tieuDe  - tieu de trang hien tai, lay tu config/routes.php
- *   $trang   - khoa route hien tai, dung de to sang muc dang chon tren menu
- *   $jsTrang - danh sach file JS cua trang, in o footer.php
- */
+//Phần đầu trang bác sĩ: mở <html>, nạp CSS. Dùng $tieuDe, $trang, $jsTrang do index.php chuẩn bị.
 ?>
 
 <!doctype html>

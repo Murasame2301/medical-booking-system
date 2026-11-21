@@ -15,7 +15,7 @@ function quan_tri_dat_flash($loai, $noiDung)
     $_SESSION[QUAN_TRI_KHOA_FLASH] = ['type' => $loai, 'message' => $noiDung];
 }
 
-//Đọc rồi xoá thông báo. Trả về null nếu không có.
+//Đọc rồi xoá thông báo.
 function quan_tri_lay_flash()
 {
     $flash = $_SESSION[QUAN_TRI_KHOA_FLASH] ?? null;

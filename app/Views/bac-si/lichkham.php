@@ -35,13 +35,11 @@
           </tr>
         </thead>
         <tbody id="than-bang-kham">
-          <!-- JavaScript sẽ tự động chèn <tr> vào đây -->
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- HOP THOAI HUY LICH KHAM -->
   <dialog id="hop-huy-kham">
     <form id="form-huy-kham">
       <h2>Hủy lịch khám</h2>

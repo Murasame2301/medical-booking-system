@@ -1,10 +1,8 @@
-/* Menu "Quản lý tài khoản" dạng số xuống, dùng <details> nên không cần JavaScript.
-   Nạp sau home.css / appointment.css nên có thể ghi đè các rule nav a của hai file đó. */
-
 .nav-account {
   position: relative;
 }
-.nav-account > summary {
+
+.nav-account>summary {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -16,23 +14,29 @@
   cursor: pointer;
   transition: color .15s ease;
 }
-.nav-account > summary::-webkit-details-marker {
+
+.nav-account>summary::-webkit-details-marker {
   display: none;
 }
-.nav-account > summary::marker {
+
+.nav-account>summary::marker {
   content: "";
 }
-.nav-account > summary:hover,
-.nav-account[open] > summary {
+
+.nav-account>summary:hover,
+.nav-account[open]>summary {
   color: #1559b7;
 }
-.nav-account > summary i {
+
+.nav-account>summary i {
   font-size: 10px;
   transition: transform .15s ease;
 }
-.nav-account[open] > summary i {
+
+.nav-account[open]>summary i {
   transform: rotate(180deg);
 }
+
 .nav-account-summary span::after {
   content: none;
 }
@@ -50,6 +54,7 @@
   background: #ffffff;
   box-shadow: 0 16px 34px rgba(33, 72, 110, .14);
 }
+
 .nav-account-menu a {
   display: flex;
   align-items: center;
@@ -60,39 +65,46 @@
   font-weight: 500;
   white-space: nowrap;
 }
+
 .nav-account-menu a:hover,
 .nav-account-menu a:focus-visible {
   background: #f3f7fc;
   color: #1559b7;
   text-decoration: none;
 }
+
 .nav-account-menu a.is-current {
   color: #1559b7;
   font-weight: 700;
 }
+
 .nav-account-menu a i {
   width: 14px;
   color: #8a9aad;
   font-size: 12px;
   text-align: center;
 }
+
 .nav-account-menu a:hover i,
 .nav-account-menu a.is-current i {
   color: #1559b7;
 }
 
 @media (max-width: 700px) {
-  .nav-account > summary {
+  .nav-account>summary {
     font-size: 11px;
   }
+
   .nav-account-menu {
     left: auto;
     right: 0;
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .nav-account > summary,
-  .nav-account > summary i {
+
+  .nav-account>summary,
+  .nav-account>summary i {
     transition: none;
   }
 }

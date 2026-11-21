@@ -1,10 +1,9 @@
-/* Lich su dat kham: danh sach lich hen va form huy tai cho. */
-
 .history-main {
   max-width: 1040px;
   margin: 0 auto;
   padding: 28px clamp(24px, 5.5vw, 64px) 70px;
 }
+
 .history-breadcrumb {
   display: flex;
   align-items: center;
@@ -13,10 +12,12 @@
   color: var(--appointment-muted);
   font-size: 12px;
 }
+
 .history-breadcrumb a {
   color: var(--appointment-blue);
   font-weight: 600;
 }
+
 .history-breadcrumb a:hover {
   text-decoration: underline;
 }
@@ -28,6 +29,7 @@
   gap: 22px;
   margin-bottom: 22px;
 }
+
 .history-eyebrow {
   margin: 0 0 7px;
   color: var(--appointment-blue);
@@ -36,6 +38,7 @@
   letter-spacing: .08em;
   text-transform: uppercase;
 }
+
 .history-heading h1 {
   margin: 0;
   color: var(--appointment-ink);
@@ -43,11 +46,13 @@
   letter-spacing: -1px;
   line-height: 1.2;
 }
+
 .history-heading p:last-child {
   margin: 9px 0 0;
   color: var(--appointment-muted);
   font-size: 13px;
 }
+
 .history-count {
   flex: none;
   padding: 7px 14px;
@@ -67,11 +72,13 @@
   font-size: 13px;
   font-weight: 600;
 }
+
 .history-alert-error {
   border-color: #f0c9c6;
   background: var(--appointment-danger-bg);
   color: var(--appointment-danger);
 }
+
 .history-alert-success {
   border-color: #bfe4dc;
   background: var(--appointment-mint);
@@ -82,15 +89,18 @@
   display: grid;
   gap: 16px;
 }
+
 .history-card {
   border: 1px solid var(--appointment-line);
   border-top: 3px solid var(--appointment-blue);
   background: var(--appointment-paper);
   box-shadow: 0 12px 30px rgba(33, 72, 110, .06);
 }
+
 .history-card-cancelled {
   border-top-color: var(--appointment-field-line);
 }
+
 .history-card-done {
   border-top-color: var(--appointment-green);
 }
@@ -103,18 +113,21 @@
   padding: 16px clamp(18px, 3vw, 26px);
   border-bottom: 1px solid var(--appointment-line);
 }
+
 .history-when {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 12px;
 }
+
 .history-time {
   color: var(--appointment-ink);
   font-size: 17px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+
 .history-date {
   color: var(--appointment-muted);
   font-size: 13px;
@@ -130,18 +143,22 @@
   letter-spacing: .03em;
   white-space: nowrap;
 }
+
 .history-status-pending {
   background: #fff5dd;
   color: #8a5b00;
 }
+
 .history-status-confirmed {
   background: #e8f1ff;
   color: var(--appointment-blue-deep);
 }
+
 .history-status-done {
   background: var(--appointment-mint);
   color: var(--appointment-success-ink);
 }
+
 .history-status-cancelled {
   background: #eef1f5;
   color: var(--appointment-muted);
@@ -150,17 +167,20 @@
 .history-card-body {
   padding: 18px clamp(18px, 3vw, 26px) 20px;
 }
+
 .history-card-body h2 {
   margin: 0;
   color: var(--appointment-ink);
   font-size: 17px;
   line-height: 1.35;
 }
+
 .history-role {
   margin: 3px 0 0;
   color: var(--appointment-muted);
   font-size: 12px;
 }
+
 .history-specialty {
   display: inline-block;
   margin: 10px 0 0;
@@ -171,6 +191,7 @@
   font-size: 11px;
   font-weight: 600;
 }
+
 .history-meta {
   display: flex;
   flex-wrap: wrap;
@@ -179,6 +200,7 @@
   padding-top: 14px;
   border-top: 1px solid var(--appointment-line);
 }
+
 .history-meta dt {
   color: var(--appointment-muted);
   font-size: 11px;
@@ -186,6 +208,7 @@
   letter-spacing: .03em;
   text-transform: uppercase;
 }
+
 .history-meta dd {
   margin: 2px 0 0;
   color: var(--appointment-ink);
@@ -197,6 +220,7 @@
   border-top: 1px solid var(--appointment-line);
   background: #fbfcfe;
 }
+
 .cancel-toggle {
   display: flex;
   align-items: center;
@@ -208,9 +232,11 @@
   cursor: pointer;
   list-style: none;
 }
+
 .cancel-toggle::-webkit-details-marker {
   display: none;
 }
+
 .cancel-toggle::before {
   content: "";
   width: 7px;
@@ -220,18 +246,23 @@
   transform: rotate(-45deg);
   transition: transform .15s ease;
 }
+
 .cancel-drawer[open] .cancel-toggle::before {
   transform: rotate(45deg);
 }
+
 .cancel-toggle:hover {
   text-decoration: underline;
 }
+
 .cancel-toggle-close {
   display: none;
 }
+
 .cancel-drawer[open] .cancel-toggle-open {
   display: none;
 }
+
 .cancel-drawer[open] .cancel-toggle-close {
   display: inline;
 }
@@ -239,6 +270,7 @@
 .cancel-form {
   padding: 0 clamp(18px, 3vw, 26px) 20px;
 }
+
 .cancel-form label {
   display: block;
   margin-bottom: 6px;
@@ -246,6 +278,7 @@
   font-size: 12px;
   font-weight: 700;
 }
+
 .cancel-form textarea {
   width: 100%;
   padding: 10px 12px;
@@ -257,11 +290,13 @@
   font-size: 13px;
   resize: vertical;
 }
+
 .cancel-form textarea:focus {
   border-color: var(--appointment-focus);
   outline: 3px solid rgba(57, 135, 213, .18);
   outline-offset: 1px;
 }
+
 .cancel-actions {
   display: flex;
   align-items: center;
@@ -269,6 +304,7 @@
   gap: 12px;
   margin-top: 12px;
 }
+
 .cancel-submit {
   padding: 10px 20px;
   border: 1px solid #8d2421;
@@ -279,9 +315,11 @@
   font-weight: 700;
   cursor: pointer;
 }
+
 .cancel-submit:hover {
   background: #8d2421;
 }
+
 .cancel-hint {
   color: var(--appointment-muted);
   font-size: 12px;
@@ -294,6 +332,7 @@
   text-align: center;
   box-shadow: 0 12px 30px rgba(33, 72, 110, .06);
 }
+
 .history-empty-icon {
   width: 56px;
   height: 56px;
@@ -305,17 +344,20 @@
   color: var(--appointment-green);
   font-size: 22px;
 }
+
 .history-empty h2 {
   margin: 0;
   color: var(--appointment-ink);
   font-size: 19px;
 }
+
 .history-empty p {
   margin: 8px auto 20px;
   max-width: 380px;
   color: var(--appointment-muted);
   font-size: 13px;
 }
+
 .history-primary-button {
   display: inline-block;
   padding: 11px 22px;
@@ -325,6 +367,7 @@
   font-size: 13px;
   font-weight: 700;
 }
+
 .history-primary-button:hover {
   background: var(--appointment-blue-deep);
 }
@@ -333,20 +376,24 @@
   .history-main {
     padding: 22px 16px 56px;
   }
+
   .history-heading {
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
   }
+
   .history-card-top {
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
   }
+
   .cancel-actions {
     align-items: stretch;
     flex-direction: column;
   }
+
   .cancel-submit {
     width: 100%;
   }
@@ -356,13 +403,16 @@
 #history-alert:empty {
   display: none;
 }
+
 #history-alert {
   margin-bottom: 18px;
 }
+
 .cancel-form .cancel-submit[disabled] {
   cursor: progress;
   opacity: 0.7;
 }
+
 .history-card.is-loading {
   opacity: 0.55;
   pointer-events: none;

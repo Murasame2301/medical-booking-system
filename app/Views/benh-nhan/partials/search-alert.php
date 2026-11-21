@@ -1,8 +1,6 @@
 <?php
 
-// Khay thong bao cua trang tim lich. Dung chung cho lan tai trang dau tien
-// (search.php) va cho fragment tra ve qua AJAX.
-// Bien: $dateError, $message, $messageType.
+//Khay thông báo của trang tìm lịch, dùng chung cho tải trang và AJAX. Biến: $dateError, $message, $messageType.
 
 $dateError = (string) ($dateError ?? '');
 $message = (string) ($message ?? '');

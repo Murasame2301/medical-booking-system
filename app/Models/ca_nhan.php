@@ -1,10 +1,7 @@
 <?php
-/* Truy van thong tin ca nhan cua bac si (NGUOI_DUNG + BAC_SI).
-   Moi ham nhan $conn lam tham so dau tien. */
+//Truy vấn thông tin cá nhân của bác sĩ (NGUOI_DUNG + BAC_SI).
 
-/**
- * Thong tin ca nhan day du cua mot bac si (null neu khong tim thay).
- */
+//Thông tin cá nhân đầy đủ của một bác sĩ
 function ca_nhan_lay_thong_tin($conn, int $maNguoiDung): ?array
 {
     return truy_van_mot(
@@ -19,9 +16,8 @@ function ca_nhan_lay_thong_tin($conn, int $maNguoiDung): ?array
     );
 }
 
-/**
- * Cap nhat thong tin ca nhan. Phai goi ben trong transaction cua nguoi goi.
- */
+//Cập nhật thông tin cá nhân.
+//Phải gọi bên trong transaction của nơi gọi.
 function ca_nhan_cap_nhat($conn, array $giaTri): void
 {
     thi_hanh(
@@ -58,17 +54,13 @@ function ca_nhan_cap_nhat($conn, array $giaTri): void
     }
 }
 
-/**
- * Hash mat khau hien tai cua tai khoan (null neu khong co).
- */
+//Hash mật khẩu hiện tại của tài khoản.
 function ca_nhan_lay_hash_mat_khau($conn, int $maNguoiDung): ?array
 {
     return truy_van_mot($conn, "SELECT matkhau FROM NGUOI_DUNG WHERE manguoidung = ?", 'i', [$maNguoiDung]);
 }
 
-/**
- * Ghi hash mat khau moi.
- */
+//Ghi hash mật khẩu mới.
 function ca_nhan_cap_nhat_mat_khau($conn, int $maNguoiDung, string $matKhauMaHoa): void
 {
     thi_hanh(
@@ -79,17 +71,13 @@ function ca_nhan_cap_nhat_mat_khau($conn, int $maNguoiDung, string $matKhauMaHoa
     )->close();
 }
 
-/**
- * Duong dan anh dai dien hien tai.
- */
+//Đường dẫn ảnh đại diện hiện tại.
 function ca_nhan_lay_anh($conn, int $maNguoiDung): array
 {
     return truy_van_mot($conn, "SELECT anhdaidien FROM NGUOI_DUNG WHERE manguoidung = ?", 'i', [$maNguoiDung]) ?? [];
 }
 
-/**
- * Ghi duong dan anh dai dien moi.
- */
+//Ghi đường dẫn ảnh đại diện mới.
 function ca_nhan_cap_nhat_anh($conn, int $maNguoiDung, ?string $duongDan): void
 {
     thi_hanh($conn, "UPDATE NGUOI_DUNG SET anhdaidien = ? WHERE manguoidung = ?", 'si', [$duongDan, $maNguoiDung])->close();

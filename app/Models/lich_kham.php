@@ -1,13 +1,9 @@
 <?php
 
-// Truy van lich lam viec / lich kham. Moi ham nhan $conn lam tham so dau tien.
-// Loi truy van nem RuntimeException de controller bat va bao loi cho nguoi dung.
+//Truy vấn lịch làm việc, lịch khám.
+//Lỗi truy vấn ném RuntimeException cho controller bắt.
 
-/**
- * Chay mot cau SELECT khong tham so, tra ve mang cac dong.
- *
- * @throws RuntimeException
- */
+//Chạy một câu SELECT không tham số, trả về mảng các dòng.
 function lich_kham_lay_nhieu_dong($conn, $sql)
 {
     $stmt = $conn->prepare($sql);
@@ -26,9 +22,7 @@ function lich_kham_lay_nhieu_dong($conn, $sql)
     return $rows;
 }
 
-/**
- * bind_param voi so tham so thay doi duoc (mysqli doi tham so phai truyen theo tham chieu).
- */
+//bind_param với số tham số thay đổi được.
 function lich_kham_gan_tham_so($stmt, $types, $params)
 {
     $references = [$types];
@@ -41,8 +35,7 @@ function lich_kham_gan_tham_so($stmt, $types, $params)
 
 function lich_kham_lay_danh_sach_chuyen_khoa($conn)
 {
-    // Mot ten chuyen khoa co the ung voi nhieu machuyenkhoa (moi khoa mot ma),
-    // nen gom theo ten de danh sach chi hien thi moi chuyen khoa mot lan.
+    //Gom theo tên vì một tên chuyên khoa có thể ứng với nhiều mã.
     $sql = "SELECT MIN(machuyenkhoa) AS machuyenkhoa, tenchuyenkhoa
             FROM CHUYEN_KHOA
             GROUP BY tenchuyenkhoa
@@ -62,7 +55,7 @@ function lich_kham_lay_danh_sach_bac_si($conn, $machuyenkhoa = null)
                 ON ck.machuyenkhoa = bsck.machuyenkhoa";
 
     if ($machuyenkhoa !== null) {
-        // Loc theo ten chuyen khoa de gom ca cac machuyenkhoa cung ten.
+        //Lọc theo tên chuyên khoa để gom cả các mã cùng tên.
         $sql .= " WHERE ck.tenchuyenkhoa = (
                       SELECT tenchuyenkhoa FROM CHUYEN_KHOA WHERE machuyenkhoa = ?
                   )";
@@ -112,7 +105,7 @@ function lich_kham_tim_khung_gio($conn, $ngay, $machuyenkhoa = null, $manguoidun
     $params = [$ngay, thoi_diem_chan_dat_lich()];
 
     if ($machuyenkhoa !== null) {
-        // Loc theo ten chuyen khoa de gom ca cac machuyenkhoa cung ten.
+        //Lọc theo tên chuyên khoa để gom cả các mã cùng tên.
         $sql .= " AND ck.tenchuyenkhoa = (
                       SELECT tenchuyenkhoa FROM CHUYEN_KHOA WHERE machuyenkhoa = ?
                   )";
@@ -184,7 +177,7 @@ function lich_kham_lay_chi_tiet_khung_gio($conn, $malichlamviec)
         throw new RuntimeException('Không thể chuẩn bị thông tin khung giờ.');
     }
 
-    $mocChan = thoi_diem_chan_dat_lich();   // bind_param can bien (tham chieu)
+    $mocChan = thoi_diem_chan_dat_lich();   //bind_param cần biến (tham chiếu)
     $stmt->bind_param('is', $malichlamviec, $mocChan);
     if (!$stmt->execute()) {
         $stmt->close();
@@ -222,7 +215,7 @@ function lich_kham_lay_ho_so_benh_nhan($conn, $manguoidung)
 
 function lich_kham_lay_lich_su_dat_kham($conn, $manguoidung)
 {
-    // Chuyen khoa dung LEFT JOIN de lich van hien khi bac si chua duoc gan chuyen khoa.
+    //LEFT JOIN chuyên khoa để lịch vẫn hiện khi bác sĩ chưa được gán chuyên khoa.
     $sql = "SELECT lk.malichkham,
                    lk.trangthai,
                    lk.lydo,
@@ -278,17 +271,7 @@ function lich_kham_lay_lich_su_dat_kham($conn, $manguoidung)
     return $rows;
 }
 
-/**
- * Huy lich cua chinh benh nhan dang dang nhap.
- *
- * Khong dung UPDATE ... INNER JOIN LICH_LAM_VIEC: trigger tren LICH_KHAM co
- * UPDATE vao LICH_LAM_VIEC, va MySQL khong cho mot cau vua doc vua ghi cung
- * bang qua trigger. Vi vay tach thanh hai buoc trong cung transaction:
- *   1. SELECT ... FOR UPDATE khoa dong lich kham va doc gio kham.
- *   2. UPDATE LICH_KHAM theo khoa chinh (khong dung toi LICH_LAM_VIEC).
- *
- * @return bool true neu huy duoc.
- */
+//Huỷ lịch của bệnh nhân đang đăng nhập. Tách SELECT FOR UPDATE và UPDATE vì trigger không cho UPDATE JOIN LICH_LAM_VIEC.
 function lich_kham_huy_lich($conn, $malichkham, $manguoidung, $lydo)
 {
     $conn->begin_transaction();
@@ -350,12 +333,7 @@ function lich_kham_huy_lich($conn, $malichkham, $manguoidung, $lydo)
     }
 }
 
-/**
- * Dat lich trong mot giao dich: khoa khung gio, kiem tra con trong, roi ghi.
- *
- * @return int Ma lich kham vua tao.
- * @throws RuntimeException Ma 409 khi khung gio khong con trong.
- */
+//Đặt lịch trong một transaction: khoá khung giờ, kiểm tra còn trống rồi ghi. Lỗi 409 nếu hết chỗ.
 function lich_kham_dat_lich($conn, $manguoidung, $malichlamviec, $lydo)
 {
     $conn->begin_transaction();
@@ -378,7 +356,7 @@ function lich_kham_dat_lich($conn, $manguoidung, $malichlamviec, $lydo)
             throw new RuntimeException('Không thể chuẩn bị kiểm tra khung giờ.');
         }
 
-        $mocChan = thoi_diem_chan_dat_lich();   // bind_param can bien (tham chieu)
+        $mocChan = thoi_diem_chan_dat_lich();   //bind_param cần biến (tham chiếu)
         $stmt->bind_param('is', $malichlamviec, $mocChan);
         if (!$stmt->execute()) {
             $stmt->close();

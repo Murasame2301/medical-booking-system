@@ -1,4 +1,3 @@
-<?php /* Trang bao loi 419: phien lam viec het han (CSRF). */ ?>
 <!DOCTYPE html>
 <html lang="vi">
 

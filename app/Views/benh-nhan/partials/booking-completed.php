@@ -1,8 +1,6 @@
 <?php
 
-// Panel thay the form dat lich sau khi dat thanh cong.
-// Bien: $message, $backUrl.
-
+//Panel thay form đặt lịch sau khi đặt thành công.
 $message = (string) ($message ?? '');
 $backUrl = (string) ($backUrl ?? 'index.php?page=dat-kham');
 

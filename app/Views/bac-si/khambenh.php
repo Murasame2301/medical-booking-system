@@ -4,11 +4,8 @@
   </header>
 
   <div class="noidung">
-    <!-- Danh sách ca khám hôm nay -->
     <section class="khung">
       <h2>Ca khám hôm nay</h2>
-
-      <!-- bang-cuon: bảng có thanh cuộn riêng khi có nhiều ca -->
       <div class="bang bang-cuon">
         <table>
           <thead>
@@ -20,13 +17,12 @@
               <th>Thao tác</th>
             </tr>
           </thead>
-          <!-- lay giao dien js -->
           <tbody id="than-bang-kham-benh"></tbody>
         </table>
       </div>
     </section>
 
-    
+
     <section class="khung" id="khung-ho-so" style="display: none;">
       <h2 id="hs-tieu-de">Hồ sơ khám: </h2>
 
