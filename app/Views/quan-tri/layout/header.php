@@ -38,7 +38,7 @@ $mucDangChon = $mucPhu[$trangHienTai] ?? $trangHienTai;
 
     <div class="thanh-tren">
         <div class="rong">
-            <span>Hotline: 363636</span>
+            <span>Hotline: 0292 000 2026</span>
             <span>Thứ 2 đến Thứ 7 | 07:30 đến 16:30</span>
         </div>
     </div>

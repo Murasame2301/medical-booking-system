@@ -72,7 +72,12 @@ function ganSuKienKhoaMo() {
 
 // Tim kiem bang AJAX: lay du lieu o loc, nhan ve bang moi roi thay vao trang
 function timNguoiDung(formLoc) {
-  const thamSo = new URLSearchParams(new FormData(formLoc)).toString();
+  // Form co hidden name="page" (de gui GET khi tat JS). Neu giu lai, URL se
+  // co hai tham so page va PHP lay cai sau -> roi ve trang danh sach day du
+  // thay vi endpoint AJAX. Bo page o day, URL da co page cua endpoint.
+  const duLieu = new FormData(formLoc);
+  duLieu.delete("page");
+  const thamSo = new URLSearchParams(duLieu).toString();
 
   fetch("index.php?page=quan-tri/ajax/tim-nguoi-dung&" + thamSo, {
     headers: { "X-Requested-With": "XMLHttpRequest" },

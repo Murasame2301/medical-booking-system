@@ -459,6 +459,50 @@ table td:last-child {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
+/* Mat khau: nut hien/an nam trong .password-control. */
+.password-control {
+  position: relative;
+}
+.password-control input {
+  padding-right: 44px;
+}
+.password-toggle {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--mo);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.password-toggle[hidden] {
+  display: none;
+}
+.password-toggle:hover {
+  background: var(--hover);
+  color: var(--chu);
+}
+.password-toggle i {
+  grid-area: 1 / 1;
+  font-size: 14px;
+  line-height: 1;
+}
+.password-toggle .fa-eye-slash {
+  display: none;
+}
+.password-toggle[aria-pressed="true"] .fa-eye {
+  display: none;
+}
+.password-toggle[aria-pressed="true"] .fa-eye-slash {
+  display: block;
+}
+
 .anh-dai-dien {
   display: flex;
   align-items: center;

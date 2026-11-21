@@ -276,6 +276,37 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // ************ HIEN/AN MAT KHAU
+  function cacNutHienMatKhau() {
+    return document.querySelectorAll("[data-password-target]");
+  }
+
+  function datLaiHienMatKhau() {
+    if (!formMatKhau) return;
+    formMatKhau.querySelectorAll("[data-password-target]").forEach(function (nut) {
+      const o = document.getElementById(nut.getAttribute("data-password-target"));
+      if (!o) return;
+      o.type = "password";
+      nut.setAttribute("aria-pressed", "false");
+      nut.setAttribute("aria-label", "Hiện mật khẩu");
+    });
+  }
+
+  function khoiTaoHienMatKhau() {
+    cacNutHienMatKhau().forEach(function (nut) {
+      const o = document.getElementById(nut.getAttribute("data-password-target"));
+      if (!o) return;
+      nut.hidden = false;
+      nut.addEventListener("click", function () {
+        const hien = o.type === "password";
+        o.type = hien ? "text" : "password";
+        nut.setAttribute("aria-pressed", String(hien));
+        nut.setAttribute("aria-label", hien ? "Ẩn mật khẩu" : "Hiện mật khẩu");
+        o.focus();
+      });
+    });
+  }
+
   // ************ FORM DOI MAT KHAU
   async function xuLyGuiMatKhau(e) {
     e.preventDefault();
@@ -301,6 +332,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const r = await post(URL_AJAX + "doi_mat_khau", d);
       thongBao(r.msg);
       formMatKhau.reset();
+      datLaiHienMatKhau();
     } catch (loi) {
       thongBao(loi.message, true);
     } finally {
@@ -320,15 +352,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ************ KHOI TAO
   function khoiTao() {
-  ganSuKien(); // gắn submit của form trước tiên
-  [khoiTaoChuyenTab, khoiTaoAnhDaiDien].forEach(function (ham) {
-    try {
-      ham();
-    } catch (loi) {
-      console.error("ca_nhan.js " + ham.name + ":", loi);
-    }
-  });
-}
+    ganSuKien(); // gắn submit của form trước tiên
+    [khoiTaoChuyenTab, khoiTaoAnhDaiDien, khoiTaoHienMatKhau].forEach(function (ham) {
+      try {
+        ham();
+      } catch (loi) {
+        console.error("ca_nhan.js " + ham.name + ":", loi);
+      }
+    });
+  }
 
   khoiTao();
 });

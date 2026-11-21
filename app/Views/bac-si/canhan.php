@@ -79,15 +79,33 @@ $gt = $tt['gioitinh'] ?? '';
         <form class="form-ca-nhan form-bao-mat" id="form-mat-khau" autocomplete="off">
           <div class="nhom-truong">
             <label for="f-mk-ht">Mật khẩu hiện tại</label>
-            <input type="password" id="f-mk-ht" name="mat_khau_hien_tai" placeholder="••••••••" autocomplete="current-password" required />
+            <div class="password-control">
+              <input type="password" id="f-mk-ht" name="mat_khau_hien_tai" placeholder="••••••••" autocomplete="current-password" required />
+              <button class="password-toggle" type="button" data-password-target="f-mk-ht" aria-pressed="false" aria-label="Hiện mật khẩu" hidden>
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
           <div class="nhom-truong">
             <label for="f-mk-moi">Mật khẩu mới (tối thiểu 8 ký tự)</label>
-            <input type="password" id="f-mk-moi" name="mat_khau_moi" placeholder="••••••••" minlength="8" maxlength="72" autocomplete="new-password" required />
+            <div class="password-control">
+              <input type="password" id="f-mk-moi" name="mat_khau_moi" placeholder="••••••••" minlength="8" maxlength="72" autocomplete="new-password" required />
+              <button class="password-toggle" type="button" data-password-target="f-mk-moi" aria-pressed="false" aria-label="Hiện mật khẩu" hidden>
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
           <div class="nhom-truong">
             <label for="f-mk-xn">Xác nhận mật khẩu mới</label>
-            <input type="password" id="f-mk-xn" name="xac_nhan" placeholder="••••••••" minlength="8" maxlength="72" autocomplete="new-password" required />
+            <div class="password-control">
+              <input type="password" id="f-mk-xn" name="xac_nhan" placeholder="••••••••" minlength="8" maxlength="72" autocomplete="new-password" required />
+              <button class="password-toggle" type="button" data-password-target="f-mk-xn" aria-pressed="false" aria-label="Hiện mật khẩu" hidden>
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
 
           <button class="btn xanh" type="submit">Đổi mật khẩu</button>
