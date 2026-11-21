@@ -38,12 +38,6 @@ function lich_kham_tim_kiem($conn, int $maBacSi, string $tuNgay, string $denNgay
         $sql .= " AND lk.trangthai IN (" . implode(',', array_fill(0, count($tt), '?')) . ')';
         $kieu .= str_repeat('s', count($tt));
         $thamSo = array_merge($thamSo, $tt);
-    } else {
-        //Mặc định "Tất cả": ẩn lịch đã kết thúc.
-        //Chọn trạng thái cụ thể để xem cả lịch đã qua.
-        $sql .= " AND llv.thoigianketthuc >= ?";
-        $kieu .= 's';
-        $thamSo[] = date('Y-m-d H:i:s');
     }
     $sql .= ' ORDER BY llv.thoigianbatdau ASC, lk.malichkham ASC';
 

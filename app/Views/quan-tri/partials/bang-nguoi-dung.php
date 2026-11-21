@@ -1,6 +1,5 @@
 <?php
-/* Bang danh sach nguoi dung. Dung cho ca trang va endpoint AJAX tim kiem.
-   Bien: $ds, $tukhoa, $vaitro, $nguoiHienTai */
+//Bảng danh sách người dùng. Dùng cho cả trang và endpoint AJAX tìm kiếm.
 
 if (count($ds) === 0) {
     echo '<p class="trong">Không tìm thấy người dùng nào.</p>';

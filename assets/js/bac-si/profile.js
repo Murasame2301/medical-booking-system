@@ -1,36 +1,36 @@
 document.addEventListener("DOMContentLoaded", function () {
   const URL_AJAX = "index.php?page=bac-si/ca-nhan&ajax=";
-  const ANH_TOI_DA = 2 * 1024 * 1024; // khop ANH_TOI_DA_BYTE o PHP
+  const ANH_TOI_DA = 2 * 1024 * 1024; //khớp ANH_TOI_DA_BYTE ở PHP
   const ANH_HOP_LE = ["image/jpeg", "image/png", "image/webp"];
-  const MAT_KHAU_TOI_THIEU = 8; // khop MAT_KHAU_TOI_THIEU o PHP
-  const GIOI_THIEU_TOI_DA = 1000; // khop GIOI_THIEU_TOI_DA o PHP
+  const MAT_KHAU_TOI_THIEU = 8; //khớp MAT_KHAU_TOI_THIEU ở PHP
+  const GIOI_THIEU_TOI_DA = 1000; //khớp GIOI_THIEU_TOI_DA ở PHP
 
-  // ten truong trong form -> khoa trong du lieu server tra ve
+  //Tên trường trong form -> khoá trong dữ liệu server trả về.
   const TRUONG_FORM = {
     ten: "hoten",
     ngay_sinh: "ngaysinh",
     gioi_tinh: "gioitinh",
     trinh_do: "trinhdo",
-    gioi_thieu: "gioithieu", // tuy chon: chi dung neu form co o nay
+    gioi_thieu: "gioithieu", //tuỳ chọn: chỉ dùng nếu form có ô này
     sdt: "sdt",
     email: "email",
     dia_chi: "diachi",
   };
   const TRUONG_TUY_CHON = ["gioi_thieu", "email"];
 
-  // ************ CHON PHAN TU
+  // ************ CHỌN PHẦN TỬ
   const formThongTin = $("form-thong-tin");
   const formMatKhau = $("form-mat-khau");
   const btnDoiAnh = $("btn-doi-anh");
   const inputAnh = $("inp-anh");
   const btnXoaAnh = $("btn-xoa-anh");
 
-  // ************ TRANG THAI
-  let anhDaLuu = null; // duong dan anh dang luu tren may chu (null = chua co)
+  // ************ TRẠNG THÁI
+  let anhDaLuu = null; //đường dẫn ảnh đang lưu trên máy chủ (null = chưa có)
   let dangGuiThongTin = false;
   let dangGuiMatKhau = false;
 
-  // ************ THONG BAO (thay alert) - kieu dang nam trong ca_nhan.css
+  // ************ THÔNG BÁO (thay alert) - kiểu dáng nằm trong ca_nhan.css
   function thongBao(noiDung, loi) {
     let t = $("toast-ca-nhan");
     if (!t) {
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
-  // ************ TAB (co aria + dieu huong bang phim mui ten)
+  // ************ TAB (có aria + điều hướng bằng phím mũi tên)
   function khoiTaoChuyenTab() {
     const tabButtons = [...document.querySelectorAll(".tab-nut")];
     const tabContents = [...document.querySelectorAll(".tab-noi-dung")];
@@ -83,8 +83,8 @@ document.addEventListener("DOMContentLoaded", function () {
     chon(dau >= 0 ? dau : 0);
   }
 
-  // ************ ANH DAI DIEN
-  // PHP (html_avatar) in san: data-chu = chu viet tat, data-anh = duong dan anh (neu co)
+  // ************ ẢNH ĐẠI DIỆN
+  //PHP (html_avatar) in sẵn: data-chu = chữ viết tắt, data-anh = đường dẫn ảnh (nếu có).
   function cacKhungAvatar() {
     return document.querySelectorAll("[data-chu]");
   }
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // tai truoc anh tu may chu roi moi thay -> khong bi nhay/trang khung
+  //Tải trước ảnh từ máy chủ rồi mới thay -> không bị nhảy/trắng khung.
   function taiTruocAnh(url) {
     return new Promise(function (ok, hong) {
       const img = new Image();
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // cap nhat ten o header/sidebar: cac phan tu co thuoc tinh data-ten
+  //Cập nhật tên ở header/sidebar: các phần tử có thuộc tính data-ten.
   function capNhatTenHienThi(hoTen) {
     document.querySelectorAll("[data-ten]").forEach(function (el) {
       el.textContent = hoTen;
@@ -158,25 +158,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const urlTam = URL.createObjectURL(file);
-    veAnhDaiDien(urlTam); // xem truoc ngay
+    veAnhDaiDien(urlTam); //xem trước ngay
 
     const fd = new FormData();
     fd.append("anh", file);
     khoaNutAnh(true);
     try {
       const r = await post(URL_AJAX + "doi_anh", fd);
-      const anhMoi = r.data.anh + "?v=" + Date.now(); // tranh cache anh cu
+      const anhMoi = r.data.anh + "?v=" + Date.now(); //tránh cache ảnh cũ
       try {
         await taiTruocAnh(anhMoi);
       } catch (_) {
-        /* da luu thanh cong, van dung duong dan moi */
+        //Đã lưu thành công, vẫn dùng đường dẫn mới.
       }
       anhDaLuu = anhMoi;
       veAnhDaiDien(anhDaLuu);
       cacKhungAvatar().forEach((k) => (k.dataset.anh = anhDaLuu));
       thongBao(r.msg);
     } catch (loi) {
-      veAnhDaiDien(anhDaLuu); // that bai -> tra ve anh truoc do
+      veAnhDaiDien(anhDaLuu); //thất bại -> trả về ảnh trước đó
       thongBao(loi.message, true);
     } finally {
       URL.revokeObjectURL(urlTam);
@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (btnXoaAnh) btnXoaAnh.addEventListener("click", xuLyXoaAnh);
   }
 
-  // ************ FORM THONG TIN
+  // ************ FORM THÔNG TIN
   function napLaiForm(form, duLieu) {
     Object.keys(TRUONG_FORM).forEach(function (ten) {
       const o = form.elements[ten];
@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // kiem tra nhanh phia client (PHP van kiem tra lai)
+  //Kiểm tra nhanh phía client (PHP vẫn kiểm tra lại).
   function kiemTraThongTin(d) {
     const thieu = Object.keys(d).some(
       (k) => !TRUONG_TUY_CHON.includes(k) && String(d[k]).trim() === "",
@@ -234,7 +234,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (thieu) return "Vui lòng nhập đầy đủ thông tin.";
     if (!/^0\d{9}$/.test(String(d.sdt).trim()))
       return "Số điện thoại không hợp lệ.";
-    // email khong bat buoc: chi kiem tra dinh dang khi co nhap
+    //Email không bắt buộc: chỉ kiểm tra định dạng khi có nhập.
     const email = String(d.email || "").trim();
     if (email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return "Email không hợp lệ.";
@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function xuLyGuiThongTin(e) {
-    e.preventDefault(); // JS tu gui bang fetch, khong dung action cua form
+    e.preventDefault(); //JS tự gửi bằng fetch, không dùng action của form
     if (dangGuiThongTin) return;
 
     const d = Object.fromEntries(new FormData(formThongTin));
@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const r = await post(URL_AJAX + "cap_nhat", d);
       if (r.data) {
-        napLaiForm(formThongTin, r.data); // hien dung gia tri vua luu (doc lai tu DB)
+        napLaiForm(formThongTin, r.data); //hiện đúng giá trị vừa lưu (đọc lại từ DB)
         if (r.data.hoten) {
           capNhatChuVietTat(r.data.hoten);
           capNhatTenHienThi(r.data.hoten);
@@ -276,7 +276,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // ************ HIEN/AN MAT KHAU
+  // ************ HIỆN/ẨN MẬT KHẨU
   function cacNutHienMatKhau() {
     return document.querySelectorAll("[data-password-target]");
   }
@@ -307,7 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // ************ FORM DOI MAT KHAU
+  // ************ FORM ĐỔI MẬT KHẨU
   async function xuLyGuiMatKhau(e) {
     e.preventDefault();
     if (dangGuiMatKhau) return;
@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // ************ GAN SU KIEN
+  // ************ GẮN SỰ KIỆN
   function ganSuKien() {
     if (formThongTin) formThongTin.addEventListener("submit", xuLyGuiThongTin);
     else console.error("ca_nhan.js: không tìm thấy #form-thong-tin.");
@@ -350,9 +350,9 @@ document.addEventListener("DOMContentLoaded", function () {
     else console.error("ca_nhan.js: không tìm thấy #form-mat-khau.");
   }
 
-  // ************ KHOI TAO
+  // ************ KHỞI TẠO
   function khoiTao() {
-    ganSuKien(); // gắn submit của form trước tiên
+    ganSuKien(); //gắn submit của form trước tiên
     [khoiTaoChuyenTab, khoiTaoAnhDaiDien, khoiTaoHienMatKhau].forEach(function (ham) {
       try {
         ham();

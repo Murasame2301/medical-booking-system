@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // ************ HANG SO
   const SO_COT = 9;
   const URL_AJAX = "index.php?page=bac-si/lich-kham&ajax=";
 
@@ -11,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const thanBang = $("than-bang-kham");
   const datLai = $("dat-lai");
 
-  // hop thoai huy lich kham
+  //hộp thoại huỷ lịch khám
   const hopHuy = $("hop-huy-kham");
   const formHuy = $("form-huy-kham");
   const huyThongTin = $("huy-thong-tin");
@@ -20,13 +19,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!thanBang) return;
 
-  let hen = null; // bo hen gio cho o tim kiem
+  let hen = null; //bỏ hẹn giờ cho ô tìm kiếm
   let danhSachLichKham = [];
   let soLanTai = 0;
   let dangGui = false;
 
-  // ************ TIEN TICH NHO
-  // bo dau + chu thuong de tim kiem
+  // ************ TIỆN ÍCH NHỎ
+  //Bỏ dấu + chữ thường để tìm kiếm.
   function chuanHoa(s) {
     return String(s || "")
       .normalize("NFD")
@@ -37,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .trim();
   }
 
-  // 1 dong tu server -> doi tuong phia client
+  //Một dòng từ server -> đối tượng phía client.
   function chuyenLichKham(k) {
     return {
       ma: Number(k.malichkham),
@@ -53,12 +52,12 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
-  // so dien thoai dinh dang 4 3 3
+  //Số điện thoại định dạng 4 3 3.
   function dinhDangSdt(sdt) {
     return sdt.replace(/^(\d{4})(\d{3})(\d{3})$/, "$1 $2 $3");
   }
 
-  // ************ HAM LOC (phia client: tu khoa + loc lai cho chac)
+  // ************ HÀM LỌC (phía client: từ khoá + lọc lại cho chắc)
   function locLichKham(danhSach, dieuKien) {
     const tuKhoa = (dieuKien && dieuKien.tuKhoa) || "";
     const tuNgay = (dieuKien && dieuKien.tuNgay) || "";
@@ -71,28 +70,32 @@ document.addEventListener("DOMContentLoaded", function () {
     return danhSach.filter(function (k) {
       const dungNgay =
         (!tuNgay || k.ngay >= tuNgay) && (!denNgay || k.ngay <= denNgay);
-      const dungTrangThai =
-        !trangThai || trangThai === TAT_CA || k.trangThai === trangThai;
-      // chi tim theo ten (khong dau, khong phan biet hoa thuong) hoac so dien thoai
-      const dungTuKhoa =
-        !tk ||
+      const dungTrangThai = !trangThai || trangThai === TAT_CA || k.trangThai === trangThai;
+      //Chỉ tìm theo tên (không dấu, không phân biệt hoa thường) hoặc số điện thoại.
+      const dungTuKhoa = !tk ||
         chuanHoa(k.ten).includes(tk) ||
         (tkSo !== "" && k.sdt.includes(tkSo));
       return dungNgay && dungTrangThai && dungTuKhoa;
     });
   }
 
-  // ************ VE BANG
+  // ************ VẼ BẢNG
   function taoThaoTac(k) {
     if (k.trangThai === LOC_LICH_KHAM.CHO_XAC_NHAN) {
       return taoOChua(
-        taoNut("Xác nhận", "btn xanh nho", { xacnhan: k.ma }),
+        taoNut("Xác nhận", "btn xanh nho", {
+          xacnhan: k.ma
+        }),
         " ",
-        taoNut("Hủy", "btn do nho", { huy: k.ma }),
+        taoNut("Hủy", "btn do nho", {
+          huy: k.ma
+        }),
       );
     }
     if (k.trangThai === LOC_LICH_KHAM.DA_XAC_NHAN) {
-      return taoOChua(taoNut("Hủy", "btn do nho", { huy: k.ma }));
+      return taoOChua(taoNut("Hủy", "btn do nho", {
+        huy: k.ma
+      }));
     }
     return taoO("td", "—");
   }
@@ -100,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function taoDongKham(k) {
     const dong = taoPhanTu("tr");
     dong.append(
-      taoOChua(taoNhanLK(k.trangThai)), // FIX: truoc day goi taoNhan (khong ton tai)
+      taoOChua(taoNhanLK(k.trangThai)), //FIX: trước đây gọi taoNhan (không tồn tại)
       taoO("td", k.ma),
       taoO("td", k.ten),
       taoO("td", k.ngaySinh),
@@ -132,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
-  // ************ YEU CAU SERVER
+  // ************ YÊU CẦU SERVER
   async function taiLichKham(baoLoi) {
     if (baoLoi === undefined) baoLoi = true;
 
@@ -153,9 +156,9 @@ document.addEventListener("DOMContentLoaded", function () {
       if (baoLoi) alert(loi.message);
       return false;
     }
-    if (lanNay !== soLanTai) return true; // da co yeu cau moi hon
+    if (lanNay !== soLanTai) return true; //đã có yêu cầu mới hơn
 
-    danhSachLichKham = (ketQua.data?.danh_sach || []).map(chuyenLichKham);
+    danhSachLichKham = (ketQua.data ? .danh_sach || []).map(chuyenLichKham);
     veBang();
     return true;
   }
@@ -171,8 +174,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // hop thoai nhap ly do huy: tra ve Promise
-  // - chuoi (co the rong) khi bam "Huy lich"; null khi bam Dong / Esc
+  //Hộp thoại nhập lý do huỷ: trả về Promise.
+  //- chuỗi (có thể rỗng) khi bấm "Huỷ lịch"; null khi bấm Đóng / Esc.
   function hoiLyDoHuy(lich) {
     return new Promise(function (resolve) {
       huyThongTin.textContent =
@@ -190,23 +193,25 @@ document.addEventListener("DOMContentLoaded", function () {
         if (hopHuy.open) hopHuy.close();
         resolve(giaTri);
       }
+
       function khiGui(e) {
         e.preventDefault();
         xong(huyLyDo.value.trim());
       }
+
       function khiDong() {
         xong(null);
       }
 
       formHuy.addEventListener("submit", khiGui);
       huyNutDong.addEventListener("click", khiDong);
-      hopHuy.addEventListener("close", khiDong); // bam Esc
+      hopHuy.addEventListener("close", khiDong); //bấm Esc
       hopHuy.showModal();
       huyLyDo.focus();
     });
   }
 
-  // xac nhan hoac huy
+  //Xác nhận hoặc huỷ.
   async function doiTrangThai(ma, hanhDong, cauHoi) {
     if (dangGui) return;
 
@@ -215,7 +220,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     if (!lich) return;
 
-    const duLieu = { ma: ma };
+    const duLieu = {
+      ma: ma
+    };
     if (hanhDong === "huy") {
       const lyDo = await hoiLyDoHuy(lich);
       if (lyDo === null) return;
@@ -227,7 +234,7 @@ document.addEventListener("DOMContentLoaded", function () {
     dangGui = true;
     try {
       const xong = await guiYeuCauLK(hanhDong, duLieu);
-      if (xong) await taiLichKham(false); // lay trang thai that tu DB
+      if (xong) await taiLichKham(false); //lấy trạng thái thật từ DB
     } finally {
       dangGui = false;
     }
@@ -252,14 +259,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // ************ HAM CHO BO LOC
-  // doi ngay / trang thai -> phai tai lai tu server (server loc theo khoang ngay)
+  // ************ HÀM CHO BỘ LỌC
+  //Đổi ngày/trạng thái -> phải tải lại từ server (server lọc theo khoảng ngày).
   function xuLyDoiBoLoc() {
     dieuChinhNgayLoc(locTu, locDen);
     taiLichKham();
   }
 
-  // go tu khoa -> chi loc tren du lieu da tai
+  //Gõ từ khoá -> chỉ lọc trên dữ liệu đã tải.
   function xuLyGoTuKhoa() {
     clearTimeout(hen);
     hen = setTimeout(veBang, 250);
@@ -271,21 +278,24 @@ document.addEventListener("DOMContentLoaded", function () {
     xuLyDoiBoLoc();
   }
 
-  // mac dinh luon la 1 ngay: hom nay
+  //Mặc định luôn là 1 ngày: hôm nay.
   function datMacDinh() {
     const homNay = layNgayThuc();
-    datKhoangLoc(locTu, locDen, { tu: homNay, den: homNay });
+    datKhoangLoc(locTu, locDen, {
+      tu: homNay,
+      den: homNay
+    });
     locTrangThai.value = TAT_CA;
     locTuKhoa.value = "";
   }
 
   function xuLyDatLai() {
     clearTimeout(hen);
-    datMacDinh(); // FIX: formLoc.reset() lam o ngay rong -> server bao "Ngay khong hop le"
+    datMacDinh(); //FIX: formLoc.reset() làm ô ngày rỗng -> server báo "Ngày không hợp lệ"
     taiLichKham();
   }
 
-  // ************ GAN SU KIEN
+  // ************ GẮN SỰ KIỆN
   function ganSuKien() {
     locTuKhoa.addEventListener("input", xuLyGoTuKhoa);
     [locTu, locDen, locTrangThai].forEach(function (el) {
@@ -296,13 +306,13 @@ document.addEventListener("DOMContentLoaded", function () {
     thanBang.addEventListener("click", xuLyClickBang);
   }
 
-  // ************ KHOI TAO
+  // ************ KHỞI TẠO
   function khoiTao() {
     datMacDinh();
-    giuKhongTrong(locTu); // khong cho de trong ngay (server bat buoc co ngay)
+    giuKhongTrong(locTu); //không cho để trống ngày (server bắt buộc có ngày)
     giuKhongTrong(locDen);
     ganSuKien();
-    taiLichKham(); // FIX: truoc day chi goi veBang() nen khong bao gio lay du lieu tu server
+    taiLichKham(); //FIX: trước đây chỉ gọi veBang() nên không bao giờ lấy dữ liệu từ server
   }
 
   khoiTao();

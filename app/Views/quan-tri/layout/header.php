@@ -1,12 +1,4 @@
 <?php
-
-/**
- * Phan dau trang quan tri (mo <html>, thanh tren, header, menu).
- *
- * Bien co san khi file nay chay (do index.php chuan bi truoc do):
- *   $tieuDe  - tieu de trang hien tai
- *   $trang   - khoa route hien tai, de to sang muc dang chon tren menu
- */
 $trangHienTai = $trang ?? '';
 
 $mucQuanTri = [
@@ -15,7 +7,6 @@ $mucQuanTri = [
     'quan-tri/bac-si' => 'Quản lý bác sĩ',
 ];
 
-// Cac trang con cung thuoc mot muc menu
 $mucPhu = [
     'quan-tri/bac-si/them' => 'quan-tri/bac-si',
     'quan-tri/bac-si/sua' => 'quan-tri/bac-si',
@@ -48,7 +39,7 @@ $mucDangChon = $mucPhu[$trangHienTai] ?? $trangHienTai;
             <a href="index.php?page=quan-tri/tong-quan" class="logo">Đặt Lịch Khám Bệnh</a>
             <nav class="menu">
                 <?php foreach ($mucQuanTri as $page => $chu): ?>
-                    <a href="index.php?page=<?= h($page) ?>"<?= $mucDangChon === $page ? ' class="dang-chon"' : '' ?>>
+                    <a href="index.php?page=<?= h($page) ?>" <?= $mucDangChon === $page ? ' class="dang-chon"' : '' ?>>
                         <?= h($chu) ?>
                     </a>
                 <?php endforeach; ?>

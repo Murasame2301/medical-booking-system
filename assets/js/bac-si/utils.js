@@ -1,14 +1,14 @@
-// ===== HANG SO TRANG THAI LOC =====
+// ===== HẰNG SỐ TRẠNG THÁI LỌC =====
 const TAT_CA = "tat_ca";
 
-// lich lam viec (khop ENUM trong DB)
+//Lịch làm việc (khớp ENUM trong DB).
 const LOC_LLV = Object.freeze({
   TAT_CA: TAT_CA,
   CON_TRONG: "con_trong",
   DA_DAT: "da_dat",
 });
 
-// lich kham (khop ENUM trong DB)
+//Lịch khám (khớp ENUM trong DB).
 const LOC_LICH_KHAM = Object.freeze({
   TAT_CA: TAT_CA,
   CHO_XAC_NHAN: "cho_xac_nhan",
@@ -31,33 +31,33 @@ const LOC_LICH_KHAM_TUY_CHON = Object.freeze([
   { giaTri: LOC_LICH_KHAM.DA_HUY, chu: "Đã hủy" },
 ]);
 
-// gia tri ENUM trong DB ('nam', 'nu') -> chu hien thi
+//Giá trị ENUM trong DB ('nam', 'nu') -> chữ hiển thị.
 const NHAN_GIOI_TINH = { nam: "Nam", nu: "Nữ" };
-// kiem tra hop le LLV
+//Kiểm tra hợp lệ lịch làm việc.
 function hopLeLocLLV(giaTri) {
   return LOC_LLV_TUY_CHON.some(function (o) {
     return o.giaTri === giaTri;
   });
 }
 
-// gia tri khong hop le thi ve "tat_ca"
+//Giá trị không hợp lệ thì về "tat_ca".
 function layLocLLV(giaTri) {
   return hopLeLocLLV(giaTri) ? giaTri : LOC_LLV.TAT_CA;
 }
 
-// kiem tra hop le LK
+//Kiểm tra hợp lệ lịch khám.
 function hopLeLocLichKham(giaTri) {
   return LOC_LICH_KHAM_TUY_CHON.some(function (o) {
     return o.giaTri === giaTri;
   });
 }
 
-// gia tri khong hop le thi ve "tat_ca"
+//Giá trị không hợp lệ thì về "tat_ca".
 function layLocLichKham(giaTri) {
   return hopLeLocLichKham(giaTri) ? giaTri : LOC_LICH_KHAM.TAT_CA;
 }
 
-// ===== NHAN TRANG THAI =====
+// ===== NHÃN TRẠNG THÁI =====
 const NHAN_TRANG_THAI_LK = {
   [LOC_LICH_KHAM.CHO_XAC_NHAN]: "Chờ xác nhận",
   [LOC_LICH_KHAM.DA_XAC_NHAN]: "Đã xác nhận",
@@ -77,12 +77,12 @@ const LLV_NHAN_TRANG_THAI = {
   [LOC_LLV.DA_DAT]: { chu: "Đã đặt", lop: "n-xam" },
 };
 
-// ===== CHON PHAN TU =====
+// ===== CHỌN PHẦN TỬ =====
 function $(id) {
   return document.getElementById(id);
 }
 
-// ===== NGAY, GIO, TUAN =====
+// ===== NGÀY, GIỜ, TUẦN =====
 function pad2(n) {
   return String(n).padStart(2, "0");
 }
@@ -121,17 +121,17 @@ function gioDauCuoi(gioBatDau, gioKetThuc) {
   return gioBatDau + "-" + gioKetThuc;
 }
 
-// tra ve thu 2 -> chu nhat cua tuan chua ngay da cho
+//Trả về thứ 2 -> chủ nhật của tuần chứa ngày đã cho.
 function tuanChua(chuoiNgay) {
   const phan = chuoiNgay.split("-").map(Number);
   const d = new Date(phan[0], phan[1] - 1, phan[2]);
-  d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // thu 2
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); //thứ 2
   const tu = dinhDangNgay(d);
-  d.setDate(d.getDate() + 6); // chu nhat
+  d.setDate(d.getDate() + 6); //chủ nhật
   return { tu: tu, den: dinhDangNgay(d) };
 }
 
-// ===== XU LY O NHAP =====
+// ===== XỬ LÝ Ô NHẬP =====
 function ghi(input, giaTri) {
   if (!input) return;
   input.value = giaTri;
@@ -164,7 +164,7 @@ function giuKhongTrong(input) {
   });
 }
 
-// ===== TAO PHAN TU DOM =====
+// ===== TẠO PHẦN TỬ DOM =====
 function taoPhanTu(tag, className, noiDung) {
   const phanTu = document.createElement(tag);
   if (className) phanTu.className = className;
@@ -186,7 +186,7 @@ function taoDong(cacGiaTri, tag) {
   return dong;
 }
 
-// o <td> chua cac node/chuoi bat ky
+//Ô <td> chứa các node/chuỗi bất kỳ.
 function taoOChua(...nodes) {
   const o = taoPhanTu("td");
   o.append(...nodes);
@@ -201,7 +201,7 @@ function taoOInput(loai, truong, giaTri) {
   return o;
 }
 
-// nut bam; duLieu -> data-*, vd taoNut("Sửa", "btn nho", { sua: 5 })
+//Nút bấm; duLieu -> data-*, vd taoNut("Sửa", "btn nho", { sua: 5 }).
 function taoNut(chu, className, duLieu) {
   const nut = taoPhanTu("button", className, chu);
   nut.type = "button";
@@ -217,7 +217,7 @@ function taoNhanMau(chu, lop) {
   );
 }
 
-// nhan mau cho trang thai lich kham
+//Nhãn màu cho trạng thái lịch khám.
 function taoNhanLK(trangThai) {
   return taoNhanMau(
     NHAN_TRANG_THAI_LK[trangThai],
@@ -225,25 +225,25 @@ function taoNhanLK(trangThai) {
   );
 }
 
-// nhan mau cho trang thai lich lam viec
+//Nhãn màu cho trạng thái lịch làm việc.
 function taoNhanLLV(trangThai) {
   const m = LLV_NHAN_TRANG_THAI[trangThai] || {};
   return taoNhanMau(m.chu, m.lop);
 }
 
-// ===== BO LOC & BANG DUNG CHUNG =====
+// ===== BỘ LỌC & BẢNG DÙNG CHUNG =====
 function datKhoangLoc(locTu, locDen, khoang) {
   ghi(locTu, khoang.tu);
   ghi(locDen, khoang.den);
 }
 
-// dat bo loc ve tuan hien tai (thu 2 -> chu nhat) + trang thai "tat ca"
+//Đặt bộ lọc về tuần hiện tại (thứ 2 -> chủ nhật) + trạng thái "tat_ca".
 function datTuanHienTai(locTu, locDen, locTrangThai, giaTriTatCa) {
   datKhoangLoc(locTu, locDen, tuanChua(layNgayThuc()));
   locTrangThai.value = giaTriTatCa === undefined ? TAT_CA : giaTriTatCa;
 }
 
-// den ngay khong duoc nho hon tu ngay
+//Đến ngày không được nhỏ hơn từ ngày.
 function dieuChinhNgayLoc(locTu, locDen) {
   if (locTu.value && locDen.value && locDen.value < locTu.value)
     ghi(locDen, locTu.value);
@@ -259,7 +259,7 @@ function taoDongRong(soCot, noiDung) {
   return dong;
 }
 
-// ve bang: danh sach rong thi hien dong thong bao
+//Vẽ bảng: danh sách rỗng thì hiện dòng thông báo.
 function veDanhSach(thanBang, danhSach, taoDongDuLieu, soCot, thongBaoRong) {
   thanBang.replaceChildren(
     ...(danhSach.length
@@ -268,7 +268,7 @@ function veDanhSach(thanBang, danhSach, taoDongDuLieu, soCot, thongBaoRong) {
   );
 }
 
-// do option vao <select> (tuy chon)
+//Đổ option vào <select> (tuỳ chọn).
 function napTuyChon(select, tuyChon, giaTriChon) {
   select.replaceChildren();
   tuyChon.forEach(function (o) {

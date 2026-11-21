@@ -1,6 +1,6 @@
-// Goi API cua khu bac si. Token CSRF do layout/header.php in ra:
-//   <meta name="csrf-token" content="...">
-// Server doc token tu header X-CSRF-Token (xem app/Helpers/csrf.php).
+//Gọi API của khu bác sĩ. Token CSRF do layout/header.php in ra:
+//<meta name="csrf-token" content="...">
+//Server đọc token từ header X-CSRF-Token (xem app/Helpers/csrf.php).
 
 function layTokenCsrf() {
   const meta = document.querySelector('meta[name="csrf-token"]');
@@ -8,7 +8,7 @@ function layTokenCsrf() {
 }
 
 async function request(url, { method = "GET", data = null } = {}) {
-  // gui kem moi request (GET, POST JSON, FormData); server chi kiem tra o POST
+  //Gửi kèm mọi request; server chỉ kiểm tra ở POST.
   const config = {
     method,
     headers: {
@@ -19,7 +19,7 @@ async function request(url, { method = "GET", data = null } = {}) {
   };
 
   if (data instanceof FormData) {
-    config.body = data; // upload file: khong set Content-Type
+    config.body = data; //upload file: không set Content-Type
   } else if (data !== null) {
     config.headers["Content-Type"] = "application/json";
     config.body = JSON.stringify(data);
@@ -39,7 +39,7 @@ async function request(url, { method = "GET", data = null } = {}) {
     throw new Error(`Phản hồi không hợp lệ (HTTP ${res.status})`);
   }
 
-  // 401: phien het han -> ve trang dang nhap
+  //401: phiên hết hạn -> về trang đăng nhập.
   if (res.status === 401 && json?.msg) {
     window.location.href = "index.php?page=dang-nhap";
     throw new Error(json.msg);

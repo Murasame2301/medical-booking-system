@@ -1,6 +1,5 @@
 <?php
-/* Thong bao flash dung chung cho cac trang quan tri.
-   Bien: $flash = ['type' => 'ok'|'loi', 'message' => ...] hoac null */
+//Thông báo flash dùng chung cho các trang quản trị.
 if (!empty($flash['message'])):
     $loai = $flash['type'] === 'ok' ? 'ok' : 'loi';
     ?>

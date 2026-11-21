@@ -1,7 +1,7 @@
 const thongKe = document.getElementById("the-thong-ke");
 const bangLichKham = document.getElementById("bang-lich-kham");
 
-// tao thong ke sever tra ve data : {thong_ke :{ trang thai }}
+//Ô thống kê, khoá khớp data.thong_ke server trả về.
 const oThongKe = {
   tong_luot: $("so-tong-luot"),
   cho_xac_nhan: $("so-cho-xac-nhan"),
@@ -12,7 +12,7 @@ const thanBangLich = $("than-bang-lich");
 
 const SO_COT_LICH = 4;
 
-// chi cap nhat so, khung giu co dinh; thieu du lieu thi = 0
+//Chỉ cập nhật số; thiếu dữ liệu thì hiện 0.
 function taoThongKe(thongKe) {
   thongKe = thongKe || {};
   Object.keys(oThongKe).forEach(function (khoa) {
@@ -22,13 +22,13 @@ function taoThongKe(thongKe) {
   });
 }
 
-// dong thong bao nam trong tbody (giu nguyen tieu de bang)
+//Dòng thông báo nằm trong tbody (giữ nguyên tiêu đề bảng).
 function hienThongBaoBang(noiDung) {
   if (!thanBangLich) return;
   thanBangLich.replaceChildren(taoDongRong(SO_COT_LICH, noiDung));
 }
 
-// tao 1 dong lich: gio, benh nhan, ly do, trang thai
+//Tạo một dòng lịch: giờ, bệnh nhân, lý do, trạng thái.
 function taoDongLich(lich) {
   const gio = gioDauCuoi(
     String(lich.gio_bat_dau || "").slice(0, 5),
@@ -43,7 +43,7 @@ function taoDongLich(lich) {
   })();
 }
 
-// hien bang lich
+//Hiện bảng lịch.
 function hienThiLichKham(danhSachLich) {
   if (!thanBangLich) return;
   veDanhSach(
@@ -55,7 +55,7 @@ function hienThiLichKham(danhSachLich) {
   );
 }
 
-// loi tai du lieu: thong ke ve 0, bang bao loi
+//Lỗi tải dữ liệu: thống kê về 0, bảng báo lỗi.
 function hienLoiLayDuLieu(loi) {
   console.error("Lỗi tải dữ liệu:", loi);
   taoThongKe({});

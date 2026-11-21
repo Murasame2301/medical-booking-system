@@ -1,18 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // ************ HANG SO
+  // ************ HẰNG SỐ
   const SO_PHUT_TOI_THIEU = 5;
   const SO_PHUT_TOI_DA = 60;
   const CUOI_NGAY = 23 * 60 + 59;
   const SO_COT = 5;
   const URL_AJAX = "index.php?page=bac-si/lich-lam-viec&ajax=";
 
-  // ************  TRANG THAI
-  let lich = []; // chi chua du lieu lay tu CSDL
-  let soLanTai = 0; // bo qua ket qua cu khi co yeu cau moi hon
-  let maDangSua = null; // ma khung gio dang sua (null = khong sua)
-  let dangGui = false; // dang gui tao/luu -> chan bam lien tiep
+  // ************  TRẠNG THÁI
+  let lich = []; //chỉ chứa dữ liệu lấy từ CSDL
+  let soLanTai = 0; //bỏ qua kết quả cũ khi có yêu cầu mới hơn
+  let maDangSua = null; //mã khung giờ đang sửa (null = không sửa)
+  let dangGui = false; //đang gửi tạo/lưu -> chặn bấm liên tiếp
 
-  // ************ VE BANG CHON PHAN TU
+  // ************ PHẦN TỬ TRÊN TRANG
   const formTao = $("form-tao");
   const ngayKham = $("ngay-kham");
   const gioBatDau = $("tg-bat-dau");
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const thanBang = $("than-bang");
 
-  // ************ TIEN ICH NHO
+  // ************ TIỆN ÍCH NHỎ
   function chenhPhut(bd, kt) {
     return gioSangPhut(kt) - gioSangPhut(bd);
   }
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return k.trangThai === LOC_LLV.CON_TRONG && !k.daCoLuot;
   }
 
-  // chuyen 1 dong tu server sang dang dung o client
+  //Chuyển một dòng từ server sang dạng dùng ở client.
   function chuyenKhungGio(k) {
     return {
       ma: Number(k.malichlamviec),
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
-  // chan gui trung + khoa nut trong luc chay tac vu
+  //Chặn gửi trùng và khoá nút trong lúc chạy tác vụ.
   async function chayMotLan(nut, tacVu) {
     if (dangGui) return;
     dangGui = true;
@@ -61,10 +61,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // ************ VE BANG
-  // dong o che do sua: o hien gia tri doi thanh o nhap
+  // ************ VẼ BẢNG
+  //Dòng ở chế độ sửa: ô hiện giá trị đổi thành ô nhập.
   function taoDongSua(k) {
-    const dong = taoDong([k.ma]); // o ma: giu nguyen
+    const dong = taoDong([k.ma]); //ô mã: giữ nguyên
     dong.classList.add("dong-dang-sua");
 
     const inNgay = taoOInput("date", "ngay", k.ngay);
@@ -87,9 +87,9 @@ document.addEventListener("DOMContentLoaded", function () {
     return dong;
   }
 
-  // dong o che do xem
+  //Dòng ở chế độ xem.
   function taoDongKhungGio(k) {
-    // co luot kham dang hieu luc => coi nhu da dat
+    //Có lượt khám đang hiệu lực => coi như đã đặt.
     const daDat = k.daCoLuot || k.trangThai === LOC_LLV.DA_DAT;
 
     if (k.ma === maDangSua && !daDat) return taoDongSua(k);
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return dong;
   }
 
-  // server da loc theo ngay va trang thai nen khong loc lai o client
+  //Server đã lọc theo ngày và trạng thái nên không lọc lại ở client.
   function veBang() {
     veDanhSach(
       thanBang,
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
-  //************ TINH GIO KHI TAO LICH
+  //************ TÍNH GIỜ KHI TẠO LỊCH
   function laySoPhut() {
     return Number(soPhut.value) || Number(soPhut.dataset.cu) || 30;
   }
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return Math.min(SO_PHUT_TOI_DA, Math.max(SO_PHUT_TOI_THIEU, gt));
   }
 
-  // gio ket thuc = gio bat dau + so phut
+  //Giờ kết thúc = giờ bắt đầu + số phút.
   function capNhatGioKetThuc() {
     const sp = laySoPhut();
     if (!gioBatDau.value || !hopLeSoPhut(sp)) return;
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
-  // doi gio ket thuc -> tinh lai so phut; tra ve true neu hop le
+  //Đổi giờ kết thúc -> tính lại số phút; trả về true nếu hợp lệ.
   function dongBoSoPhutTuGio() {
     if (!gioBatDau.value || !gioKetThuc.value) return false;
     const chenh = chenhPhut(gioBatDau.value, gioKetThuc.value);
@@ -158,13 +158,13 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
-  // dua so phut ve 5-60 va tinh lai gio ket thuc
+  //Đưa số phút về 5-60 và tính lại giờ kết thúc.
   function chotSoPhut() {
     ghi(soPhut, kepSoPhut(laySoPhut()));
     capNhatGioKetThuc();
   }
 
-  // sau khi tao xong: gio bat dau moi = gio ket thuc cu
+  //Sau khi tạo xong: giờ bắt đầu mới = giờ kết thúc cũ.
   function congDonThoiGian() {
     if (gioSangPhut(gioKetThuc.value) + SO_PHUT_TOI_THIEU > CUOI_NGAY)
       return false;
@@ -173,16 +173,16 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
-  // BO LOC
+  //BỘ LỌC
   function xemTuanHienTai() {
     datTuanHienTai(locTu, locDen, locTrangThai);
   }
 
-  // dua bo loc ve noi co khung gio vua tao/sua
+  //Đưa bộ lọc về nơi có khung giờ vừa tạo/sửa.
   function dieuChinhLocTheoNgay(ngay) {
     if (ngay < locTu.value || ngay > locDen.value)
       datKhoangLoc(locTu, locDen, tuanChua(ngay));
-    // khung gio vua tao luon con trong -> khong hien khi dang loc "da dat"
+    //Khung giờ vừa tạo luôn còn trống -> không hiện khi đang lọc "đã đặt".
     if (
       locTrangThai.value !== LOC_LLV.TAT_CA &&
       locTrangThai.value !== LOC_LLV.CON_TRONG
@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
       locTrangThai.value = LOC_LLV.TAT_CA;
   }
 
-  //************ KIEM TRA DU LIEU TRUOC KHI GUI
+  //************ KIỂM TRA DỮ LIỆU TRƯỚC KHI GỬI
   function timKhungTrung(ngay, bd, kt, maBoQua) {
     const b = gioSangPhut(bd);
     const e = gioSangPhut(kt);
@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // tra ve noi dung loi, hoac "" neu hop le
+  //Trả về nội dung lỗi, hoặc '' nếu hợp lệ.
   function kiemTraKhungGio(ngay, bd, kt, maBoQua) {
     if (maBoQua === undefined) maBoQua = null;
 
@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
       : "";
   }
 
-  // ************ GOI SERVER
+  // ************ GỌI SERVER
   async function taiKhungGio(baoLoi) {
     if (baoLoi === undefined) baoLoi = true;
 
@@ -248,11 +248,11 @@ document.addEventListener("DOMContentLoaded", function () {
       if (baoLoi) alert(loi.message);
       return false;
     }
-    if (lanNay !== soLanTai) return true; // da co yeu cau moi hon
+    if (lanNay !== soLanTai) return true; //đã có yêu cầu mới hơn
 
     lich = (ketQua.data?.danh_sach || []).map(chuyenKhungGio);
 
-    // dong dang sua khong con trong danh sach -> thoat che do sua
+    //Dòng đang sửa không còn trong danh sách -> thoát chế độ sửa.
     if (
       !lich.some(function (k) {
         return k.ma === maDangSua;
@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
-  // gui yeu cau tao / sua / xoa; thanh cong tra ve true
+  //Gửi yêu cầu tạo/sửa/xoá; thành công trả về true.
   async function guiYeuCauLLV(hanhDong, duLieu) {
     try {
       await post(URL_AJAX + hanhDong, duLieu);
@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // sau khi tao/sua thanh cong: dua bo loc ve ngay do roi tai lai bang
+  //Sau khi tạo/sửa thành công: đưa bộ lọc về ngày đó rồi tải lại bảng.
   async function taiLaiSauKhiGhi(ngay, thongBaoLoi) {
     dieuChinhLocTheoNgay(ngay);
     if (await taiKhungGio(false)) return true;
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return false;
   }
 
-  //************ SU KIEN LOC
+  //************ SỰ KIỆN LỌC
   async function xuLyDoiBoLoc() {
     dieuChinhNgayLoc(locTu, locDen);
     await taiKhungGio();
@@ -303,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
     await taiKhungGio();
   }
 
-  //************  SU KIEN TAO LICH
+  //************  SỰ KIỆN TẠO LỊCH
   async function xuLyTaoLich(e) {
     e.preventDefault();
     if (dangGui) return;
@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const kt = gioKetThuc.value;
     const giaTriSoPhut = Number(soPhut.value);
 
-    // 1: kiem tra o client
+    //1: kiểm tra ở client
     if (bd && gioSangPhut(bd) + giaTriSoPhut > CUOI_NGAY)
       return alert("Khung giờ vượt quá cuối ngày.");
     const loi = kiemTraKhungGio(ngay, bd, kt);
@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", function () {
     await chayMotLan(
       formTao.querySelector('[type="submit"]'),
       async function () {
-        // 2: gui len server
+        //2: gửi lên server
         const daTao = await guiYeuCauLLV("tao", {
           ngay: ngay,
           gio_bat_dau: bd,
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         if (!daTao) return;
 
-        // 3: tai lai bang, roi cong don gio cho khung ke tiep
+        //3: tải lại bảng rồi cộng dồn giờ cho khung kế tiếp
         const taiDuoc = await taiLaiSauKhiGhi(
           ngay,
           "Đã tạo khung giờ nhưng không tải lại được danh sách. Vui lòng tải lại trang.",
@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
-  // ************ SU KIEN BANG: click Sua / Luu / Huy / Xoa, phim Enter / Esc
+  // ************ SỰ KIỆN BẢNG: click Sửa / Lưu / Huỷ / Xoá, phím Enter / Esc
   function timTheoMa(ma) {
     return lich.find(function (item) {
       return item.ma === Number(ma);
@@ -365,7 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
     veBang();
   }
 
-  // luu: kiem tra, gui server, tai lai bang
+  //Lưu: kiểm tra, gửi server, tải lại bảng.
   async function luuDong(dong) {
     if (dangGui || maDangSua === null) return;
 
@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function () {
         gio_bat_dau: bd,
         so_phut: chenhPhut(bd, kt),
       });
-      if (!daLuu) return; // giu nguyen dong o nhap de nguoi dung sua tiep
+      if (!daLuu) return; //giữ nguyên dòng ô nhập để người dùng sửa tiếp
 
       maDangSua = null;
       await taiLaiSauKhiGhi(
@@ -407,7 +407,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (await guiYeuCauLLV("xoa", { ma: k.ma })) await taiKhungGio();
   }
 
-  // dieu phoi click tren bang
+  //Điều phối click trên bảng.
   function xuLyClickBang(e) {
     const nut = e.target.closest(
       "[data-sua], [data-luu], [data-huy], [data-xoa]",
@@ -420,7 +420,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if ("xoa" in nut.dataset) return xuLyBamXoa(nut);
   }
 
-  // Enter = luu (chi khi dang go o o nhap), Esc = huy
+  //Enter = lưu (chỉ khi đang gõ ở ô nhập), Esc = huỷ.
   function xuLyPhimBang(e) {
     const dong = e.target.closest("tr.dong-dang-sua");
     if (!dong) return;
@@ -433,7 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  //************  SU KIEN THOI GIAN TRONG FORM
+  //************  SỰ KIỆN THỜI GIAN TRONG FORM
   function xuLyNhapSoPhut() {
     const gt = laySoPhut();
     if (!hopLeSoPhut(gt)) return;
@@ -453,12 +453,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // roi o gio ket thuc: neu khong hop le thi tra ve gio theo so phut hien tai
+  //Rời ô giờ kết thúc: nếu không hợp lệ thì trả về giờ theo số phút hiện tại.
   function xuLyRoiGioKetThuc() {
     if (!dongBoSoPhutTuGio()) capNhatGioKetThuc();
   }
 
-  // ************ GAN SU KIEN
+  // ************ GẮN SỰ KIỆN
   function ganSuKien() {
     [locTu, locDen, locTrangThai].forEach(function (el) {
       el.addEventListener("change", xuLyDoiBoLoc);
@@ -481,7 +481,7 @@ document.addEventListener("DOMContentLoaded", function () {
     gioKetThuc.addEventListener("blur", xuLyRoiGioKetThuc);
   }
 
-  // ************ KHOI TAO
+  // ************ KHỞI TẠO
   function khoiTao() {
     ghi(ngayKham, layNgayThuc());
     ghi(gioBatDau, layGioThuc());

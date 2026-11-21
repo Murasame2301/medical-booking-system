@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let dsCa = [];
   let maDangChon = null;
 
-  // ************ BANG
+  // ************ BẢNG
   function taoDongCa(k) {
     const dong = taoPhanTu("tr");
     dong.dataset.ma = k.ma;
@@ -58,8 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
     veBang();
   }
 
-  // ************ HO SO
-  // ca đã khám: chỉ xem; ca chưa khám: cho nhập
+  // ************ HỒ SƠ
+  //Ca đã khám: chỉ xem; ca chưa khám: cho nhập.
   function datCheDoForm(chiXem) {
     txtChanDoan.readOnly = txtLoiDan.readOnly = chiXem;
     btnHoanThanh.style.display = chiXem ? "none" : "";
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     txtChanDoan.value = "";
     txtLoiDan.value = "";
-    // đặt chế độ form NGAY, trước khi chờ mạng, để không còn trạng thái của ca trước
+    //Đặt chế độ form NGAY trước khi chờ mạng, để không còn trạng thái của ca trước.
     datCheDoForm(daKham);
     khungHoSo.style.display = "block";
     veBang();
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     veBang();
   }
 
-  // ************ SU KIEN TUONG TAC
+  // ************ SỰ KIỆN TƯƠNG TÁC
   thanBang.addEventListener("click", (e) => {
     const dong = e.target.closest("tr[data-ma]");
     if (!dong) return;
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       alert(r.msg);
       await taiDanhSach();
-      // người dùng đã chuyển sang ca khác hoặc đóng hồ sơ trong lúc chờ thì không mở lại ca cũ
+      //Người dùng đã chuyển sang ca khác hoặc đóng hồ sơ trong lúc chờ thì không mở lại ca cũ.
       if (maDangChon !== ma) return;
       const k = dsCa.find((x) => x.ma === ma);
       if (k) moHoSo(k);
