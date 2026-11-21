@@ -1,6 +1,6 @@
 <?php
 
-// Trang ho so benh nhan (page=tao-ho-so).
+// Trang hồ sơ bệnh nhân (page=tao-ho-so).
 
 require_once __DIR__ . '/../../Helpers/csrf.php';
 require_once __DIR__ . '/../../Helpers/utils.php';
@@ -8,9 +8,6 @@ require_once __DIR__ . '/../../Helpers/session.php';
 require_once __DIR__ . '/../../Helpers/ho_so.php';
 require_once __DIR__ . '/../../Models/nguoi_dung.php';
 
-/**
- * @return array Du lieu cho view benh-nhan/tao-ho-so.php
- */
 function benh_nhan_tao_ho_so($conn)
 {
     $manguoidung = chung_so_duong($_SESSION[SS_MA_NGUOI_DUNG] ?? null);

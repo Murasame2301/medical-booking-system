@@ -24,9 +24,7 @@ function benh_nhan_url($page, array $thamSo = [])
     return $url;
 }
 
-/**
- * Trang tim lich kham (page=dat-kham).
- */
+//Trang tìm kiếm lịch khám (page=dat-kham).
 function benh_nhan_dat_kham($conn)
 {
     // Mac dinh: hom nay. Ngay trong qua khu bi benh_nhan_kiem_tra_ngay() chan.
@@ -98,9 +96,7 @@ function benh_nhan_dat_kham($conn)
     ];
 }
 
-/**
- * Trang lich su dat kham (page=lich-su-dat-kham), kem xu ly huy lich.
- */
+//Trang Lịch sử đặt khám (page=lich-su-dat-kham) + có kèm theo huỷ đặt lịhc.
 function benh_nhan_lich_su_dat_kham($conn)
 {
     if (!la_vai_tro(VT_BENH_NHAN)) {
@@ -120,8 +116,10 @@ function benh_nhan_lich_su_dat_kham($conn)
     $manguoidung = ma_nguoi_dung_hien_tai();
     $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-    if ($requestMethod === 'POST'
-        && chung_chuoi($_POST['hanh_dong'] ?? '') === 'huy_lich') {
+    if (
+        $requestMethod === 'POST'
+        && chung_chuoi($_POST['hanh_dong'] ?? '') === 'huy_lich'
+    ) {
         $isAjax = ajax_is_request();
 
         if (!csrf_validate()) {
@@ -212,7 +210,7 @@ function benh_nhan_lich_su_dat_kham($conn)
         $messageType = $messageType !== '' ? $messageType : 'error';
     }
 
-    // Cung cong thuc voi dieu kien trong lich_kham_huy_lich().
+    //Cùng công với với điều kiện trong lich_kham_huy_lich().
     foreach ($lichSu as $key => $row) {
         $lichSu[$key]['coTheHuy'] = in_array($row['trangthai'], [LK_CHO_XAC_NHAN, LK_DA_XAC_NHAN], true)
             && strtotime($row['thoigianbatdau']) >= $now;
@@ -238,13 +236,11 @@ function benh_nhan_dat_flash_lich_su($message, $type, $lydo = '', $malichkham = 
 
 function benh_nhan_chuyen_trang_lich_su()
 {
-    // 303: doi POST thanh GET de F5 khong gui lai yeu cau huy.
+    // 303: đổi POST thành GET để F5 không gửi lại yêu cầu huỷ.
     chuyen_trang_sau_post('index.php?page=lich-su-dat-kham');
 }
 
-/**
- * Doc lai dung the lich vua huy de JS thay outerHTML. Tra '' neu khong tim thay.
- */
+//Đọc lại đúng thẻ lịch vừa hủy để JS thay outerHTML. Trả '' nếu không tìm thấy.
 function benh_nhan_render_the_lich_su($conn, $malichkham, $manguoidung)
 {
     try {
@@ -272,9 +268,9 @@ function benh_nhan_render_the_lich_su($conn, $malichkham, $manguoidung)
     return '';
 }
 
-/**
- * Trang chi tiet khung gio (page=chi-tiet-lich-kham), kem xu ly dat lich.
- */
+
+//Trang chi tiết lịch khám.
+
 function benh_nhan_chi_tiet_lich_kham($conn)
 {
     $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -321,8 +317,10 @@ function benh_nhan_chi_tiet_lich_kham($conn)
         $_SESSION['after_login_url'] = benh_nhan_url_chi_tiet($malichlamviec);
     }
 
-    if ($requestMethod === 'POST'
-        && chung_chuoi($_POST['hanh_dong'] ?? '') === 'dat_lich') {
+    if (
+        $requestMethod === 'POST'
+        && chung_chuoi($_POST['hanh_dong'] ?? '') === 'dat_lich'
+    ) {
         if (!csrf_validate()) {
             if ($isAjax) {
                 ajax_json([
@@ -392,7 +390,7 @@ function benh_nhan_chi_tiet_lich_kham($conn)
             }
         }
 
-        // Nhanh AJAX: tra JSON de JS cap nhat panel ma khong mat noi dung da go.
+        // Nhánh AJAX: trả json để js cập nhật panel mà không mất nội dung đã gõ.
         if ($isAjax) {
             ajax_json([
                 'ok' => $bookingCompleted,

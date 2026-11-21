@@ -1,7 +1,6 @@
 <?php
 
-// Trang "Thong tin tai khoan" (page=thong-tin-tai-khoan) va "Doi mat khau"
-// (page=doi-mat-khau).
+// Trang Thông tin tài khoản và đổi mật khẩu
 
 require_once __DIR__ . '/../../Helpers/csrf.php';
 require_once __DIR__ . '/../../Helpers/ajax.php';
@@ -10,20 +9,13 @@ require_once __DIR__ . '/../../Helpers/session.php';
 require_once __DIR__ . '/../../Helpers/ho_so.php';
 require_once __DIR__ . '/../../Models/nguoi_dung.php';
 
-// Han che do tim email/BHYT/CCCD cua nguoi khac qua thong bao "da duoc su dung":
-// qua GIOI_HAN_TRUNG lan trung trong KHUNG_GIO_TRUNG giay thi tam chan doi cac truong nay.
 const TAI_KHOAN_GIOI_HAN_TRUNG = 5;
 const TAI_KHOAN_KHUNG_GIO_TRUNG = 900;
 
-/**
- * Trang "Thông tin tài khoản": thông tin tài khoản chỉ đọc
- * và hồ sơ bệnh nhân có thể chỉnh sửa.
- */
 function benh_nhan_thong_tin_tai_khoan($conn)
 {
     $manguoidung = benh_nhan_bat_dau_trang('index.php?page=thong-tin-tai-khoan');
     $taiKhoan = benh_nhan_lay_tai_khoan_dang_nhap($conn, $manguoidung);
-    // [] = loi truy van tam thoi: chua xac minh duoc trang thai/vai tro, khong cho ghi.
     $taiKhoanLoi = $taiKhoan === [];
 
     $hoSoError = '';
@@ -40,12 +32,13 @@ function benh_nhan_thong_tin_tai_khoan($conn)
     }
 
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
-        && chung_chuoi($_POST['hanh_dong'] ?? '') === 'cap_nhat_ho_so') {
+        && chung_chuoi($_POST['hanh_dong'] ?? '') === 'cap_nhat_ho_so'
+    ) {
         $isAjax = ajax_is_request();
 
         if (!csrf_validate()) {
             if ($isAjax) {
-                // Tra token hien tai de nguoi dung bam luu lai ma khong mat du lieu da nhap.
+                // Trả token hiện tại để người dùng bấm lưu lại mà không mất dữ liệu đã nhập
                 ajax_json([
                     'ok' => false,
                     'message' => 'Phiên làm việc đã được làm mới. Vui lòng bấm lưu lại.',
@@ -78,7 +71,6 @@ function benh_nhan_thong_tin_tai_khoan($conn)
             $hoSoFormValues = $values;
             $moHoSo = true;
         } else {
-            // Luong khong co JS: giu nguyen POST/303 + flash.
             benh_nhan_dat_flash('Đã cập nhật hồ sơ bệnh nhân.', 'success');
             chuyen_trang_sau_post('index.php?page=thong-tin-tai-khoan');
         }
