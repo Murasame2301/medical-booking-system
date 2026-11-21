@@ -1,5 +1,5 @@
 <?php
-// Trang kham benh: ca kham trong ngay, hoan tat kham va xem ho so kham.
+// Trang khám bệnh: Ca khám trong ngày, hoàn tất khám, xem hồ sơ khám.
 
 require_once __DIR__ . '/../../Helpers/utils.php';
 require_once __DIR__ . '/../../Models/lich_kham_bac_si.php';

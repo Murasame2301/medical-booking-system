@@ -103,9 +103,7 @@ function benh_nhan_thong_tin_tai_khoan($conn)
     ];
 }
 
-/**
- * Trang "Đổi mật khẩu".
- */
+//Trang đổi mật khẩu.
 function benh_nhan_doi_mat_khau($conn)
 {
     $manguoidung = benh_nhan_bat_dau_trang('index.php?page=doi-mat-khau');
@@ -164,7 +162,7 @@ function benh_nhan_lay_tai_khoan_dang_nhap($conn, $manguoidung)
             return [];
         }
 
-        // Tài khoản không còn tồn tại: kết thúc phiên.
+        // Tài khoản không còn tồn tại: kết thúc session.
         dang_xuat();
     }
 
@@ -189,11 +187,8 @@ function benh_nhan_lay_gia_tri_post()
     ];
 }
 
-/**
- * Validate va ghi ho so. Khong redirect: noi goi quyet dinh tra JSON hay POST/303.
- *
- * @return string Chuoi loi; rong nghia la da luu.
- */
+// Kiểm tra và lưu hồ sơ: trả '' nếu thành công, ngược lại trả thông báo lỗi.
+// Không tự redirect để dùng chung cho cả AJAX (JSON) lẫn form thường (303).
 function benh_nhan_xu_ly_cap_nhat_ho_so($conn, $manguoidung, array $taiKhoan, array $values)
 {
     $error = ho_so_kiem_tra_ho_ten($values['hoten']);

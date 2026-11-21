@@ -1,5 +1,5 @@
 <?php
-/* Trang ca nhan bac si: thong tin, doi mat khau va anh dai dien. */
+//Trang cá nhân bác sĩ
 
 require_once __DIR__ . '/../../Helpers/utils.php';
 require_once __DIR__ . '/../../Helpers/avatar.php';
@@ -34,12 +34,8 @@ function bac_si_ca_nhan_thong_bao_trung(Throwable $loi): string
     return 'Email hoặc số điện thoại đã được sử dụng.';
 }
 
-/**
- * Validate va ghi thong tin ca nhan.
- *
- * Khac ban goc: ngay sinh, gioi tinh, email va dia chi khong bat buoc
- * (tai khoan do quan tri tao co the chua co email).
- */
+//Kiểm tra và lưu thông tin cá nhân. Chỉ bắt buộc họ tên và SĐT
+//các trường khác được để trống vì tài khoản do quản trị tạo có thể chưa có email.
 function bac_si_ca_nhan_cap_nhat_thong_tin($conn, int $ma, array $dl): array
 {
     $ten = trim((string) ($dl['ten'] ?? ''));
@@ -56,8 +52,10 @@ function bac_si_ca_nhan_cap_nhat_thong_tin($conn, int $ma, array $dl): array
     if ($ten === '' || $sdt === '') {
         return ket_qua(false, 'Vui lòng nhập họ tên và số điện thoại.');
     }
-    if (chung_do_dai($ten) > 100 || chung_do_dai($trinhDo) > 100
-        || chung_do_dai($email) > 100 || chung_do_dai($diaChi) > 255) {
+    if (
+        chung_do_dai($ten) > 100 || chung_do_dai($trinhDo) > 100
+        || chung_do_dai($email) > 100 || chung_do_dai($diaChi) > 255
+    ) {
         return ket_qua(false, 'Thông tin nhập quá dài.');
     }
     if ($coGioiThieu && chung_do_dai($gioiThieu) > CA_NHAN_GIOI_THIEU_TOI_DA) {
@@ -104,7 +102,7 @@ function bac_si_ca_nhan_cap_nhat_thong_tin($conn, int $ma, array $dl): array
         return ket_qua(false, 'Không cập nhật được thông tin, vui lòng thử lại.');
     }
 
-    // Ten trong session dung cho menu, cap nhat luon
+    //Tên trong session dùng cho menu, cập nhật luôn
     $_SESSION[SS_HO_TEN] = $ten;
 
     $moi = bac_si_ca_nhan_lay($conn, $ma);
@@ -112,9 +110,8 @@ function bac_si_ca_nhan_cap_nhat_thong_tin($conn, int $ma, array $dl): array
     return ket_qua(true, 'Đã cập nhật thông tin cá nhân.', $moi['data'] ?? ['hoten' => $ten]);
 }
 
-/**
- * Validate va doi mat khau.
- */
+
+//Validate va đổi mật khẩu.
 function bac_si_ca_nhan_doi_mat_khau($conn, int $ma, array $dl): array
 {
     $hienTai = (string) ($dl['mat_khau_hien_tai'] ?? '');
@@ -185,9 +182,7 @@ function bac_si_ca_nhan_chuan_bi_thu_muc_anh(): ?string
     return $thuMuc;
 }
 
-/**
- * Validate tep tai len va luu anh dai dien moi.
- */
+//Validate file ảnh đại diện mới tải lên và lưu lại.
 function bac_si_ca_nhan_luu_anh($conn, int $ma, ?array $file): array
 {
     $loiTai = [
@@ -252,9 +247,7 @@ function bac_si_ca_nhan_xoa_anh($conn, int $ma): array
     return ket_qua(true, 'Đã xoá ảnh đại diện.');
 }
 
-/**
- * Xu ly AJAX page=bac-si/ca-nhan&ajax=... (cap_nhat | doi_mat_khau | doi_anh | xoa_anh).
- */
+//Xử lý AJAX
 function bac_si_ca_nhan_ajax($conn): void
 {
     $ma = ma_nguoi_dung_hien_tai();
@@ -277,9 +270,7 @@ function bac_si_ca_nhan_ajax($conn): void
     tra_json($ketQua);
 }
 
-/**
- * Du lieu cho view trang ca nhan.
- */
+//Dữ liệu cho view trang cá nhân
 function bac_si_ca_nhan($conn): array
 {
     $maNd = ma_nguoi_dung_hien_tai();
